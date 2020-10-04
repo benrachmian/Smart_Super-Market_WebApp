@@ -1,8 +1,7 @@
 package SDMSystem.system;
 
-import SDMSystem.customer.Customer;
+import SDMSystem.user.customer.Customer;
 import SDMSystem.exceptions.ExistenceException;
-import SDMSystem.store.Store;
 
 import java.awt.*;
 import java.util.HashMap;

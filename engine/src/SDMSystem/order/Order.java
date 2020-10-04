@@ -1,7 +1,7 @@
 package SDMSystem.order;
 
 import SDMSystem.HasSerialNumber;
-import SDMSystem.customer.Customer;
+import SDMSystem.user.customer.Customer;
 import SDMSystem.product.IProductInStore;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.product.WayOfBuying;

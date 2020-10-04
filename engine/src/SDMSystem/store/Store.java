@@ -10,6 +10,8 @@ import SDMSystem.product.Product;
 import SDMSystem.product.ProductInStore;
 import SDMSystem.exceptions.*;
 import SDMSystem.system.ItemInSystem;
+import SDMSystem.user.User;
+import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.discount.DTODiscount;
 import SDMSystemDTO.product.DTOProduct;
 import SDMSystemDTO.product.DTOProductInDiscount;
@@ -26,6 +28,8 @@ import java.util.*;
 public class Store implements Locationable, HasSerialNumber<Integer>, Serializable {
 
     private static int generatedSerialNumber = 1000;
+    private StoreOwner storeOwner;
+    private String storeArea;
     private final Map<Integer,ProductInStore> productsInStore;
     private final Point storeLocation;
     private final float ppk;
@@ -52,7 +56,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         return storeDiscounts;
     }
 
-    public Store(int storeSerialNumber, Point storeLocation, float ppk, String storeName, Collection<Discount> storeDiscounts) {
+    public Store(int storeSerialNumber, Point storeLocation, float ppk, String storeName, Collection<Discount> storeDiscounts, StoreOwner storeOwner) {
         this.storeDiscounts = storeDiscounts; //ctor
         this.productsInStore = new HashMap<>();
         this.storeLocation = storeLocation;
@@ -60,6 +64,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         this.storeSerialNumber = storeSerialNumber;
         this.storeName = storeName;
         this.ordersFromStore = new HashSet<>();
+        this.storeOwner = storeOwner;
         //this.storeFeedbacks = null;
     }
 

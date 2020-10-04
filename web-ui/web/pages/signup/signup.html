@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login to system</title>
+
+    <link rel="stylesheet" href="../../common/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/css/signup.css">
+
+    <script src="../../common/jquery-2.0.3.min.js"></script>
+    <script src="../../common/popper.min.js"></script>
+    <script src="../../common/bootstrap.min.js"></script>
+
+    <!--<script type="text/javascript" language="javascript">
+        $(function(){
+            $("#login").submit(function (){
+                var parameters = $(this).serialize();
+
+                $.ajax({
+                    data: parameters,
+                    url: this.action,
+                    timeout: 2000,
+                    error: function (r){
+                        $("#error").text(r)
+                    },
+                    success: function (r){
+                        $("#error").text("great")
+                    }
+                });
+
+                return false;
+            })
+        })
+            </script>-->
+
+
+        </head>
+<body>
+<div class="container">
+    <h2>Please enter a unique user name:</h2>
+    <form id="login" method="GET" action="login">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+        </div>
+        <p>Please select your role:</p>
+        <input type="radio" id="customer" name="role" value="customer">
+        <label for="customer">Customer</label><br>
+        <input type="radio" id="store-owner" name="role" value="store-owner">
+        <label for="store-owner">Store Owner</label><br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>

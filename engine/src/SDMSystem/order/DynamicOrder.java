@@ -1,8 +1,7 @@
 package SDMSystem.order;
 
-import SDMSystem.customer.Customer;
+import SDMSystem.user.customer.Customer;
 import SDMSystem.product.IProductInStore;
-import SDMSystem.product.ProductInStore;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
@@ -10,7 +9,6 @@ import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 
