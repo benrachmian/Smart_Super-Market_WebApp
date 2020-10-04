@@ -41,16 +41,16 @@
     cursor: pointer;
 }
 
-.box{
-    position:relative;
-    /*position: relative;*/
-    /*top:50%;*/
-    top:80px;
-    left:50%;
-    transform : translate(-50% ,-50%);
-    padding: 500px 50px;
-    margin-top: 80px;
-}
+/*.box{*/
+/*    position:relative;*/
+/*    !*position: relative;*!*/
+/*    !*top:50%;*!*/
+/*    top:80px;*/
+/*    left:50%;*/
+/*    transform : translate(-50% ,-50%);*/
+/*    padding: 500px 50px;*/
+/*    margin-top: 80px;*/
+/*}*/
 
 .btn:link,
 .btn:visited{
@@ -65,9 +65,10 @@
     transition: all .5s;
 }
 
-.btn-white{
+.btn-turquoise{
     background: #009879;
-    color: #000000;
+    color: #ffffff;
+    font-family: "Comic Sans MS";
 }
 
 .btn:hover{
@@ -99,7 +100,7 @@
     transition: all .5s;
 }
 
-.btn-white::after {
+.btn-turquoise::after {
     background: #009879;
 }
 
