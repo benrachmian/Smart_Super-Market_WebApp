@@ -37,7 +37,7 @@ public class UsersInSystem {
 
     public void addUser(String username, String userRole) {
         User user = null;
-        if(userRole == "Customer"){
+        if(userRole.equals("customer")){
            user = new Customer(username);
            customersInSystem.put(user.getSerialNumber(),(Customer)user)       ;
         }

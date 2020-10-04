@@ -19,6 +19,8 @@ public class LoginServlet extends HttpServlet {
 
     private final String SIGN_UP_URL = "../signup/signup.html";
     private final String SIGN_UP_ERROR_URL = "/pages/signup/signup_after_error.jsp";
+    private final String ZONE_AND_INFO_URL = "../zones-and-info/zones_and_info.html";
+
 
 
     /**
@@ -69,13 +71,13 @@ public class LoginServlet extends HttpServlet {
 
                         //redirect the request to the chat room - in order to actually change the URL
                         System.out.println("On login, request URI is: " + request.getRequestURI());
-                        response.sendRedirect("/web_ui_Web_exploded/index.html");
+                        response.sendRedirect(ZONE_AND_INFO_URL);
                     }
                 }
             }
         } else {
             //user is already logged in
-            response.sendRedirect("/web_ui_Web_exploded/index.html");
+            response.sendRedirect(ZONE_AND_INFO_URL);
         }
     }
 

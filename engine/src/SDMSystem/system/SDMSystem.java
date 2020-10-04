@@ -3,6 +3,7 @@ package SDMSystem.system;
 import SDMSystem.discount.Discount;
 import SDMSystem.location.Locationable;
 import SDMSystem.system.usersInSystem.UsersInSystem;
+import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
 import xml.XMLHelper;
@@ -49,5 +50,9 @@ public class SDMSystem {
 
     public synchronized void addUser(String username, String userRole) {
         usersInSystem.addUser(username,userRole);
+    }
+
+    public Map<String, User> getUsersList() {
+        return usersInSystem.getUsersInSystem();
     }
 }

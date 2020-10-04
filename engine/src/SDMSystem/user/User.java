@@ -24,4 +24,8 @@ public abstract class User implements HasSerialNumber<Integer> {
     public Integer getSerialNumber() {
         return serialNumber;
     }
+
+    public String getUsername() {
+        return username;
+    }
 }
