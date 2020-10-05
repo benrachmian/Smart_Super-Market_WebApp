@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class UsersInSystem {
     private Map<String,User> usersInSystem;
-    private Map<Integer,Customer> customersInSystem;
-    private Map<Integer,StoreOwner> storeOwnersInSystem;
+    private Map<String,Customer> customersInSystem;
+    private Map<String,StoreOwner> storeOwnersInSystem;
 
     public UsersInSystem() {
         usersInSystem = new HashMap<>();
@@ -19,19 +19,19 @@ public class UsersInSystem {
         storeOwnersInSystem = new HashMap<>();
     }
 
-    public Customer getCustomer(int customerSerialNumber) {
-        return customersInSystem.get(customerSerialNumber);
+    public Customer getCustomer(String  customerUserName) {
+        return customersInSystem.get(customerUserName);
     }
 
     public Map<String, User> getUsersInSystem() {
         return usersInSystem;
     }
 
-    public Map<Integer, Customer> getCustomersInSystem() {
+    public Map<String, Customer> getCustomersInSystem() {
         return customersInSystem;
     }
 
-    public Map<Integer, StoreOwner> getStoreOwnersInSystem() {
+    public Map<String, StoreOwner> getStoreOwnersInSystem() {
         return storeOwnersInSystem;
     }
 
@@ -39,11 +39,11 @@ public class UsersInSystem {
         User user = null;
         if(userRole.equals("customer")){
            user = new Customer(username);
-           customersInSystem.put(user.getSerialNumber(),(Customer)user)       ;
+           customersInSystem.put(user.getUsername(),(Customer)user)       ;
         }
         else{
             user = new StoreOwner(username);
-            storeOwnersInSystem.put(user.getSerialNumber(),(StoreOwner)user);
+            storeOwnersInSystem.put(user.getUsername(),(StoreOwner)user);
         }
         usersInSystem.put(username,user);
     }

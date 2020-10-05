@@ -34,8 +34,8 @@ public class SDMSystemManager {
         systemsInZoneMap.get(superDuperMarketDescriptor.getSDMZone().getName()).loadSystem(superDuperMarketDescriptor,storeOwner);
     }
 
-    public Customer getCustomer(int customerSerialNumber) {
-        return usersInSystem.getCustomer(customerSerialNumber);
+    public Customer getCustomer(String customerUserName) {
+        return usersInSystem.getCustomer(customerUserName);
     }
 
     public boolean isUserExists(String usernameFromParameter) {

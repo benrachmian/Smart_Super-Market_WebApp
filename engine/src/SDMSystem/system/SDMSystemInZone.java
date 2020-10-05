@@ -9,7 +9,6 @@ import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.discount.DTODiscount;
 import SDMSystemDTO.discount.DiscountKind;
 import SDMSystem.discount.Offer;
-import SDMSystem.location.Locationable;
 import SDMSystem.order.DynamicOrder;
 import SDMSystem.order.StaticOrder;
 import SDMSystem.product.Product;
@@ -18,13 +17,12 @@ import SDMSystem.order.Order;
 import SDMSystem.store.Store;
 import SDMSystem.exceptions.*;
 import SDMSystem.validation.*;
-import SDMSystemDTO.customer.DTOCustomer;
+import SDMSystemDTO.user.customer.DTOCustomer;
 import SDMSystemDTO.product.*;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.store.DTOStore;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Pair;
-import xml.XMLHelper;
 import xml.generated.*;
 
 import javax.xml.bind.JAXBException;
@@ -335,7 +333,7 @@ public class SDMSystemInZone {
                                    DTOCustomer whoOrdered) {
         Collection<Pair<IProductInStore,Float>> productsInOrder = createProductsInOrderCollectionFromDTO(dtoProductsInOrder);
         Store storeTheProductBelong = storesInSystem.getStoreInSystem(chosenStore.getStoreSerialNumber());
-        Customer customerOrdered = SDMSystem.getInstance().getCustomer(whoOrdered.getCustomerSerialNumber());
+        Customer customerOrdered = SDMSystem.getInstance().getCustomer(whoOrdered.getUsername());
         Order newOrder = createdNewStaticOrderObjectAndUpdateAmountSoldInStore(orderDate,deliveryCost,productsInOrder,storeTheProductBelong, customerOrdered,dtoProductsInOrder);
         updateAmountSoldInSystemForEveryProductInOrder(productsInOrder);
         storeTheProductBelong.addOrder(newOrder,deliveryCost);
@@ -349,7 +347,7 @@ public class SDMSystemInZone {
                                     DTOCustomer whoOrdered,
                                     Point orderToLocation) {
         Collection<StaticOrder> subOrders = new LinkedList<>();
-        Customer customerMakingTheOrder = SDMSystem.getInstance().getCustomer(whoOrdered.getCustomerSerialNumber());
+        Customer customerMakingTheOrder = SDMSystem.getInstance().getCustomer(whoOrdered.getUsername());
         float totalDeliveryCost;
         //int[0] = amount of products
         //int[1] = amount of products kinds

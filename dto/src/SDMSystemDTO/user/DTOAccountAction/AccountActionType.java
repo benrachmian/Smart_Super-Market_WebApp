@@ -1,4 +1,4 @@
-package SDMSystem.user.accountAction;
+package SDMSystemDTO.user.DTOAccountAction;
 
 public enum AccountActionType {
     CHARGE {

@@ -1,6 +1,6 @@
 package SDMSystemDTO;
 
-import SDMSystemDTO.customer.DTOCustomer;
+import SDMSystemDTO.user.customer.DTOCustomer;
 
 public class DTOFeedback {
 

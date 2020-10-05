@@ -26,13 +26,52 @@ function ajaxUsersList() {
     });
 }
 
+function uploadFileAjax() {
+    var file = this[0].files[0];
+
+    var formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", this[1].value);
+
+    $.ajax({
+        method:'POST',
+        data: formData,
+        url: this.action,
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        timeout: 4000,
+        error: function(e) {
+            console.error("Failed to submit");
+            $("#result").text("Failed to get result from server " + e);
+        },
+        success: function(r) {
+            $("#result").text(r);
+        }
+    });
+}
+
 function addButtonsByRole(role) {
     if(role === "customer"){
         // $("<a href=\"#\" class=\"btn btn-turquoise  btn-animation-1\" role=\"button\">Charge Money</a>").appendTo($(".box"));
         $(".box").prepend("<a href=\"#\" class=\"btn btn-turquoise  btn-animation-1\" role=\"button\">Charge Money</a>");
     }
+    // store owner
     else{
-        $(".box").prepend("<a href=\"#\" class=\"btn btn-turquoise  btn-animation-1\" role=\"button\">Upload File</a>");
+        $(".box").prepend("" +
+            "<form id = \"uploadFile\" action=\"../../uploadFiles\" enctype=\"multipart/form-data\" method=\"POST\">"
+            + "<input type=\"file\" accept=\".xml\" name=\"xmlFile\"><br><br>"
+            + "<input type=\"Submit\" value=\"Upload File\"'>"
+            + "</form>"
+            + "<div class=\"isa_error\" style='display: none'>"
+            + "<i class=\"fa fa-times-circle\"></i>"
+            + "<span id=\"error\"></span>"
+            + "</div>");
+        $("#uploadFile").submit(function() {
+            uploadFileAjax();
+            // return value of the submit operation
+            return false;
+        })
+        // $(".isa_error").css("display", "block");
     }
 }
 
@@ -53,3 +92,15 @@ $(function() {
     setInterval(ajaxUsersList, refreshRate);
     ajaxButtonsByRole();
 });
+
+
+
+// // step 1: onload - capture the submit event on the form.
+// $(function() { // onload...do
+//     $("#uploadFile").submit(function() {
+//         uploadFileAjax();
+//         // return value of the submit operation
+//         // by default - we'll always return false so it doesn't redirect the user.
+//         return false;
+//     })
+// })

@@ -1,4 +1,4 @@
-
+@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 .styled-table {
     border-collapse: collapse;
@@ -63,6 +63,7 @@
     border-radius:100px;
     display:inline-block;
     transition: all .5s;
+    margin-top: 10px;
 }
 
 .btn-turquoise{
@@ -120,3 +121,12 @@
     }
 }
 
+.isa_error {
+    margin: 10px 0px;
+    padding:12px;
+    color: #D8000C;
+    background-color: #FFD2D2;
+    margin:10px 22px;
+    font-size:2em;
+    vertical-align:middle;
+}

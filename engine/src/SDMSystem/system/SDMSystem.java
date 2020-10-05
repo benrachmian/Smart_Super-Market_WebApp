@@ -12,6 +12,7 @@ import xml.generated.SuperDuperMarketDescriptor;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,13 +36,30 @@ public class SDMSystem {
         return single_Instance;
     }
 
-    public void loadSystem(String filePath, StoreOwner storeOwner) throws FileNotFoundException, JAXBException {
+    public void loadSystemWithFilePath(String filePath, StoreOwner storeOwner) throws FileNotFoundException, JAXBException {
         SuperDuperMarketDescriptor superDuperMarketDescriptor = XMLHelper.FromXmlFileToObject(filePath);
         systemsInZoneMap.get(superDuperMarketDescriptor.getSDMZone().getName()).loadSystem(superDuperMarketDescriptor,storeOwner);
     }
 
-    public Customer getCustomer(int customerSerialNumber) {
-        return usersInSystem.getCustomer(customerSerialNumber);
+    public void loadSystemWithInputStream(InputStream xmlStream, String storeOwnerUserName) throws FileNotFoundException, JAXBException {
+        StoreOwner storeOwner = usersInSystem.getStoreOwnersInSystem().get(storeOwnerUserName);
+        SuperDuperMarketDescriptor superDuperMarketDescriptor = XMLHelper.deserializeFrom(xmlStream);
+        String zone = superDuperMarketDescriptor.getSDMZone().getName();
+        SDMSystemInZone sdmSystemInZone =  systemsInZoneMap.get(zone);
+        //new zone
+        if(sdmSystemInZone == null){
+            sdmSystemInZone = SDMSystemInZone.getInstance();
+            sdmSystemInZone.loadSystem(superDuperMarketDescriptor,storeOwner);
+            systemsInZoneMap.put(zone, sdmSystemInZone);
+        }
+        //exist zone
+        else{
+            throw new RuntimeException("There is already such zone in the system!");
+        }
+    }
+
+    public Customer getCustomer(String  customerUserName) {
+        return usersInSystem.getCustomer(customerUserName);
     }
 
     public boolean isUserExists(String usernameFromParameter) {

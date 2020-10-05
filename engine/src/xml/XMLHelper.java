@@ -5,10 +5,7 @@ import xml.generated.SuperDuperMarketDescriptor;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 
 public class XMLHelper {
 
@@ -31,7 +28,7 @@ public class XMLHelper {
     }
 
 
-    private static SuperDuperMarketDescriptor deserializeFrom(InputStream in) throws JAXBException {
+    public static SuperDuperMarketDescriptor deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
         Unmarshaller u = jc.createUnmarshaller();
         return (SuperDuperMarketDescriptor) u.unmarshal(in);
