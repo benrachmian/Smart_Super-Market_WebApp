@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 import java.io.SequenceInputStream;
 import java.util.*;
 
-//@WebServlet("/uploadFiles")
+@WebServlet(name = "UploadFileServlet", urlPatterns = {"/uploadfile"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class UploadFileServlet extends HttpServlet {
 
@@ -38,16 +38,10 @@ public class UploadFileServlet extends HttpServlet {
 
         Collection<Part> parts = request.getParts();
 
-//        out.println("Total parts : " + parts.size() + "\n");
-
-//        StringBuilder fileContent = new StringBuilder();
 
         Collection<InputStream> fileInputStreamList = new LinkedList<>();
 
         for (Part part : parts) {
-            //to write the content of the file to a string
-//            fileContent.append("New Part content:").append("\n");
-//            fileContent.append(readFromInputStream(part.getInputStream())).append("\n");
             fileInputStreamList.add(part.getInputStream());
         }
 

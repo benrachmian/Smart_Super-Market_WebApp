@@ -19,10 +19,10 @@
         <servlet-class>sdm.servlets.RoleServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>UploadFileServlet</servlet-name>
-        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>UploadFileServlet</servlet-name>-->
+<!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
+<!--    </servlet>-->
 
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -39,9 +39,9 @@
         <url-pattern>/role</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>UploadFileServlet</servlet-name>
-        <url-pattern>/uploadFiles</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>UploadFileServlet</servlet-name>-->
+<!--        <url-pattern>/uploadFiles</url-pattern>-->
+<!--    </servlet-mapping>-->
 
 </web-app>

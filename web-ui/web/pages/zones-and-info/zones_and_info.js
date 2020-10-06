@@ -1,6 +1,8 @@
 var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
+var UPLOAD_FILE_URL = buildUrlWithContextPath("uploadfile");
+
 
 //users = a list of usernames, essentially an array of javascript strings:
 // ["moshe","nachum","nachche"...]
@@ -31,21 +33,21 @@ function uploadFileAjax() {
 
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("name", this[1].value);
+    //formData.append("name", this[1].value);
 
     $.ajax({
         method:'POST',
         data: formData,
-        url: this.action,
+        url: UPLOAD_FILE_URL,
         processData: false, // Don't process the files
         contentType: false, // Set content type to false as jQuery will tell the server its a query string request
         timeout: 4000,
         error: function(e) {
             console.error("Failed to submit");
-            $("#result").text("Failed to get result from server " + e);
+            $(".isa_error").css("display", "block");
         },
         success: function(r) {
-            $("#result").text(r);
+            $(".isa_error").css("display", "block");
         }
     });
 }
@@ -57,16 +59,21 @@ function addButtonsByRole(role) {
     }
     // store owner
     else{
-        $(".box").prepend("" +
-            "<form id = \"uploadFile\" action=\"../../uploadFiles\" enctype=\"multipart/form-data\" method=\"POST\">"
-            + "<input type=\"file\" accept=\".xml\" name=\"xmlFile\"><br><br>"
-            + "<input type=\"Submit\" value=\"Upload File\"'>"
-            + "</form>"
-            + "<div class=\"isa_error\" style='display: none'>"
-            + "<i class=\"fa fa-times-circle\"></i>"
-            + "<span id=\"error\"></span>"
-            + "</div>");
-        $("#uploadFile").submit(function() {
+        // $(".box").prepend("" +
+        //     "<form id = \"uploadFile\" action=\"../../uploadFiles\" enctype=\"multipart/form-data\" method=\"POST\">"
+        //     + "<input type=\"file\" accept=\".xml\" name=\"xmlFile\"><br><br>"
+        //     + "<input type=\"Submit\" value=\"Upload File\"'>"
+        //     + "</form>"
+        //     + "<div class=\"isa_error\" style='display: none'>"
+        //     + "<i class=\"fa fa-times-circle\"></i>"
+        //     + "<span id=\"error\"></span>"
+        //     + "</div>");
+
+        $("<input type='file' name='file1'>" +
+            "<input type='submit' value='Upload File'/><br>").appendTo($("#upload-file"));
+
+
+        $("#uploadform").submit(function() {
             uploadFileAjax();
             // return value of the submit operation
             return false;
@@ -104,3 +111,5 @@ $(function() {
 //         return false;
 //     })
 // })
+
+
