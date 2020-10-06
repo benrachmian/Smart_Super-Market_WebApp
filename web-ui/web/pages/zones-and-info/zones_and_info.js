@@ -28,33 +28,62 @@ function ajaxUsersList() {
     });
 }
 
-function uploadFileAjax() {
-    var file = this[0].files[0];
+function overloadFileUploadWithAjax() {
+    // $("#uploadform").submit(function() {
+    //     var file = this[0].files[0];
+    //
+    //     var formData = new FormData();
+    //     formData.append("file", file);
+    //     //formData.append("name", this[1].value);
+    //
+    //     $.ajax({
+    //         method: 'POST',
+    //         data: formData,
+    //         url: UPLOAD_FILE_URL,
+    //         processData: false, // Don't process the files
+    //         contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+    //         timeout: 4000,
+    //         error: function (e) {
+    //             console.error("Failed to submit");
+    //             $(".isa_error").css("display", "block");
+    //         },
+    //         success: function (r) {
+    //             $(".isa_error").css("display", "block");
+    //         }
+    //     });
+    // }
 
-    var formData = new FormData();
-    formData.append("file", file);
-    //formData.append("name", this[1].value);
+    $("#uploadform").submit(function() {
+        var file = this[0].files[0];
 
-    $.ajax({
-        method:'POST',
-        data: formData,
-        url: UPLOAD_FILE_URL,
-        processData: false, // Don't process the files
-        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-        timeout: 4000,
-        error: function(e) {
-            console.error("Failed to submit");
-            $(".isa_error").css("display", "block");
-        },
-        success: function(r) {
-            $(".isa_error").css("display", "block");
-        }
-    });
+        var formData = new FormData();
+        formData.append("file", file);
+        //formData.append("name", this[1].value);
+
+        $.ajax({
+            method:'POST',
+            data: formData,
+            url: UPLOAD_FILE_URL,
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            timeout: 4000,
+            error: function(e) {
+                console.error("Failed to submit");
+                $(".isa_error").css("display", "block");
+            },
+            success: function(r) {
+                $(".isa_success").css("display", "block");
+            }
+        });
+        // return value of the submit operation
+        return false;
+    })
+
+
 }
 
 function addButtonsByRole(role) {
     if(role === "customer"){
-        // $("<a href=\"#\" class=\"btn btn-turquoise  btn-animation-1\" role=\"button\">Charge Money</a>").appendTo($(".box"));
         $(".box").prepend("<a href=\"#\" class=\"btn btn-turquoise  btn-animation-1\" role=\"button\">Charge Money</a>");
     }
     // store owner
@@ -70,15 +99,19 @@ function addButtonsByRole(role) {
         //     + "</div>");
 
         $("<input type='file' name='file1'>" +
-            "<input type='submit' value='Upload File'/><br>").appendTo($("#upload-file"));
+            "<input type='submit' value='Upload File'/><br>"
+            + "<div class=\"isa_error\" style='display: none'>"
+            + "<i class=\"fa fa-times-circle\"></i>"
+            + "<span id=\"error\"></span>"
+            + "</div>"
+            + "<div class=\"isa_success\" style='display: none'>"
+            + "<i class=\"fa fa-check\"></i>"
+            + "<span id=\"success\">The zone system was uploaded successfully!</span>"
+            + "</div>"
+        ).appendTo($("#upload-file"));
 
-
-        $("#uploadform").submit(function() {
-            uploadFileAjax();
-            // return value of the submit operation
-            return false;
-        })
-        // $(".isa_error").css("display", "block");
+        overloadFileUploadWithAjax();
+        //$(".isa_error").css("display", "block");
     }
 }
 
@@ -94,7 +127,6 @@ function ajaxButtonsByRole() {
 
 //activate the timer calls after the page is loaded
 $(function() {
-
     //The users list is refreshed automatically every second
     setInterval(ajaxUsersList, refreshRate);
     ajaxButtonsByRole();
@@ -102,14 +134,5 @@ $(function() {
 
 
 
-// // step 1: onload - capture the submit event on the form.
-// $(function() { // onload...do
-//     $("#uploadFile").submit(function() {
-//         uploadFileAjax();
-//         // return value of the submit operation
-//         // by default - we'll always return false so it doesn't redirect the user.
-//         return false;
-//     })
-// })
 
 
