@@ -29,7 +29,6 @@ function ajaxUsersList() {
 }
 
 function overloadFileUploadWithAjax() {
-    // $("#uploadform").submit(function() {
     //     var file = this[0].files[0];
     //
     //     var formData = new FormData();
@@ -70,9 +69,13 @@ function overloadFileUploadWithAjax() {
             error: function(e) {
                 console.error("Failed to submit");
                 $(".isa_error").css("display", "block");
+                $(".isa_success").css("display", "none");
+                $("#error").empty();
+                $("#error").append(e.responseText);
             },
             success: function(r) {
                 $(".isa_success").css("display", "block");
+                $(".isa_error").css("display", "none");
             }
         });
         // return value of the submit operation
@@ -111,6 +114,11 @@ function addButtonsByRole(role) {
         ).appendTo($("#upload-file"));
 
         overloadFileUploadWithAjax();
+
+        //$("#uploadform").submit(function() {
+        //function...
+        //return false
+
         //$(".isa_error").css("display", "block");
     }
 }

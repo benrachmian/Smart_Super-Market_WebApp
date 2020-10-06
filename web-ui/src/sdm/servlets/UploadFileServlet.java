@@ -1,6 +1,8 @@
 package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
+import com.google.gson.Gson;
+import javafx.application.Application;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
@@ -42,16 +44,33 @@ public class UploadFileServlet extends HttpServlet {
         Collection<InputStream> fileInputStreamList = new LinkedList<>();
 
         for (Part part : parts) {
+            if(part.getContentType() == null){
+                throw new RuntimeException("You must choose an xml file!");
+            }
             fileInputStreamList.add(part.getInputStream());
         }
+
 
         SequenceInputStream fileInputStream =  new SequenceInputStream(Collections.enumeration(fileInputStreamList));
 
         try {
             sdmSystem.loadSystemWithInputStream(fileInputStream,usernameFromSession);
+//            ErrorMsg cav = new ErrorMsg("BENNNN");
+//            Gson gson = new Gson();
+//            String jsonResponse = gson.toJson(cav);
+//            out.println();
+//            out.flush();
         } catch (Exception e) {
-            request.setAttribute(Constants.ERROR, e.getMessage());
-            out.println();
+//            request.setAttribute(Constants.ERROR, e.getMessage());
+            ErrorMsg cav = new ErrorMsg(e.getMessage());
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(cav);
+//            out.println();
+//            out.flush();
+//            response.sendError(404,e.getMessage());
+            response.setStatus(400);
+            out.print(e.getMessage());
+            out.flush();
         }
     }
 
@@ -59,6 +78,15 @@ public class UploadFileServlet extends HttpServlet {
 
     private String readFromInputStream(InputStream inputStream) {
         return new Scanner(inputStream).useDelimiter("\\Z").next();
+    }
+
+    private static class ErrorMsg {
+
+        final private String errorMsg;
+
+        public ErrorMsg(String errorMsg) {
+            this.errorMsg = errorMsg;
+        }
     }
 
 }
