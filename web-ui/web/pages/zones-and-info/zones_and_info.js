@@ -135,9 +135,17 @@ function overloadChargeSumbit() {
             url: CHARGE_MONEY_URL,
             timeout: 4000,
             error: function(e) {
+                $(".actionStatusContainer").css("display", "block");
+                console.error("Failed to submit");
+                $(".isa_error").css("display", "block");
+                $(".isa_success").css("display", "none");
+                $("#error").empty();
+                $("#error").append(e.responseText);
             },
             success: function(r) {
-
+                $(".actionStatusContainer").css("display", "block");
+                $(".isa_success").css("display", "block");
+                $(".isa_error").css("display", "none");
             }
         });
         // return value of the submit operation
@@ -147,6 +155,7 @@ function overloadChargeSumbit() {
 
 function clickOnChargeMoneyButton() {
     $(".actionContainer").empty();
+    $(".actionStatusContainer").empty();
     $(".actionContainer").css("display","block");
     $("<form method=\"GET\" id='chargeMoney' action=\"chargeMoney\">" +
         "        <div class=\"form-group\">" +
@@ -155,7 +164,17 @@ function clickOnChargeMoneyButton() {
         "<br><label for=\"chargeDate\">Charge Date:</label>" +
         "  <input type=\"date\" id=\"chargeDate\" name=\"chargeDate\">" +
         "<input type=\"submit\" value=\"Charge!\">" +
-        "        </div>").appendTo($(".actionContainer"));
+        + "</div>").appendTo($(".actionContainer"));
+
+    $("<div class=\"isa_error\" style='display: none'>"
+    + "<i class=\"fa fa-times-circle\"></i>"
+    + "<span id=\"error\"></span>"
+    + "</div>"
+    + "<div class=\"isa_success\" style='display: none'>"
+    + "<i class=\"fa fa-check\"></i>"
+    + "<span id=\"success\">You successfully charged your account!</span>"
+    ).appendTo($(".actionStatusContainer"));
+
 
     overloadChargeSumbit();
 }
