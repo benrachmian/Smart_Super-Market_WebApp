@@ -1,5 +1,6 @@
 package SDMSystem.system;
 
+import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.discount.Discount;
 import SDMSystem.location.LocationUtility;
@@ -17,6 +18,7 @@ import SDMSystem.order.Order;
 import SDMSystem.store.Store;
 import SDMSystem.exceptions.*;
 import SDMSystem.validation.*;
+import SDMSystemDTO.system.SingleZoneEntry;
 import SDMSystemDTO.user.customer.DTOCustomer;
 import SDMSystemDTO.product.*;
 import SDMSystemDTO.order.DTOOrder;
@@ -45,6 +47,7 @@ public class SDMSystemInZone {
     private Map<String,Discount> discountsInSystem;
     private String zone;
     private static SDMSystemInZone single_Instance = null;
+    private User zoneOwner;
 
     private SDMSystemInZone() {
         storesInSystem = new StoresInSystem();
@@ -92,7 +95,9 @@ public class SDMSystemInZone {
         Map<Integer, Order> oldOrdersInSystem = this.ordersInSystem;
         Map<String,Discount> oldDiscountsInSystem = this.discountsInSystem;
         String oldZone = zone;
+        User oldOwner = zoneOwner;
         this.zone = superDuperMarketDescriptor.getSDMZone().getName();
+        this.zoneOwner = storeOwner;
         storesInSystem = new StoresInSystem();
         productsInSystem = new HashMap<>();
         ordersInSystem = new HashMap<>();
@@ -108,6 +113,7 @@ public class SDMSystemInZone {
             ordersInSystem = oldOrdersInSystem;
             discountsInSystem = oldDiscountsInSystem;
             zone = oldZone;
+            zoneOwner = oldOwner;
             throw e;
         }
     }
@@ -914,5 +920,25 @@ public class SDMSystemInZone {
             storeWouldSellTheProduct.addNewProductToStore(newProduct,storesSellingTheProductAndPrice.get(storeId));
         }
 
+    }
+
+    public SingleZoneEntry createSingleZoneEntry() {
+        return new SingleZoneEntry(
+                zoneOwner.getUsername(),
+                zone,
+                productsInSystem.size(),
+                storesInSystem.getStoresInSystemBySerialNumber().size(),
+                ordersInSystem.size(),
+                calcAvgOrdersCost());
+    }
+
+    private float calcAvgOrdersCost() {
+        int numOfOrders = ordersInSystem.size();
+        float totalProductsCost = 0;
+        for(Order order : ordersInSystem.values()){
+            totalProductsCost += order.getProductsCost();
+        }
+
+        return numOfOrders == 0 ? 0 :  totalProductsCost / ordersInSystem.values().size();
     }
 }

@@ -19,6 +19,11 @@
         <servlet-class>sdm.servlets.RoleServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>NewZoneDataServlet</servlet-name>
+        <servlet-class>sdm.servlets.NewZoneDataServlet</servlet-class>
+    </servlet>
+
 <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
@@ -37,6 +42,11 @@
     <servlet-mapping>
         <servlet-name>RoleServlet</servlet-name>
         <url-pattern>/role</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>NewZoneDataServlet</servlet-name>
+        <url-pattern>/newzonedata</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->

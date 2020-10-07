@@ -6,6 +6,7 @@ import SDMSystem.system.usersInSystem.UsersInSystem;
 import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
+import SDMSystemDTO.system.SingleZoneEntry;
 import xml.XMLHelper;
 import xml.generated.SuperDuperMarketDescriptor;
 
@@ -13,7 +14,9 @@ import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //Use it as Singleton
@@ -23,10 +26,12 @@ public class SDMSystem {
     private UsersInSystem usersInSystem;
     //key: zone, value: system
     private Map<String, SDMSystemInZone> systemsInZoneMap;
+    private List<SDMSystemInZone> systemsInList;
 
     public SDMSystem() {
         usersInSystem = new UsersInSystem();
         systemsInZoneMap = new HashMap<>();
+        systemsInList = new ArrayList<>();
     }
 
     public static SDMSystem getInstance(){
@@ -51,6 +56,7 @@ public class SDMSystem {
             sdmSystemInZone = SDMSystemInZone.getInstance();
             sdmSystemInZone.loadSystem(superDuperMarketDescriptor,storeOwner);
             systemsInZoneMap.put(zone, sdmSystemInZone);
+            systemsInList.add(sdmSystemInZone);
         }
         //exist zone
         else{
@@ -72,5 +78,22 @@ public class SDMSystem {
 
     public Map<String, User> getUsersList() {
         return usersInSystem.getUsersInSystem();
+    }
+
+    public int getNumOfZones() {
+        return systemsInZoneMap.size();
+    }
+
+    public List<SingleZoneEntry> getZonesEntries(int fromIndex) {
+        List<SingleZoneEntry> res = new ArrayList<>();
+        if (fromIndex < 0 || fromIndex > systemsInList.size()) {
+            fromIndex = 0;
+        }
+        List<SDMSystemInZone> newZones = systemsInList.subList(fromIndex,systemsInList.size());
+        for(SDMSystemInZone zone : newZones){
+            res.add(zone.createSingleZoneEntry());
+        }
+
+        return res;
     }
 }

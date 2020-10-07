@@ -68,7 +68,7 @@ public class UploadFileServlet extends HttpServlet {
 //            out.println();
 //            out.flush();
 //            response.sendError(404,e.getMessage());
-            response.setStatus(400);
+            response.setStatus(500);
             out.print(e.getMessage());
             out.flush();
         }
