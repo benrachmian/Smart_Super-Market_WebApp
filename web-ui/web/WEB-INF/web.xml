@@ -24,6 +24,11 @@
         <servlet-class>sdm.servlets.NewZoneDataServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>ChargeMoneyServlet</servlet-name>
+        <servlet-class>sdm.servlets.ChargeMoneyServlet</servlet-class>
+    </servlet>
+
 <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
@@ -47,6 +52,11 @@
     <servlet-mapping>
         <servlet-name>NewZoneDataServlet</servlet-name>
         <url-pattern>/newzonedata</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ChargeMoneyServlet</servlet-name>
+        <url-pattern>/chargeMoney</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->

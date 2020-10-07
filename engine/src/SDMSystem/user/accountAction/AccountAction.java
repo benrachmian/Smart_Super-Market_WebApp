@@ -11,4 +11,15 @@ public class AccountAction {
     private float accountMoneyBeforeAction;
     private float accountMoneyAfterAction;
 
+    public AccountAction(AccountActionType accountActionType,
+                         LocalDate actionDate,
+                         float accountSum,
+                         float accountMoneyBeforeAction,
+                         float accountMoneyAfterAction) {
+        this.accountActionType = accountActionType;
+        this.actionDate = actionDate;
+        this.accountSum = accountSum;
+        this.accountMoneyBeforeAction = accountMoneyBeforeAction;
+        this.accountMoneyAfterAction = accountMoneyAfterAction;
+    }
 }

@@ -4,6 +4,7 @@ var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
 var UPLOAD_FILE_URL = buildUrlWithContextPath("uploadfile");
 var GET_NEW_ZONE_DATA_TO_TABLE = buildUrlWithContextPath("newzonedata");
+var CHARGE_MONEY_URL = buildUrlWithContextPath("chargeMoney");
 
 
 //users = a list of usernames, essentially an array of javascript strings:
@@ -124,12 +125,51 @@ function overloadFileUploadWithAjax() {
 
 }
 
+function overloadChargeSumbit() {
+    $("#chargeMoney").submit(function() {
+
+        var parameters = $(this).serialize();
+
+        $.ajax({
+            data: parameters,
+            url: CHARGE_MONEY_URL,
+            timeout: 4000,
+            error: function(e) {
+            },
+            success: function(r) {
+
+            }
+        });
+        // return value of the submit operation
+        return false;
+    })
+}
+
+function clickOnChargeMoneyButton() {
+    $(".actionContainer").empty();
+    $(".actionContainer").css("display","block");
+    $("<form method=\"GET\" id='chargeMoney' action=\"chargeMoney\">" +
+        "        <div class=\"form-group\">" +
+        "            <label for=\"money\">Money To Charge:</label>" +
+        "            <input type=\"number\" step=\"0.01\" class=\"form-control\" id=\"number\" placeholder=\"Enter Money To Charge\" name=\"money\">" +
+        "<br><label for=\"chargeDate\">Charge Date:</label>" +
+        "  <input type=\"date\" id=\"chargeDate\" name=\"chargeDate\">" +
+        "<input type=\"submit\" value=\"Charge!\">" +
+        "        </div>").appendTo($(".actionContainer"));
+
+    overloadChargeSumbit();
+}
+
 function addButtonsByRole(role) {
     if(role === "customer"){
-        $(".box").prepend("<a href=\"#\" class=\"btn btn-turquoise  btn-animation-1\" role=\"button\">Charge Money</a>");
+        $(".box").prepend("<a href=\"#\" id='chargeMoneyButton' class=\"btn btn-turquoise  btn-animation-1\" role=\"button\"'>Charge Money</a>");
+        $("#chargeMoneyButton").click(function (){
+            clickOnChargeMoneyButton();
+        });
     }
     // store owner
     else{
+        $("#uploadform").css("display","block");
         $("<input type='file' name='file1'>" +
             "<input type='submit' value='Upload File'/><br>"
             + "<div class=\"isa_error\" style='display: none'>"

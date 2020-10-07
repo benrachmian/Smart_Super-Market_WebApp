@@ -47,4 +47,8 @@ public class UsersInSystem {
         }
         usersInSystem.put(username,user);
     }
+
+    public User getUser(String username) {
+        return usersInSystem.get(username);
+    }
 }

@@ -96,4 +96,8 @@ public class SDMSystem {
 
         return res;
     }
+
+    public void chargeUserMoney(String username, float money, String chargeDate) {
+        usersInSystem.getUser(username).chargeMoney(money,chargeDate);
+    }
 }
