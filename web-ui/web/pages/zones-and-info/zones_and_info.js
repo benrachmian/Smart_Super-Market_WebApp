@@ -5,6 +5,7 @@ var GET_ROLE_URL = buildUrlWithContextPath("role");
 var UPLOAD_FILE_URL = buildUrlWithContextPath("uploadfile");
 var GET_NEW_ZONE_DATA_TO_TABLE = buildUrlWithContextPath("newzonedata");
 var CHARGE_MONEY_URL = buildUrlWithContextPath("chargeMoney");
+var GET_ACCOUNT_MOVEMENTS_URL = buildUrlWithContextPath("accountMovements");
 
 
 //users = a list of usernames, essentially an array of javascript strings:
@@ -31,9 +32,6 @@ function ajaxUsersList() {
     });
 }
 
-
-
-
 function appendNewZoneToZonesTable(index, zoneEntry) {
    $("<tr>" +
         "<td>" + zoneEntry.zoneOwner + "</td>" +
@@ -47,7 +45,6 @@ function appendNewZoneToZonesTable(index, zoneEntry) {
 
 function appendNewZonesToZonesTable(newZones) {
     $.each(newZones || [], appendNewZoneToZonesTable);
-
 }
 
 function ajaxNewZoneToTable() {
@@ -92,6 +89,16 @@ function ajaxNewZoneToTable() {
 
 }
 
+// function showErrorMsg(error) {
+//     //$(".actionStatusContainer").css("display", "block");
+//     $(".isa_error").css("display", "block");
+//     $(".isa_success").css("display", "none");
+//     $("#error").empty();
+//     $("#error").append(error.responseText);
+//     $("#error").append("bbbb");
+//     $("cccc").appendTo( $("#error"));
+// }
+
 function overloadFileUploadWithAjax() {
 
     $("#uploadform").submit(function() {
@@ -116,8 +123,11 @@ function overloadFileUploadWithAjax() {
                 $("#error").append(e.responseText);
             },
             success: function(r) {
+                //$(".actionStatusContainer").css("display", "block");
                 $(".isa_success").css("display", "block");
                 $(".isa_error").css("display", "none");
+                // $("#success").empty();
+                // $("#success").append("The file was uploaded successfully!");
                 ajaxNewZoneToTable();
             }
         });
@@ -144,9 +154,10 @@ function overloadChargeSumbit() {
                 $(".isa_success").css("display", "none");
                 $("#error").empty();
                 $("#error").append(e.responseText);
+                //showErrorMsg(e);
             },
             success: function(r) {
-                $(".actionStatusContainer").css("display", "block");
+                //$(".actionStatusContainer").css("display", "block");
                 $(".isa_success").css("display", "block");
                 $(".isa_error").css("display", "none");
             }
@@ -221,6 +232,53 @@ function triggerAjaxNewZoneToTable() {
     setTimeout(ajaxNewZoneToTable, refreshRate);
 }
 
+function showAccountMovement(index, accountMovement) {
+
+    $("<details>" +
+        "    <summary> Account Movement #" + (index+1) + "</summary>" +
+        "    <p>Account Movement Type: " + accountMovement.accountMovementType + "</p>" +
+        "    <p>Movement Date: " + accountMovement.movementDate.day + "/" + accountMovement.movementDate.month +
+                "/" + accountMovement.movementDate.year + "</p>" +
+        "    <p>Movement Sum: " + accountMovement.movementSum + "</p>" +
+        "    <p>Money In Account Before This Movement: " + accountMovement.accountMoneyBeforeAction + "</p>" +
+        "    <p>Money In Account After This Movement: " + accountMovement.accountMoneyAfterAction + "</p>" +
+        "</details>").appendTo($(".actionContainer"));
+}
+
+function showAccountMovements(accountMovements) {
+    $.each(accountMovements || [], showAccountMovement);
+        // $('<li>' + "Username: " +  user.username + "<br> Role: " +  user.role  +  '</li>').appendTo($("#userslist"));
+}
+
+function clickOnAccountMovementsButton() {
+    $.ajax({
+        url: GET_ACCOUNT_MOVEMENTS_URL,
+        timeout: 4000,
+        error: function(e) {
+            $(".actionStatusContainer").empty();
+            // $("<div class=\"isa_error\" style='display: none'>" +
+            //     "<i class=\"fa fa-times-circle\"></i>" +
+            //     "<span id=\"error\"></span>" +
+            //     "</div>").appendTo($(".actionStatusContainer"));
+            //$(".actionStatusContainer").empty();
+            $(".actionStatusContainer").css("display", "block");
+            $(".actionContainer").empty();
+            console.error("Failed to submit");
+            $(".isa_error").css("display", "block");
+            $(".isa_success").css("display", "none");
+            $("#error").empty();
+            $("#error").append(e.responseText);
+            //showErrorMsg(e);
+        },
+        success: function(r) {
+            $(".actionContainer").empty();
+            $(".actionStatusContainer").empty();
+            $(".actionContainer").css("display", "block");
+            showAccountMovements(r);
+        }
+    });
+}
+
 //activate the timer calls after the page is loaded
 $(function() {
     //The users list is refreshed automatically every second
@@ -229,6 +287,9 @@ $(function() {
     setInterval(ajaxUsersList, refreshRate);
     triggerAjaxNewZoneToTable();
     ajaxButtonsByRole();
+    $("#accountMovementsButton").click(function (){
+        clickOnAccountMovementsButton();
+    });
 });
 
 

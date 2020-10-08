@@ -1,6 +1,6 @@
 package SDMSystemDTO.user;
 
-import SDMSystemDTO.user.DTOAccountAction.DTOAccountAction;
+import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 
 import java.util.Collection;
 
@@ -8,10 +8,10 @@ public abstract class DTOUser {
 
     protected String username;
     protected final int serialNumber;
-    protected Collection<DTOAccountAction> accountActions;
+    protected Collection<DTOAccountMovement> accountActions;
     protected float moneyInAccount;
 
-    public DTOUser(String username, int serialNumber, Collection<DTOAccountAction> accountActions, float moneyInAccount) {
+    public DTOUser(String username, int serialNumber, Collection<DTOAccountMovement> accountActions, float moneyInAccount) {
         this.username = username;
         this.serialNumber = serialNumber;
         this.accountActions = accountActions;
@@ -26,7 +26,7 @@ public abstract class DTOUser {
         return serialNumber;
     }
 
-    public Collection<DTOAccountAction> getAccountActions() {
+    public Collection<DTOAccountMovement> getAccountActions() {
         return accountActions;
     }
 

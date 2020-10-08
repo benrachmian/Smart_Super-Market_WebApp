@@ -7,6 +7,7 @@ import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.system.SingleZoneEntry;
+import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 import xml.XMLHelper;
 import xml.generated.SuperDuperMarketDescriptor;
 
@@ -14,10 +15,8 @@ import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 //Use it as Singleton
 public class SDMSystem {
@@ -99,5 +98,10 @@ public class SDMSystem {
 
     public void chargeUserMoney(String username, float money, String chargeDate) {
         usersInSystem.getUser(username).chargeMoney(money,chargeDate);
+    }
+
+    public Collection<DTOAccountMovement> getUserAccountMovements(String username) {
+        User user = usersInSystem.getUser(username);
+        return user.getAccountMovements();
     }
 }

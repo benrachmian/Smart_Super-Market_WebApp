@@ -2,7 +2,7 @@ package SDMSystemDTO.user.customer;
 
 
 import SDMSystemDTO.order.DTOOrder;
-import SDMSystemDTO.user.DTOAccountAction.DTOAccountAction;
+import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 import SDMSystemDTO.user.DTOUser;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ public class DTOCustomer extends DTOUser {
 
     public DTOCustomer(String username,
                        int serialNumber,
-                       Collection<DTOAccountAction> accountActions,
+                       Collection<DTOAccountMovement> accountActions,
                        float moneyInAccount,
                        Collection<DTOOrder> ordersMade) {
         super(username, serialNumber, accountActions, moneyInAccount);
