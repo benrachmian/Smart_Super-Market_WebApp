@@ -18,6 +18,12 @@ public class SessionUtils {
         return sessionAttribute != null ? sessionAttribute.toString() : null;
     }
 
+    public static String getChosenZone (HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Object sessionAttribute = session != null ? session.getAttribute(Constants.CHOSEN_ZONE) : null;
+        return sessionAttribute != null ? sessionAttribute.toString() : null;
+    }
+
     public static void clearSession (HttpServletRequest request) {
         request.getSession().invalidate();
     }

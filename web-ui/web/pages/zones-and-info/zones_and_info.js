@@ -6,6 +6,7 @@ var UPLOAD_FILE_URL = buildUrlWithContextPath("uploadfile");
 var GET_NEW_ZONE_DATA_TO_TABLE = buildUrlWithContextPath("newzonedata");
 var CHARGE_MONEY_URL = buildUrlWithContextPath("chargeMoney");
 var GET_ACCOUNT_MOVEMENTS_URL = buildUrlWithContextPath("accountMovements");
+var SINGLE_ZONE_URL = buildUrlWithContextPath("singleZone");
 
 
 //users = a list of usernames, essentially an array of javascript strings:
@@ -32,8 +33,26 @@ function ajaxUsersList() {
     });
 }
 
+
+function goToZonePage(tableRow) {
+
+    var chosenZone = 'chosenZone=' + tableRow.cells[1].innerText;
+
+    $.ajax({
+        method: "post",
+        url: SINGLE_ZONE_URL,
+        data: chosenZone,
+        error: function(error) {
+
+        },
+        success: function (data) {
+            window.location.href = "../single-zone/single_zone.html";
+        }
+    })
+}
+
 function appendNewZoneToZonesTable(index, zoneEntry) {
-   $("<tr>" +
+   $("<tr onclick=\"goToZonePage(this)\">" +
         "<td>" + zoneEntry.zoneOwner + "</td>" +
         "<td>" + zoneEntry.zone + "</td>" +
         "<td>" + zoneEntry.kindOfProducts + "</td>" +

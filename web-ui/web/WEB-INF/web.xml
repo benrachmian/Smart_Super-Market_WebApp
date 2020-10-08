@@ -34,6 +34,16 @@
         <servlet-class>sdm.servlets.AccountMovementsServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>SingleZoneServlet</servlet-name>
+        <servlet-class>sdm.servlets.SingleZoneServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ChosenZoneServlet</servlet-name>
+        <servlet-class>sdm.servlets.ChosenZoneServlet</servlet-class>
+    </servlet>
+
 <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
@@ -67,6 +77,16 @@
     <servlet-mapping>
         <servlet-name>AccountMovementsServlet</servlet-name>
         <url-pattern>/accountMovements</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SingleZoneServlet</servlet-name>
+        <url-pattern>/singleZone</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ChosenZoneServlet</servlet-name>
+        <url-pattern>/chosenZone</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->
