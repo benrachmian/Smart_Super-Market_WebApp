@@ -24,7 +24,7 @@ public class SessionUtils {
 
     public static int getNumOfZonesInTable(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        Object sessionAttribute = session != null ? session.getAttribute(Constants.NUM_OF_ZONE) : null;
+        Object sessionAttribute = session != null ? session.getAttribute(Constants.NUM_OF_ZONES) : null;
         return sessionAttribute != null ? (int) sessionAttribute : null;
     }
 }

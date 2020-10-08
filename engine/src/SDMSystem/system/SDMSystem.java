@@ -53,7 +53,7 @@ public class SDMSystem {
         SDMSystemInZone sdmSystemInZone =  systemsInZoneMap.get(zone);
         //new zone
         if(sdmSystemInZone == null){
-            sdmSystemInZone = SDMSystemInZone.getInstance();
+            sdmSystemInZone = new SDMSystemInZone(storeOwner,zone);
             sdmSystemInZone.loadSystem(superDuperMarketDescriptor,storeOwner);
             systemsInZoneMap.put(zone, sdmSystemInZone);
             systemsInList.add(sdmSystemInZone);

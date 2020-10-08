@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
                         //create a new one
                         request.getSession(true).setAttribute(Constants.USERNAME, usernameFromParameter);
                         request.getSession(true).setAttribute(Constants.ROLE, userRoleFromParameter);
-                        request.getSession(true).setAttribute(Constants.NUM_OF_ZONE, 0);
+                        request.getSession(true).setAttribute(Constants.NUM_OF_ZONES, 0);
 
                         //redirect the request to the chat room - in order to actually change the URL
                         System.out.println("On login, request URI is: " + request.getRequestURI());

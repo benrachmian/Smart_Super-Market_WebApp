@@ -1,7 +1,6 @@
 package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
-import SDMSystem.system.SDMSystemInZone;
 import SDMSystemDTO.system.SingleZoneEntry;
 import com.google.gson.Gson;
 import sdm.constants.Constants;
@@ -21,7 +20,7 @@ public class NewZoneDataServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-        int numOfZonesInTable = SessionUtils.getNumOfZonesInTable(request);
+        int numOfZonesInTable = ServletUtils.getIntParameter(request, Constants.NUM_OF_ZONES);
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/index.html");
@@ -31,29 +30,40 @@ public class NewZoneDataServlet extends HttpServlet {
         verify chat version given from the user is a valid number. if not it is considered an error and nothing is returned back
         Obviously the UI should be ready for such a case and handle it properly
          */
-//        int chatVersion = ServletUtils.getIntParameter(request, Constants.ZONES_TABLE_VERSION_PARAMETER);
-//        if (chatVersion == Constants.INT_PARAMETER_ERROR) {
-//            return;
-//        }
+        //int chatVersion = ServletUtils.getIntParameter(request, Constants.ZONES_TABLE_VERSION_PARAMETER);
+        if (numOfZonesInTable == Constants.INT_PARAMETER_ERROR) {
+            return;
+        }
 
-        if(sdmSystemManager.getNumOfZones() > numOfZonesInTable){
+//        if(sdmSystemManager.getNumOfZones() > numOfZonesInTable){
             //SessionUtils.updateNumOfZones(getServletContext(),sdmSystemManager.getNumOfZones() - numOfZonesInTable);
-            request.getSession(true).setAttribute(Constants.NUM_OF_ZONE,sdmSystemManager.getNumOfZones());
+            //request.getSession(true).setAttribute(Constants.NUM_OF_ZONES,sdmSystemManager.getNumOfZones());
             List<SingleZoneEntry> zonesEntries;
             synchronized (getServletContext()) {
                 zonesEntries = sdmSystemManager.getZonesEntries(numOfZonesInTable);
             }
+            EntriesAndNumOfZones entriesAndNumOfZones = new EntriesAndNumOfZones(zonesEntries,sdmSystemManager.getNumOfZones());
 
             Gson gson = new Gson();
-            String jsonResponse = gson.toJson(zonesEntries);
+            String jsonResponse = gson.toJson(entriesAndNumOfZones);
 
             try (PrintWriter out = response.getWriter()) {
                 out.print(jsonResponse);
                 out.flush();
             }
-        }
+       // }
     }
 
+    private static class EntriesAndNumOfZones {
+
+        final private List<SingleZoneEntry> zonesEntries;
+        final private int numOfZones;
+
+        public EntriesAndNumOfZones(List<SingleZoneEntry> zonesEntries, int numOfZones) {
+            this.zonesEntries = zonesEntries;
+            this.numOfZones = numOfZones;
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 

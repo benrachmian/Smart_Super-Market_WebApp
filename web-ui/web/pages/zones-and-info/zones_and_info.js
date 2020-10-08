@@ -53,7 +53,7 @@ function appendNewZonesToZonesTable(newZones) {
 function ajaxNewZoneToTable() {
     $.ajax({
         url: GET_NEW_ZONE_DATA_TO_TABLE,
-        // data: "numOfZonesInTable=" + numOfZonesInTable,
+        data: "numOfZonesInTable=" + numOfZonesInTable,
         dataType: "json",
         error: function(error) {
             triggerAjaxNewZoneToTable();
@@ -82,7 +82,10 @@ function ajaxNewZoneToTable() {
                ],
             }
             */
-                appendNewZonesToZonesTable(data);
+            if (data.numOfZones !== numOfZonesInTable) {
+                numOfZonesInTable = data.numOfZones;
+                appendNewZonesToZonesTable(data.zonesEntries);
+            }
                 triggerAjaxNewZoneToTable();
         }
     })

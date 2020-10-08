@@ -46,22 +46,24 @@ public class SDMSystemInZone {
     //private Map<Point, Locationable> customersAndStoresLocationMap;
     private Map<String,Discount> discountsInSystem;
     private String zone;
-    private static SDMSystemInZone single_Instance = null;
+//    private static SDMSystemInZone single_Instance = null;
     private User zoneOwner;
 
-    private SDMSystemInZone() {
+    public SDMSystemInZone(User zoneOwner, String zone) {
         storesInSystem = new StoresInSystem();
         productsInSystem = new HashMap<>();
         ordersInSystem = new HashMap<>();
         discountsInSystem = new HashMap<>();
+        this.zoneOwner = zoneOwner;
+        this.zone = zone;
     }
 
-    public static SDMSystemInZone getInstance(){
-        if(single_Instance == null){
-            single_Instance = new SDMSystemInZone();
-        }
-        return single_Instance;
-    }
+//    public static SDMSystemInZone getInstance(){
+//        if(single_Instance == null){
+//            single_Instance = new SDMSystemInZone();
+//        }
+//        return single_Instance;
+//    }
 
 
     private void addProductToSystem(Product newProduct){
