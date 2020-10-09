@@ -7,6 +7,7 @@
 
     <script src="../../common/jquery-2.0.3.min.js"></script>
     <script src="../../common/context-path-helper.js"></script>
+    <script src="../../common/anime.min.js"></script>
     <script src="single_zone.js"></script>
 
 
@@ -21,6 +22,7 @@
 <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
     <button class="w3-bar-item w3-button w3-large"
             onclick="w3_close()">Close &times;</button>
+    <a href="single_zone.html" class="w3-bar-item w3-button" onclick="w3_close()">Home</a>
     <a href="#" id="productsInZoneButton" class="w3-bar-item w3-button" onclick="w3_close()">Products in zone</a>
     <a href="#" id="storesInZoneButton" class="w3-bar-item w3-button" onclick="w3_close()">Stores in zone</a>
     <a href="#" class="w3-bar-item w3-button">Back</a>
@@ -31,7 +33,15 @@
     <div class="w3-teal">
         <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
         <div class="w3-container" id="SDMTitle">
-            Super Duper Market
+            <h1 class="ml5">
+  <span class="text-wrapper">
+    <span class="line line1"></span>
+    <span class="letters letters-left">Super</span>
+    <span class="letters ampersand">Duper</span>
+    <span class="letters letters-right">Market</span>
+    <span class="line line2"></span>
+  </span>
+            </h1>
         </div>
         <div class="w3-container" id="welcomeTitle">
 <!--            put title in js-->
@@ -41,9 +51,9 @@
 
     <div class="w3-container" id="centerPage">
         <div id="picStore">
-            <img src="../../common/storeImg.png" alt="Store" class="w3-circle" style="width:25%">
+            <img src="../../common/storeImg.png" alt="Store" class="w3-circle center" style="width:25%">
         </div>
-        <br><p>Use the sidebar to navigate through the website.</p>
+        <br><p style="text-align: center ">Use the sidebar to navigate through the website.</p>
         <div class="row">
             <div class="column">
                 <div class="card">
