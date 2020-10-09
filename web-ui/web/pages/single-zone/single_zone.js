@@ -59,6 +59,10 @@ function clickOnProductsInZoneButton() {
     })
 }
 
+function showChosenStoreProduct(chosenStoreId) {
+
+}
+
 function showStoresInZone(storesInZone) {
     $("#centerPage").empty().append( $("<div class=\"row\"> <br>"));
     $("#welcomeTitle").empty().append( $("<h1>Stores In System: </h1>"));
@@ -73,6 +77,8 @@ function showStoresInZone(storesInZone) {
             "                    <p>Products sold cost:  " + store.productsSoldCost + "</p>" +
             "                    <p>PPK:  " + store.ppk + "</p>" +
             "                    <p>Total profit from delivery:  " + store.totalProfitFromDelivery + "</p>" +
+            "                    <button class=\"button\" onclick=\"showChosenStoreProduct(this)\"><span>Show Products </span></button>" +
+
             "                </div>" +
             "            </div>").appendTo($("#centerPage"));
         $("</div>").appendTo($("#centerPage"));
