@@ -7,6 +7,7 @@ import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.product.DTOProduct;
+import SDMSystemDTO.store.DTOStore;
 import SDMSystemDTO.system.SingleZoneEntry;
 import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 import xml.XMLHelper;
@@ -109,5 +110,10 @@ public class SDMSystem {
     public Collection<DTOProduct> getProductsInZone(String zoneFromSession) {
         SDMSystemInZone zoneSystem = systemsInZoneMap.get(zoneFromSession);
         return zoneSystem.getProductsInSystem().values();
+    }
+
+    public Collection<DTOStore> getStoresInZone(String zoneFromSession) {
+        SDMSystemInZone zoneSystem = systemsInZoneMap.get(zoneFromSession);
+        return zoneSystem.getStoresInSystemBySerialNumber().values();
     }
 }

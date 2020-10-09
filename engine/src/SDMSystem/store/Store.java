@@ -141,7 +141,18 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
                 storeName,
                 totalProfitFromDelivery,
                 getDTODiscountsInStore(),
-                ordersFromStore.size());
+                ordersFromStore.size(),
+                storeOwner.getUsername(),
+                calcProductsSoldCost());
+    }
+
+    private float calcProductsSoldCost() {
+        float res = 0;
+        for(Order order : ordersFromStore){
+            res += order.getProductsCost();
+        }
+
+        return res;
     }
 
     private Collection<DTODiscount> getDTODiscountsInStore() {

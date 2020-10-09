@@ -19,6 +19,8 @@ public class DTOStore {
     private final float totalProfitFromDelivery;
     private final Collection<DTODiscount> storeDiscounts;
     private final int totalOrders;
+    private final String storeOwner;
+    private final float productsSoldCost;
 
     @Override
     public String toString() {
@@ -32,7 +34,9 @@ public class DTOStore {
                     String storeName,
                     float totalProfitFromDelivery,
                     Collection<DTODiscount> storeDiscounts,
-                    int totalOrders) {
+                    int totalOrders,
+                    String storeOwner,
+                    float productsSoldCost) {
         this.productsInStore = productsInStore;
         this.storeLocation = storeLocation;
         this.ppk = ppk;
@@ -41,6 +45,8 @@ public class DTOStore {
         this.totalProfitFromDelivery = totalProfitFromDelivery;
         this.storeDiscounts = storeDiscounts;
         this.totalOrders = totalOrders;
+        this.storeOwner = storeOwner;
+        this.productsSoldCost = productsSoldCost;
     }
 
     public Collection<DTODiscount> getStoreDiscounts() {

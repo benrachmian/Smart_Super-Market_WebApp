@@ -1,5 +1,6 @@
 var GET_ZONE = buildUrlWithContextPath("chosenZone");
 var GET_PRODUCTS = buildUrlWithContextPath("productsInZone");
+var GET_STORES = buildUrlWithContextPath("storesInZone");
 
 
 function setTitle() {
@@ -58,9 +59,44 @@ function clickOnProductsInZoneButton() {
     })
 }
 
+function showStoresInZone(storesInZone) {
+    $("#centerPage").empty().append( $("<div class=\"row\"> <br>"));
+    $("#welcomeTitle").empty().append( $("<h1>Stores In System: </h1>"));
+    $.each(storesInZone || [], function(index, store) {
+        $("<div class=\"column\">" +
+            "                <div class=\"card\">" +
+            "                    <h3>" + store.storeName + "</h3>" +
+            "                    <p>ID: " + store.storeSerialNumber + "</p>" +
+            "                    <p>Store owner:  " + store.storeOwner + "</p>" +
+            "                    <p>Store location: X: " + store.storeLocation.x + " Y: " + store.storeLocation.y + "</p>" +
+            "                    <p>Number of orders from store: " + store.totalOrders + "</p>" +
+            "                    <p>Products sold cost:  " + store.productsSoldCost + "</p>" +
+            "                    <p>PPK:  " + store.ppk + "</p>" +
+            "                    <p>Total profit from delivery:  " + store.totalProfitFromDelivery + "</p>" +
+            "                </div>" +
+            "            </div>").appendTo($("#centerPage"));
+        $("</div>").appendTo($("#centerPage"));
+    });
+}
+
+function clickOnStoresInZoneButton() {
+    $.ajax({
+        url: GET_STORES,
+        error: function (e){
+
+        },
+        success: function(storesInZone) {
+            showStoresInZone(storesInZone);
+        }
+    })
+}
+
 $(function() {
     setTitle();
     $("#productsInZoneButton").click(function (){
         clickOnProductsInZoneButton();
+    });
+    $("#storesInZoneButton").click(function (){
+        clickOnStoresInZoneButton();
     });
 });
