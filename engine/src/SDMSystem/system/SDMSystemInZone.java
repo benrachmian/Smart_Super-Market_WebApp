@@ -834,7 +834,7 @@ public class SDMSystemInZone {
         return discountsForProduct;
     }
 
-    public WayOfBuying getProductWayOfBuying(int productSerialNumber) {
+    public String getProductWayOfBuying(int productSerialNumber) {
         return getProductsInSystem().get(productSerialNumber).getWayOfBuying();
     }
 

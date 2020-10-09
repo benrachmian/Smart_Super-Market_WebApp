@@ -21,7 +21,7 @@
 <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
     <button class="w3-bar-item w3-button w3-large"
             onclick="w3_close()">Close &times;</button>
-    <a href="#" class="w3-bar-item w3-button">Products in zone</a>
+    <a href="#" id="productsInZoneButton" class="w3-bar-item w3-button" onclick="w3_close()">Products in zone</a>
     <a href="#" class="w3-bar-item w3-button">Stores in zone</a>
     <a href="#" class="w3-bar-item w3-button">Back</a>
 </div>
@@ -34,12 +34,46 @@
 <!--            put title in js-->
         </div>
     </div>
-    <div id="picStore">
-        <img src="../../common/storeImg.png" alt="Store" class="w3-circle" style="width:25%">
-    </div>
 
-    <div class="w3-container">
+
+    <div class="w3-container" id="centerPage">
+        <div id="picStore">
+            <img src="../../common/storeImg.png" alt="Store" class="w3-circle" style="width:25%">
+        </div>
         <br><p>Use the sidebar to navigate through the website.</p>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h3>Card 1</h3>
+                    <p>Some text</p>
+                    <p>Some text</p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3>Card 2</h3>
+                    <p>Some text</p>
+                    <p>Some text</p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3>Card 3</h3>
+                    <p>Some text</p>
+                    <p>Some text</p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3>Card 4</h3>
+                    <p>Some text</p>
+                    <p>Some text</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>

@@ -9,13 +9,15 @@ public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore
 
     public DTOProductInStore(int productSerialNumber,
                              String productName,
-                             WayOfBuying wayOfBuying,
+                             String wayOfBuying,
                              //Collection<DTOStore> storesSellingTheProduct,
                              float amountSoldInAllStores,
                              float price,
                              float amountSoldInStore,
-                             int storeTheProductBelongsID) {
-        super(productSerialNumber, productName, wayOfBuying, /*storesSellingTheProduct*/ amountSoldInAllStores);
+                             int storeTheProductBelongsID,
+                             int numOfStoresSellingTheProduct,
+                             float avgPrice) {
+        super(productSerialNumber, productName, wayOfBuying, /*storesSellingTheProduct*/ amountSoldInAllStores,numOfStoresSellingTheProduct,avgPrice);
         this.price = price;
         this.amountSoldInStore = amountSoldInStore;
         this.storeTheProductBelongsID = storeTheProductBelongsID;

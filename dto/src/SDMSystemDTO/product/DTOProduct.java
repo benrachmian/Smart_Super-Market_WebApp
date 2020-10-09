@@ -4,20 +4,27 @@ public class DTOProduct {
 
     protected final int productSerialNumber;
     protected final String productName;
-    protected final WayOfBuying wayOfBuying;
+    protected final String wayOfBuying;
    // protected Collection<DTOStore> storesSellingTheProduct = new LinkedList<>();
     protected float amountSoldInAllStores;
+    protected int numOfStoresSellingTheProduct;
+    protected float avgPrice;
+
 
     public DTOProduct(int productSerialNumber,
                       String productName,
-                      WayOfBuying wayOfBuying,
+                      String wayOfBuying,
                       //Collection<DTOStore> storesSellingTheProduct,
-                      float amountSoldInAllStores) {
+                      float amountSoldInAllStores,
+                      int numOfStoresSellingTheProduct,
+                      float avgPrice) {
         this.productSerialNumber = productSerialNumber;
         this.productName = productName;
         this.wayOfBuying = wayOfBuying;
         //this.storesSellingTheProduct = null;
         this.amountSoldInAllStores = amountSoldInAllStores;
+        this.numOfStoresSellingTheProduct = numOfStoresSellingTheProduct;
+        this.avgPrice = avgPrice;
     }
 
     @Override
@@ -33,7 +40,7 @@ public class DTOProduct {
         return productName;
     }
 
-    public WayOfBuying getWayOfBuying() {
+    public String getWayOfBuying() {
         return wayOfBuying;
     }
 

@@ -21,7 +21,7 @@ public class DTOProductInDiscount implements IDTOProductInStore{
     }
 
     @Override
-    public WayOfBuying getWayOfBuying() {
+    public String getWayOfBuying() {
         return originalProductInStore.getWayOfBuying();
     }
 

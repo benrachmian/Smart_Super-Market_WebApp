@@ -6,6 +6,7 @@ import SDMSystem.system.usersInSystem.UsersInSystem;
 import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
+import SDMSystemDTO.product.DTOProduct;
 import SDMSystemDTO.system.SingleZoneEntry;
 import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 import xml.XMLHelper;
@@ -103,5 +104,10 @@ public class SDMSystem {
     public Collection<DTOAccountMovement> getUserAccountMovements(String username) {
         User user = usersInSystem.getUser(username);
         return user.getAccountMovements();
+    }
+
+    public Collection<DTOProduct> getProductsInZone(String zoneFromSession) {
+        SDMSystemInZone zoneSystem = systemsInZoneMap.get(zoneFromSession);
+        return zoneSystem.getProductsInSystem().values();
     }
 }

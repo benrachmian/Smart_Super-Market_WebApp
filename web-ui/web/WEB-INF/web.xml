@@ -44,6 +44,11 @@
         <servlet-class>sdm.servlets.ChosenZoneServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>ProductsInZoneServlet</servlet-name>
+        <servlet-class>sdm.servlets.ProductsInZoneServlet</servlet-class>
+    </servlet>
+
 <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
@@ -87,6 +92,11 @@
     <servlet-mapping>
         <servlet-name>ChosenZoneServlet</servlet-name>
         <url-pattern>/chosenZone</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ProductsInZoneServlet</servlet-name>
+        <url-pattern>/productsInZone</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->

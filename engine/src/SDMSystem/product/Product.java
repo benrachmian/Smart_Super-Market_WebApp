@@ -43,8 +43,10 @@ public class Product implements Serializable {
         return new DTOProduct(
                 productSerialNumber,
                 productName,
-                wayOfBuying,
-                amountSoldInAllStores);
+                wayOfBuying.toString(),
+                amountSoldInAllStores,
+                storesSellingTheProduct.size(),
+                averagePriceOfProduct());
     }
 
     public Collection<Store> getStoresSellingTheProduct() {

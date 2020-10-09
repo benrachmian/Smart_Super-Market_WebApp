@@ -36,11 +36,13 @@ public class ProductInStore extends Product implements IProductInStore {
         return new DTOProductInStore(
                 productSerialNumber,
                 productName,
-                wayOfBuying,
+                wayOfBuying.toString(),
                 amountSoldInAllStores,
                 getPrice(),
                 amountSoldInStore,
-                storeTheProductBelongs.getSerialNumber());
+                storeTheProductBelongs.getSerialNumber(),
+                storesSellingTheProduct.size(),
+                averagePriceOfProduct());
     }
 
     public void setPrice(float newPrice) {
@@ -57,11 +59,11 @@ public class ProductInStore extends Product implements IProductInStore {
         return new DTOProductInStore(
                 productSerialNumber,
                 productName,
-                wayOfBuying,
+                wayOfBuying.toString(),
                 amountSoldInAllStores,
                 getPrice(),
                 amountSoldInStore,
-                storeTheProductBelongs.getSerialNumber());
+                storeTheProductBelongs.getSerialNumber(), storesSellingTheProduct.size(), averagePriceOfProduct());
     }
 
     //    @Override
