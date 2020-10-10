@@ -64,6 +64,8 @@ function showProductsInStore(productsInStore, chosenStoreName) {
     $("#productsInStoreDiv").remove();
     $("#centerPage").append( $("<div class='w3-container w3-border w3-round-xlarge' id='productsInStoreDiv'  <br>"));
     $("<div><h1 style='text-align: center'> Products in store " + chosenStoreName + ": </h1></div>").appendTo( $("#productsInStoreDiv"));
+
+
     $("#productsInStoreDiv").append( $("<div class=\"row\"> <br>"));
     $.each(productsInStore || [], function(index, product) {
         $("<div class=\"column\">" +
@@ -77,6 +79,9 @@ function showProductsInStore(productsInStore, chosenStoreName) {
             "            </div>").appendTo($("#productsInStoreDiv"));
     });
     $("</div>").appendTo($("#productsInStoreDiv"));
+    $('html, body').animate({
+        scrollTop: $("#productsInStoreDiv").offset().top
+    },1000);
 
 
 }
@@ -116,8 +121,8 @@ function showStoresInZone(storesInZone) {
 
             "                </div>" +
             "            </div>").appendTo($("#centerPage"));
-        $("</div>").appendTo($("#centerPage"));
     });
+    $("</div>").appendTo($("#centerPage"));
 }
 
 function clickOnStoresInZoneButton() {
@@ -186,3 +191,8 @@ $(function() {
     // });
 });
 
+function scroll_to(div){
+    $('html, body').animate({
+        scrollTop: $("productsInStoreDiv").offset().top
+    },1000);
+}
