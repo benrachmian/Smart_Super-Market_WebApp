@@ -943,4 +943,12 @@ public class SDMSystemInZone {
 
         return numOfOrders == 0 ? 0 :  totalProductsCost / ordersInSystem.values().size();
     }
+
+    public Collection<DTOProductInStore> getProductsFromStore(int storeId) {
+        Store chosenStore = storesInSystem.getStoreInSystem(storeId);
+        if(chosenStore == null){
+            throw new RuntimeException("There are no store with ID: " + storeId);
+        }
+        return chosenStore.getDTOProductsInStore().values();
+    }
 }

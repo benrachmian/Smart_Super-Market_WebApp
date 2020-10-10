@@ -1,6 +1,7 @@
 var GET_ZONE = buildUrlWithContextPath("chosenZone");
-var GET_PRODUCTS = buildUrlWithContextPath("productsInZone");
+var GET_PRODUCTS_OF_ZONE = buildUrlWithContextPath("productsInZone");
 var GET_STORES = buildUrlWithContextPath("storesInZone");
+var GET_PRODUCTS_IN_STORE = buildUrlWithContextPath("productsInStore");
 
 
 function setTitle() {
@@ -49,7 +50,7 @@ function showProductsInZone(productsInZone) {
 
 function clickOnProductsInZoneButton() {
     $.ajax({
-        url: GET_PRODUCTS,
+        url: GET_PRODUCTS_OF_ZONE,
         error: function (e){
 
         },
@@ -59,14 +60,48 @@ function clickOnProductsInZoneButton() {
     })
 }
 
-function showChosenStoreProduct(chosenStoreId) {
+function showProductsInStore(productsInStore, chosenStoreName) {
+    $("#productsInStoreDiv").remove();
+    $("#centerPage").append( $("<div class='w3-container w3-border w3-round-xlarge' id='productsInStoreDiv'  <br>"));
+    $("<div><h1 style='text-align: center'> Products in store " + chosenStoreName + ": </h1></div>").appendTo( $("#productsInStoreDiv"));
+    $("#productsInStoreDiv").append( $("<div class=\"row\"> <br>"));
+    $.each(productsInStore || [], function(index, product) {
+        $("<div class=\"column\">" +
+            "                <div class=\"card\">" +
+            "                    <h3>" + product.productName + "</h3>" +
+            "                    <p>ID: " + product.productSerialNumber + "</p>" +
+            "                    <p>Way of buying: " + product.wayOfBuying + "</p>" +
+            "                    <p>Price per unit/kilo: " + product.price + "</p>" +
+            "                    <p>Ammount sold in store: " + product.amountSoldInStore + "</p>" +
+            "                </div>" +
+            "            </div>").appendTo($("#productsInStoreDiv"));
+    });
+    $("</div>").appendTo($("#productsInStoreDiv"));
 
+
+}
+
+function showChosenStoreProduct(buttonClicked) {
+    var chosenStoreId = $(buttonClicked)[0].dataset.chosenstoreid;
+    var chosenStoreName = $(buttonClicked)[0].dataset.chosenstorename;
+
+    $.ajax({
+        url: GET_PRODUCTS_IN_STORE,
+        data: "chosenStoreId=" + chosenStoreId,
+        error: function (e){
+
+        },
+        success: function(productsInStore) {
+            showProductsInStore(productsInStore,chosenStoreName);
+        }
+    })
 }
 
 function showStoresInZone(storesInZone) {
     $("#centerPage").empty().append( $("<div class=\"row\"> <br>"));
     $("#welcomeTitle").empty().append( $("<h1>Stores In System: </h1>"));
     $.each(storesInZone || [], function(index, store) {
+        var storeName = store.storeName;
         $("<div class=\"column\">" +
             "                <div class=\"card\">" +
             "                    <h3>" + store.storeName + "</h3>" +
@@ -77,7 +112,7 @@ function showStoresInZone(storesInZone) {
             "                    <p>Products sold cost:  " + store.productsSoldCost + "</p>" +
             "                    <p>PPK:  " + store.ppk + "</p>" +
             "                    <p>Total profit from delivery:  " + store.totalProfitFromDelivery + "</p>" +
-            "                    <button class=\"button\" onclick=\"showChosenStoreProduct(this)\"><span>Show Products </span></button>" +
+            "                    <button class=\"button\" data-chosenStoreName=\'" + storeName + "\'" + " data-chosenStoreId=" + store.storeSerialNumber + " onclick=\"showChosenStoreProduct(this)\"><span>Show Products </span></button>" +
 
             "                </div>" +
             "            </div>").appendTo($("#centerPage"));
