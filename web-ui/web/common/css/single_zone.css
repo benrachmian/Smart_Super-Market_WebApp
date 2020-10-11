@@ -245,7 +245,29 @@
     color:#fff;
 }
 
+/*!* Create three equal columns that floats next to each other *!*/
+/*.column {*/
+/*    float: left;*/
+/*    width: 50%;*/
+/*    padding: 15px;*/
+/*}*/
 
+/*!* Clear floats after the columns *!*/
+/*.row:after {*/
+/*    content: "";*/
+/*    display: table;*/
+/*    clear: both;*/
+/*}*/
+
+/*@media screen and (max-width:600px) {*/
+/*    .column {*/
+/*        width: 100%;*/
+/*    }*/
+/*}*/
+
+#amountInTableBox{
+    width: 60px;
+}
 
 
 

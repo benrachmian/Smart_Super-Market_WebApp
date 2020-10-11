@@ -171,8 +171,85 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
     return Math.sqrt(aPower2 + bPower2);
 }
 
-function chooseProductsForStaticOrder(tableRow) {
+function addProductsInStoreForStaticOrderContainer() {
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Make Static Order </h1>"));
+    $("<br><p id=\"sub-title\"> Products In Store: </p>").appendTo($("#centerPage"));
+    $("<div id='product-table-div' class=\"table-div\">\n" +
+        "<table id='products-in-store-table' class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Product Name</th>\n" +
+        "        <th>ID</th>\n" +
+        "        <th>Way Of Buying</th>\n" +
+        "        <th>Price</th>\n" +
+        "        <th>Amount</th>\n" +
+        "        <th></th>\n" +
+        "        <th>Cost</th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"productsInStoreTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>" +
+    "<form id='orderFirstDetails' method=\"GET\" action=\"saveOrderDateTypeLocation\" class=\"form-style-7\">\n" +
+        "<ul>\n" +
+        "<li>\n" +
+        "    <label for=\"orderType\">Order Type</label>\n" +
+        "    <select id='orderTypeSelect' form='orderFirstDetails' class=\"select-css\">\n" +
+        "    <option value=\"\" disabled selected>Select Product</option>\n" +
+        "</select>" +
+        "    <span>Choose the products you would like to buy</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"amount\">Insert amount</label>\n" +
+        "  <input type=\"number\" id=\"amount\" min='1' name=\"amount\">" +
+        "    <span>Insert the amount you would like to buy</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <button id='continueToStaticOrDynamicOrder' class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
+        "</li>\n" +
+        "</ul>\n" +
+        "</form>"
+    ).appendTo($("#centerPage"));
 
+}
+
+function updateCost(ammount,price,rowIndex){
+    $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = (ammount * price).toFixed(2);
+}
+
+function addProductsInStoreToTable(storeNameForAjax) {
+    $.ajax({
+        method: "post",
+        url: GET_PRODUCTS_IN_STORE,
+        data: storeNameForAjax,
+        error: function(error) {
+
+        },
+        success: function (productsInStore) {
+            $.each(productsInStore || [], function(index, product) {
+                $("<tr>" +
+                    "<td>" + product.productName + "</td>" +
+                    "<td>" + product.productSerialNumber + "</td>" +
+                    "<td>" + product.wayOfBuying + "</td>" +
+                    "<td>" + product.price + "</td>" +
+                    "<td> <input onchange=\"updateCost(this.value," + product.price + "," + index + ")\" id='amountInTableBox' type=\"number\" id=\"amount\" min='1'' name=\"amount\"></td>" +
+                    "<td><button id='addToCartButton' class='button'> Add To Cart </button></td>" +
+                    "<td>0</td>" +
+                    "</tr>").appendTo($("#productsInStoreTable"));
+            });
+        }
+    })
+}
+
+
+
+function chooseProductsForStaticOrder(tableRow) {
+    var storeIDForAjax = 'chosenStoreId=' + tableRow.cells[1].innerText;
+    addProductsInStoreForStaticOrderContainer();
+    addProductsInStoreToTable(storeIDForAjax);
 }
 
 function addStoresTable() {
@@ -251,7 +328,7 @@ function clickOnMakeOrderButton() {
         "<li>\n" +
         "    <label for=\"orderType\">Order Type</label>\n" +
         "    <select id='orderTypeSelect' form='orderFirstDetails' class=\"select-css\">\n" +
-        "    <option value=\"\" disabled selected>Select an order type</option>\n" +
+        "    <option value=\"\" disabled selected>Select Order Type</option>\n" +
         "    <option>Static Order</option>\n" +
         "    <option>Dynamic Order</option>\n" +
         "</select>" +
@@ -272,6 +349,7 @@ function clickOnMakeOrderButton() {
         "</li>\n" +
         "</ul>\n" +
         "</form>").appendTo($("#centerPage"));
+
     overloadOrderFirstDetailsFormSubmit();
 }
 
