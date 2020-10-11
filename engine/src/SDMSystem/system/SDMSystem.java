@@ -122,4 +122,8 @@ public class SDMSystem {
         SDMSystemInZone sdmSystemInZone = systemsInZoneMap.get(zoneFromSession);
         return sdmSystemInZone.getProductsFromStore(storeId);
     }
+
+    public SDMSystemInZone getZoneSystem(String zone) {
+        return systemsInZoneMap.get(zone);
+    }
 }

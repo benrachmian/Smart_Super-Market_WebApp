@@ -59,6 +59,11 @@
         <servlet-class>sdm.servlets.ProductsInStoreServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>SaveOrderDateTypeLocationServlet</servlet-name>
+        <servlet-class>sdm.servlets.SaveOrderDateTypeLocationServlet</servlet-class>
+    </servlet>
+
 
 
 <!--    <servlet>-->
@@ -119,6 +124,11 @@
     <servlet-mapping>
         <servlet-name>ProductsInStoreServlet</servlet-name>
         <url-pattern>/productsInStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SaveOrderDateTypeLocationServlet</servlet-name>
+        <url-pattern>/saveOrderDateTypeLocation</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->

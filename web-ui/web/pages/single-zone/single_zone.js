@@ -2,6 +2,8 @@ var GET_ZONE = buildUrlWithContextPath("chosenZone");
 var GET_PRODUCTS_OF_ZONE = buildUrlWithContextPath("productsInZone");
 var GET_STORES = buildUrlWithContextPath("storesInZone");
 var GET_PRODUCTS_IN_STORE = buildUrlWithContextPath("productsInStore");
+var GET_ROLE_URL = buildUrlWithContextPath("role");
+var SAVE_ORDER_DATA_TYPE_LOCATION = buildUrlWithContextPath("saveOrderDateTypeLocation");
 
 
 function setTitle() {
@@ -137,6 +139,96 @@ function clickOnStoresInZoneButton() {
     })
 }
 
+function checkValidOrderDate(parameters) {
+    return false;
+}
+
+function overloadOrderFirstDetailsFormSubmit() {
+    $("#orderFirstDetails").submit(function() {
+
+        var parameters = $(this).serialize();
+        var orderTypes = document.getElementById("orderTypeSelect");
+        var orderTypeSelected = orderTypes.options[orderTypes.selectedIndex].value;
+        parameters = parameters.concat("&ordertype=" + orderTypeSelected);
+
+        $.ajax({
+            data: parameters,
+            url: SAVE_ORDER_DATA_TYPE_LOCATION,
+            timeout: 4000,
+            error: function(e) {
+                if ( !$( "#errorDiv" ).length ) {
+                    $("<div id='errorDiv' style='display: none' class=\"isa_error\" >"
+                        + "<i class=\"fa fa-times-circle\"></i>"
+                        + "<span id=\"error\">" + e.responseText + " </span>"
+                        + "</div>").appendTo($("#centerPage")).slideDown("slow");
+                    $('html, body').animate({
+                        scrollTop: $("#errorDiv").offset().top
+                    }, 1000);
+                }
+                else{
+                    $("#error").empty().append(e.responseText);
+                }
+            },
+            success: function(r) {
+
+            }
+        });
+        // return value of the submit operation
+        return false;
+    })
+}
+
+function clickOnMakeOrderButton() {
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Make New Order </h1>"));
+    $("<form id='orderFirstDetails' method=\"GET\" action=\"saveOrderDateTypeLocation\" class=\"form-style-7\">\n" +
+        "<ul>\n" +
+        "<li>\n" +
+        "    <label for=\"date\">Order Date</label>\n" +
+        "    <input type=\"date\" name=\"date\" maxlength=\"100\">\n" +
+        "    <span>Insert the order date here</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"orderType\">Order Type</label>\n" +
+        "    <select id='orderTypeSelect' form='orderFirstDetails' class=\"select-css\">\n" +
+        "    <option value=\"\" disabled selected>Select an order type</option>\n" +
+        "    <option>Static Order</option>\n" +
+        "    <option>Dynamic Order</option>\n" +
+        "</select>" +
+        "    <span>Choose an order type</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"locationX\">X Location</label>\n" +
+        "  <input type=\"number\" id=\"locationX\" name=\"locationX\">" +
+        "    <span>Enter your X location</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"locationY\">Y Location</label>\n" +
+        "  <input type=\"number\" id=\"locationY\" name=\"locationY\">" +
+        "    <span>Enter your Y location</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <button id='continueToStaticOrDynamicOrder' class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
+        "</li>\n" +
+        "</ul>\n" +
+        "</form>").appendTo($("#centerPage"));
+    overloadOrderFirstDetailsFormSubmit();
+}
+
+function setButtonsAccordingToUserRole() {
+    $.ajax({
+        url: GET_ROLE_URL,
+        success: function (role) {
+            if(role === "customer"){
+                $("<a href=\"#\" id=\"makeOrder\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Make Order</a>").insertBefore("#backButton");
+                $("#makeOrder").click(function (){
+                    clickOnMakeOrderButton();
+                });
+            }
+        }
+    })
+}
+
 $(function() {
     setTitle();
     $("#productsInZoneButton").click(function (){
@@ -145,6 +237,7 @@ $(function() {
     $("#storesInZoneButton").click(function (){
         clickOnStoresInZoneButton();
     });
+    setButtonsAccordingToUserRole();
 });
 
 $(function() {
@@ -195,4 +288,10 @@ function scroll_to(div){
     $('html, body').animate({
         scrollTop: $("productsInStoreDiv").offset().top
     },1000);
+}
+
+//auto expand textarea
+function adjust_textarea(h) {
+    h.style.height = "20px";
+    h.style.height = (h.scrollHeight)+"px";
 }
