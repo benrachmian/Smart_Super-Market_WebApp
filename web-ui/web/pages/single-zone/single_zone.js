@@ -171,7 +171,7 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
     return Math.sqrt(aPower2 + bPower2);
 }
 
-function addProductsInStoreForStaticOrderContainer() {
+function addProductsInStoreForStaticOrderContainer(deliveryCost) {
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Make Static Order </h1>"));
     $("<br><p id=\"sub-title\"> Products In Store: </p>").appendTo($("#centerPage"));
@@ -193,31 +193,50 @@ function addProductsInStoreForStaticOrderContainer() {
         "    </tbody>\n" +
         "</table>\n" +
         "</div>" +
-    "<form id='orderFirstDetails' method=\"GET\" action=\"saveOrderDateTypeLocation\" class=\"form-style-7\">\n" +
-        "<ul>\n" +
-        "<li>\n" +
-        "    <label for=\"orderType\">Order Type</label>\n" +
-        "    <select id='orderTypeSelect' form='orderFirstDetails' class=\"select-css\">\n" +
-        "    <option value=\"\" disabled selected>Select Product</option>\n" +
-        "</select>" +
-        "    <span>Choose the products you would like to buy</span>\n" +
-        "</li>\n" +
-        "<li>\n" +
-        "    <label for=\"amount\">Insert amount</label>\n" +
-        "  <input type=\"number\" id=\"amount\" min='1' name=\"amount\">" +
-        "    <span>Insert the amount you would like to buy</span>\n" +
-        "</li>\n" +
-        "<li>\n" +
-        "    <button id='continueToStaticOrDynamicOrder' class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
-        "</li>\n" +
-        "</ul>\n" +
-        "</form>"
+        "<br><p id=\"sub-title\"> Shopping Cart: </p>" +
+        "<table id='shopping-cart-table' class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Product Name</th>\n" +
+        "        <th>ID</th>\n" +
+        "        <th>Way Of Buying</th>\n" +
+        "        <th>Amount</th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"shoppingCartTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>" +
+        "<div id='staticOrderSummary'>" +
+        "<div><label>Delivery cost:</label><label id='deliveryCost'>" + deliveryCost.toFixed(2) + "</label></div>" +
+        "<div><label>Products cost:</label><label id='productsCost'> 0</label></div>" +
+        "<div><label>Total order cost:</label><label id='totalOrderCost'>" +  deliveryCost.toFixed(2) + "</label></div>" +
+        "</div>"
     ).appendTo($("#centerPage"));
 
 }
 
 function updateCost(ammount,price,rowIndex){
     $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = (ammount * price).toFixed(2);
+}
+
+function addProductToCart(productToAdd,rowIndex) {
+    var amount = $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value;
+    $("<tr>" +
+        "<td>" + productToAdd.productName + "</td>" +
+        "<td>" + productToAdd.productSerialNumber + "</td>" +
+        "<td>" + productToAdd.wayOfBuying + "</td>" +
+        "<td>" + amount + "</td>" +
+        "</tr>").appendTo($("#shoppingCartTable"));
+    $('html, body').animate({
+        scrollTop: $("#shoppingCartTable").offset().top
+    }, 1000);
+    var currProductsCost = parseFloat($("#productsCost")[0].innerText);
+    var updateProductsCost = currProductsCost + (productToAdd.price * amount);
+    var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
+    $("#productsCost")[0].innerText = updateProductsCost.toFixed(2);
+    $("#totalOrderCost")[0].innerText = (currTotalCost + (productToAdd.price * amount)).toFixed(2);
 }
 
 function addProductsInStoreToTable(storeNameForAjax) {
@@ -236,9 +255,12 @@ function addProductsInStoreToTable(storeNameForAjax) {
                     "<td>" + product.wayOfBuying + "</td>" +
                     "<td>" + product.price + "</td>" +
                     "<td> <input onchange=\"updateCost(this.value," + product.price + "," + index + ")\" id='amountInTableBox' type=\"number\" id=\"amount\" min='1'' name=\"amount\"></td>" +
-                    "<td><button id='addToCartButton' class='button'> Add To Cart </button></td>" +
+                    "<td><button class='button addToCartButton'> Add To Cart </button></td>" +
                     "<td>0</td>" +
                     "</tr>").appendTo($("#productsInStoreTable"));
+                $( ".addToCartButton:last" ).click(function() {
+                    addProductToCart(product,index);
+                });
             });
         }
     })
@@ -246,9 +268,9 @@ function addProductsInStoreToTable(storeNameForAjax) {
 
 
 
-function chooseProductsForStaticOrder(tableRow) {
+function chooseProductsForStaticOrder(tableRow,deliveryCost) {
     var storeIDForAjax = 'chosenStoreId=' + tableRow.cells[1].innerText;
-    addProductsInStoreForStaticOrderContainer();
+    addProductsInStoreForStaticOrderContainer(deliveryCost);
     addProductsInStoreToTable(storeIDForAjax);
 }
 
@@ -264,7 +286,7 @@ function addStoresTable() {
         success: function(storesInZone) {
             $.each(storesInZone || [], function(index, store) {
                 distance = calcDistance(orderToLocationX,orderToLocationY,store.storeLocation.x,store.storeLocation.y);
-                $("<tr onclick=\"chooseProductsForStaticOrder(this)\">" +
+                $("<tr onclick=\"chooseProductsForStaticOrder(this," + (distance * store.ppk) + ")\">" +
                     "<td>" + store.storeName + "</td>" +
                     "<td>" + store.storeSerialNumber + "</td>" +
                     "<td> X: " + store.storeLocation.x + " Y: " + store.storeLocation.y + "</td>" +

@@ -269,8 +269,14 @@
     width: 60px;
 }
 
-
-
+#staticOrderSummary{
+    text-align: center;
+    padding: 0.01em 16px;
+    border-radius:20px;
+    border: 1px solid #ccc!important;
+    width: 25%;
+    margin: auto;
+}
 
 
 
