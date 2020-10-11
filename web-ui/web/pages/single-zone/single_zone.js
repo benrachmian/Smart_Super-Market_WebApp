@@ -221,22 +221,49 @@ function updateCost(ammount,price,rowIndex){
     $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = (ammount * price).toFixed(2);
 }
 
+function errorMsg(whereToAppend,errorMsg){
+    if ( !$( "#errorDiv" ).length ) {
+        $("<div id='errorDiv' style='display: none' class=\"isa_error\" >"
+            + "<i class=\"fa fa-times-circle\"></i>"
+            + "<span id=\"error\">" + errorMsg + " </span>"
+            + "</div>").appendTo(whereToAppend).slideDown("slow");
+        $('html, body').animate({
+            scrollTop: $("#errorDiv").offset().top
+        }, 1000);
+    }
+    else{
+        $("#error").empty().append(errorMsg);
+    }
+}
+
 function addProductToCart(productToAdd,rowIndex) {
     var amount = $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value;
-    $("<tr>" +
-        "<td>" + productToAdd.productName + "</td>" +
-        "<td>" + productToAdd.productSerialNumber + "</td>" +
-        "<td>" + productToAdd.wayOfBuying + "</td>" +
-        "<td>" + amount + "</td>" +
-        "</tr>").appendTo($("#shoppingCartTable"));
-    $('html, body').animate({
-        scrollTop: $("#shoppingCartTable").offset().top
-    }, 1000);
-    var currProductsCost = parseFloat($("#productsCost")[0].innerText);
-    var updateProductsCost = currProductsCost + (productToAdd.price * amount);
-    var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
-    $("#productsCost")[0].innerText = updateProductsCost.toFixed(2);
-    $("#totalOrderCost")[0].innerText = (currTotalCost + (productToAdd.price * amount)).toFixed(2);
+    if(amount ===""){
+        errorMsg($("#product-table-div"),"You must enter an amount!");
+    }
+    else if(amount <=0){
+        errorMsg($("#product-table-div"),"The amount must be a positive number!");
+    }
+    else {
+        $( "#errorDiv" ).remove();
+        $("<tr>" +
+            "<td>" + productToAdd.productName + "</td>" +
+            "<td>" + productToAdd.productSerialNumber + "</td>" +
+            "<td>" + productToAdd.wayOfBuying + "</td>" +
+            "<td>" + amount + "</td>" +
+            "</tr>").appendTo($("#shoppingCartTable"));
+        $('html, body').animate({
+            scrollTop: $("#shoppingCartTable").offset().top
+        }, 1000);
+        var currProductsCost = parseFloat($("#productsCost")[0].innerText);
+        var updateProductsCost = currProductsCost + (productToAdd.price * amount);
+        var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
+        $("#productsCost")[0].innerText = updateProductsCost.toFixed(2);
+        $("#totalOrderCost")[0].innerText = (currTotalCost + (productToAdd.price * amount)).toFixed(2);
+        //init amount and cost:
+        $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value = "";
+        $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = "";
+    }
 }
 
 function addProductsInStoreToTable(storeNameForAjax) {
