@@ -4,6 +4,8 @@ var GET_STORES = buildUrlWithContextPath("storesInZone");
 var GET_PRODUCTS_IN_STORE = buildUrlWithContextPath("productsInStore");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
 var SAVE_ORDER_DATA_TYPE_LOCATION = buildUrlWithContextPath("saveOrderDateTypeLocation");
+var orderToLocationX;
+var orderToLocationY;
 
 
 function setTitle() {
@@ -139,8 +141,62 @@ function clickOnStoresInZoneButton() {
     })
 }
 
-function checkValidOrderDate(parameters) {
-    return false;
+
+function addStoresTableContainer() {
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Choose Store </h1>"));
+    $("<div class=\"table-div\">\n" +
+        "<table class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Store Name</th>\n" +
+        "        <th>Store ID</th>\n" +
+        "        <th>Location</th>\n" +
+        "        <th>PPK</th>\n" +
+        "        <th>Delivery Cost</th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"storesTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>").appendTo($("#centerPage"));
+}
+
+function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
+    var a = Math.abs(orderToLocationX - storeX);
+    var b = Math.abs(orderToLocationY - storeY);
+    var aPower2 = Math.pow(a, 2);
+    var bPower2 = Math.pow(b, 2);
+    return Math.sqrt(aPower2 + bPower2);
+}
+
+function chooseProductsForStaticOrder(tableRow) {
+
+}
+
+function addStoresTable() {
+    addStoresTableContainer();
+    var distance;
+
+    $.ajax({
+        url: GET_STORES,
+        error: function (e){
+
+        },
+        success: function(storesInZone) {
+            $.each(storesInZone || [], function(index, store) {
+                distance = calcDistance(orderToLocationX,orderToLocationY,store.storeLocation.x,store.storeLocation.y);
+                $("<tr onclick=\"chooseProductsForStaticOrder(this)\">" +
+                    "<td>" + store.storeName + "</td>" +
+                    "<td>" + store.storeSerialNumber + "</td>" +
+                    "<td> X: " + store.storeLocation.x + " Y: " + store.storeLocation.y + "</td>" +
+                    "<td>" + store.ppk + "</td>" +
+                    "<td>" + (distance * store.ppk).toFixed(2) + "</td>" +
+                    "</tr>").appendTo($("#storesTable"));
+            });
+        }
+    })
 }
 
 function overloadOrderFirstDetailsFormSubmit() {
@@ -170,7 +226,11 @@ function overloadOrderFirstDetailsFormSubmit() {
                 }
             },
             success: function(r) {
-
+                orderToLocationX = $("#locationX").val();
+                orderToLocationY = $("#locationY").val();
+                if(r==="Static Order"){
+                    addStoresTable();
+                }
             }
         });
         // return value of the submit operation

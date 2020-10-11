@@ -42,6 +42,8 @@ public class SaveOrderDateTypeLocationServlet extends HttpServlet {
             request.getSession(true).setAttribute(Constants.Y_COORDINATE, yLocationInt);
             request.getSession(true).setAttribute(Constants.ORDER_DATE, orderDate);
             request.getSession(true).setAttribute(Constants.ORDER_TYPE, orderType);
+            out.print(orderType);
+            //out.flush();
         }
         catch (RuntimeException e){
             response.setStatus(500);
