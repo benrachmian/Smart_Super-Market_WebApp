@@ -5,8 +5,11 @@ var GET_PRODUCTS_IN_STORE = buildUrlWithContextPath("productsInStore");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
 var SAVE_ORDER_DATA_TYPE_LOCATION = buildUrlWithContextPath("saveOrderDateTypeLocation");
 var SAVE_SHOPPING_CART = buildUrlWithContextPath("saveShoppingCart");
+var CHECK_IF_HAS_DISCOUNTS = buildUrlWithContextPath("checkForDiscounts");
+var GET_DISCOUNTS = buildUrlWithContextPath("discountsInOrder");
 var orderToLocationX;
 var orderToLocationY;
+var chosenStoreIdForAjax;
 
 function ProductInCart (product, amount){
     this.product = product;
@@ -100,12 +103,12 @@ function showProductsInStore(productsInStore, chosenStoreName) {
 }
 
 function showChosenStoreProduct(buttonClicked) {
-    var chosenStoreId = $(buttonClicked)[0].dataset.chosenstoreid;
+    chosenStoreIdForAjax = $(buttonClicked)[0].dataset.chosenstoreid;
     var chosenStoreName = $(buttonClicked)[0].dataset.chosenstorename;
 
     $.ajax({
         url: GET_PRODUCTS_IN_STORE,
-        data: "chosenStoreId=" + chosenStoreId,
+        data: "chosenStoreId=" + chosenStoreIdForAjax,
         error: function (e){
 
         },
@@ -180,6 +183,7 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
     return Math.sqrt(aPower2 + bPower2);
 }
 
+
 function saveShoppingCartInSession() {
 
     var parameters = shoppingCart;
@@ -187,21 +191,88 @@ function saveShoppingCartInSession() {
     $.ajax({
         method: "post",
         url: SAVE_SHOPPING_CART,
-        dataType: 'json',
         data: JSON.stringify(shoppingCart),
-        contentType: 'application/json',
-        mimeType: 'application/json',
         error: function(error) {
 
         },
-        success: function (productsInStore) {
+        success: function () {
 
         }
     })
 }
 
+function addDiscountsToDiv() {
+
+    $.ajax({
+        url: GET_DISCOUNTS,
+        // data: "chosenStoreId=" + chosenStoreIdForAjax,
+        error: function (e) {
+
+        },
+        success: function (discountsForProducts) {
+            $.each(discountsForProducts || [], function (index, discountsForProduct) {
+                $.each(discountsForProduct || [], function (index, discountForProduct) {
+                    var discountKind = discountForProduct.key.discountKind;
+                    var amountToBuyForDiscount = discountForProduct.key.ifYouBuyProductAndAmount.value;
+                    var productBoughtForDiscount = discountForProduct.key.productNameToBuyForDiscount;
+                    var productWayOfBuying = discountForProduct.key.productWayOfBuying;
+                    var productToBuyId = discountForProduct.key.ifYouBuyProductAndAmount.key;
+                    var msg1 = "You bought " + amountToBuyForDiscount + (productWayOfBuying === "BY_QUANTITY" ? " units " : " kilos ") +
+                        "of " + productBoughtForDiscount + " (ID:" + productToBuyId + ")."
+                    var msg2 = "you deserve";
+                    if(discountKind === "ONE_OF"){
+                        msg2 = msg2.concat(" one of the following products:")
+                    }
+                    else if(discountKind === "ALL_OR_NOTHING"){
+                        msg2 = msg2.concat(" all of the following products:")
+                    }
+                    else{
+                        msg2 = msg2.concat(":");
+                    }
+                    $("<div class=\"singleDiscount\">" +
+                        "<br><p id=\"sub-title\">" + discountForProduct.key.discountName + " </p>" +
+                        "<p>" + msg1 + "</p>" +
+                        "<p>" + msg2 + "</p>" +
+                        "            </div>").appendTo($("#discountsInOrderDiv"));
+                });
+            });
+        }
+    });}
+
+
+function createDiscountsInOrderPage() {
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Discounts </h1>"));
+    $("<br><div class='w3-container w3-border w3-round-xlarge' id='discountsInOrderDiv'>" +
+        "</div>"
+    ).appendTo($("#centerPage"));
+    addDiscountsToDiv();
+}
+
+function createOrderSummaryPage() {
+
+}
+
 function continueToDiscountPageOrSummary() {
     saveShoppingCartInSession();
+
+    $.ajax({
+        method: "GET",
+        url: CHECK_IF_HAS_DISCOUNTS,
+        data: chosenStoreIdForAjax,
+        error: function(error) {
+
+        },
+        success: function (hasDiscount) {
+            if(hasDiscount === "true"){
+                createDiscountsInOrderPage();
+            }
+            else{
+                createOrderSummaryPage();
+            }
+
+        }
+    })
 }
 
 function buildAddProductsToCartStaticOrderPage(deliveryCost) {
@@ -337,11 +408,11 @@ function addProductToCart(productToAdd,rowIndex) {
     }
 }
 
-function addProductsInStoreToTable(storeNameForAjax) {
+function addProductsInStoreToTable(storeIDForAjax) {
     $.ajax({
         method: "post",
         url: GET_PRODUCTS_IN_STORE,
-        data: storeNameForAjax,
+        data: storeIDForAjax,
         error: function(error) {
 
         },
@@ -367,9 +438,9 @@ function addProductsInStoreToTable(storeNameForAjax) {
 
 
 function chooseProductsForStaticOrder(tableRow,deliveryCost) {
-    var storeIDForAjax = 'chosenStoreId=' + tableRow.cells[1].innerText;
+    chosenStoreIdForAjax = 'chosenStoreId=' + tableRow.cells[1].innerText;
     buildAddProductsToCartStaticOrderPage(deliveryCost);
-    addProductsInStoreToTable(storeIDForAjax);
+    addProductsInStoreToTable(chosenStoreIdForAjax);
 }
 
 function addStoresTable() {

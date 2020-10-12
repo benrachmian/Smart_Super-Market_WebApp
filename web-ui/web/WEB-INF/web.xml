@@ -69,6 +69,16 @@
         <servlet-class>sdm.servlets.SaveShoppingCartServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CheckForDiscountsServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckForDiscountsServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetDiscountsInOrderServlet</servlet-name>
+        <servlet-class>sdm.servlets.GetDiscountsInOrderServlet</servlet-class>
+    </servlet>
+
 
 
 <!--    <servlet>-->
@@ -139,6 +149,16 @@
     <servlet-mapping>
         <servlet-name>SaveShoppingCartServlet</servlet-name>
         <url-pattern>/saveShoppingCart</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckForDiscountsServlet</servlet-name>
+        <url-pattern>/checkForDiscounts</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetDiscountsInOrderServlet</servlet-name>
+        <url-pattern>/discountsInOrder</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->

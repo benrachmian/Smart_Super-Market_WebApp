@@ -26,17 +26,12 @@ public class SaveShoppingCartServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
+        //response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
         try {
-            SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-            String zone = SessionUtils.getChosenZone(request);
-            SDMSystemInZone zoneSystem = sdmSystemManager.getZoneSystem(zone);
-
             BufferedReader br =
                     new BufferedReader(new InputStreamReader(request.getInputStream()));
-
             String json = "";
             if(br != null){
                 json = br.readLine();
@@ -45,8 +40,10 @@ public class SaveShoppingCartServlet extends HttpServlet {
             Gson gson = new Gson();
             Type listType = new TypeToken<ArrayList<ProductAndAmount>>(){}.getType();
             List<ProductAndAmount> productsAndAmount = gson.fromJson(json, listType);
-            Map<Integer,Pair<IDTOProductInStore, Float>> shoppingCart = createShoppingCartFromProductsAndAmount(productsAndAmount);
-
+            //key: storeId, value:Map - key:product id, value: pair - key:product, value: ammount
+            Map<Integer,Map<Integer,Pair<IDTOProductInStore, Float>>> shoppingCart = new HashMap<>();
+            Map<Integer,Pair<IDTOProductInStore, Float>> shoppingCartInStaticOrder = createShoppingCartFromProductsAndAmount(productsAndAmount);
+            shoppingCart.put(productsAndAmount.get(0).product.getStoreTheProductBelongsID(),shoppingCartInStaticOrder);
             request.getSession(true).setAttribute(Constants.SHOPPING_CART, shoppingCart);
         }
         catch (RuntimeException e){
@@ -131,13 +128,4 @@ public class SaveShoppingCartServlet extends HttpServlet {
             this.amount = amount;
         }
     }
-
-    private class ShoppingCart{
-        List<ProductAndAmount> list;
-
-        public List<ProductAndAmount> getList() {
-            return list;
-        }
-    }
-
 }
