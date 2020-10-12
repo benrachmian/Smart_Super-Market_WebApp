@@ -2,9 +2,9 @@ package SDMSystemDTO.product;
 
 public class DTOProduct {
 
-    protected final int productSerialNumber;
-    protected final String productName;
-    protected final String wayOfBuying;
+    protected int productSerialNumber;
+    protected String productName;
+    protected String wayOfBuying;
    // protected Collection<DTOStore> storesSellingTheProduct = new LinkedList<>();
     protected float amountSoldInAllStores;
     protected int numOfStoresSellingTheProduct;
@@ -25,6 +25,9 @@ public class DTOProduct {
         this.amountSoldInAllStores = amountSoldInAllStores;
         this.numOfStoresSellingTheProduct = numOfStoresSellingTheProduct;
         this.avgPrice = avgPrice;
+    }
+    public DTOProduct(){
+
     }
 
     @Override
@@ -55,4 +58,24 @@ public class DTOProduct {
 //    public int numberOfStoresSellingTheProduct() {
 //        return storesSellingTheProduct.size();
 //    }
+
+    public void setAmountSoldInAllStores(float amountSoldInAllStores) {
+        this.amountSoldInAllStores = amountSoldInAllStores;
+    }
+
+    public int getNumOfStoresSellingTheProduct() {
+        return numOfStoresSellingTheProduct;
+    }
+
+    public void setNumOfStoresSellingTheProduct(int numOfStoresSellingTheProduct) {
+        this.numOfStoresSellingTheProduct = numOfStoresSellingTheProduct;
+    }
+
+    public float getAvgPrice() {
+        return avgPrice;
+    }
+
+    public void setAvgPrice(float avgPrice) {
+        this.avgPrice = avgPrice;
+    }
 }

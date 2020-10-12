@@ -4,8 +4,17 @@ var GET_STORES = buildUrlWithContextPath("storesInZone");
 var GET_PRODUCTS_IN_STORE = buildUrlWithContextPath("productsInStore");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
 var SAVE_ORDER_DATA_TYPE_LOCATION = buildUrlWithContextPath("saveOrderDateTypeLocation");
+var SAVE_SHOPPING_CART = buildUrlWithContextPath("saveShoppingCart");
 var orderToLocationX;
 var orderToLocationY;
+
+function ProductInCart (product, amount){
+    this.product = product;
+    this.amount = amount;
+}
+
+var shoppingCart = [];
+var productTry = [];
 
 
 function setTitle() {
@@ -171,6 +180,30 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
     return Math.sqrt(aPower2 + bPower2);
 }
 
+function saveShoppingCartInSession() {
+
+    var parameters = shoppingCart;
+
+    $.ajax({
+        method: "post",
+        url: SAVE_SHOPPING_CART,
+        dataType: 'json',
+        data: JSON.stringify(shoppingCart),
+        contentType: 'application/json',
+        mimeType: 'application/json',
+        error: function(error) {
+
+        },
+        success: function (productsInStore) {
+
+        }
+    })
+}
+
+function continueToDiscountPageOrSummary() {
+    saveShoppingCartInSession();
+}
+
 function buildAddProductsToCartStaticOrderPage(deliveryCost) {
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Make Static Order </h1>"));
@@ -214,9 +247,12 @@ function buildAddProductsToCartStaticOrderPage(deliveryCost) {
         "<div><label>Total order cost:</label><label id='totalOrderCost'> &ensp;" +  deliveryCost.toFixed(2) + "</label></div>" +
         "</div>" +
         "<div style='display: flex; justify-content: center'>" +
-        "<button class='button' > <span>Continue </span> </button>" +
+        "<button id='continueToDiscountPageOrSummaryButton' class='button' > <span>Continue </span> </button>" +
         "</div>"
     ).appendTo($("#centerPage"));
+    $( "#continueToDiscountPageOrSummaryButton" ).click(function() {
+        continueToDiscountPageOrSummary();
+    });
 
 }
 
@@ -259,6 +295,15 @@ function scrollToAnimate(scrollTo){
     }, 1000);
 }
 
+function addProductToCartTable(productToAdd,amount) {
+    $("<tr>" +
+        "<td>" + productToAdd.productName + "</td>" +
+        "<td>" + productToAdd.productSerialNumber + "</td>" +
+        "<td>" + productToAdd.wayOfBuying + "</td>" +
+        "<td>" + amount + "</td>" +
+        "</tr>").appendTo($("#shoppingCartTable"));
+}
+
 function addProductToCart(productToAdd,rowIndex) {
     var amount = $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value;
     var productWayOfBuying = $("#products-in-store-table")[0].rows[rowIndex+1].cells[2].innerText;
@@ -277,12 +322,7 @@ function addProductToCart(productToAdd,rowIndex) {
     }
     else {
         $( "#errorDiv" ).remove();
-        $("<tr>" +
-            "<td>" + productToAdd.productName + "</td>" +
-            "<td>" + productToAdd.productSerialNumber + "</td>" +
-            "<td>" + productToAdd.wayOfBuying + "</td>" +
-            "<td>" + amount + "</td>" +
-            "</tr>").appendTo($("#shoppingCartTable"));
+        addProductToCartTable(productToAdd,amount);
         var currProductsCost = parseFloat($("#productsCost")[0].innerText);
         var updateProductsCost = currProductsCost + (productToAdd.price * amount);
         var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
@@ -292,6 +332,8 @@ function addProductToCart(productToAdd,rowIndex) {
         $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value = "";
         $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = "";
         successMsg($("#product-table-div"),"The product was added to the cart successfully!");
+        var productInCart = new ProductInCart(productToAdd,amount);
+        shoppingCart.push(productInCart);
     }
 }
 

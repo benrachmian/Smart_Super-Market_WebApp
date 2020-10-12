@@ -10,5 +10,6 @@ public class Constants {
     public static final String Y_COORDINATE = "yCoordinate";
     public static final String ORDER_DATE = "orderDate";
     public static final String ORDER_TYPE = "orderType";
+    public static final String SHOPPING_CART = "shoppingCart";
     public static final int INT_PARAMETER_ERROR = Integer.MIN_VALUE;
 }

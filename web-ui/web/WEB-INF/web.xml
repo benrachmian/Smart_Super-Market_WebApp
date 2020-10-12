@@ -64,6 +64,11 @@
         <servlet-class>sdm.servlets.SaveOrderDateTypeLocationServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>SaveShoppingCartServlet</servlet-name>
+        <servlet-class>sdm.servlets.SaveShoppingCartServlet</servlet-class>
+    </servlet>
+
 
 
 <!--    <servlet>-->
@@ -129,6 +134,11 @@
     <servlet-mapping>
         <servlet-name>SaveOrderDateTypeLocationServlet</servlet-name>
         <url-pattern>/saveOrderDateTypeLocation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SaveShoppingCartServlet</servlet-name>
+        <url-pattern>/saveShoppingCart</url-pattern>
     </servlet-mapping>
 
 <!--    <servlet-mapping>-->

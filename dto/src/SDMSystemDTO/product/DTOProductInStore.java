@@ -3,9 +3,9 @@ package SDMSystemDTO.product;
 
 
 public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore{
-    private final float price;
+    private  float price;
     private float amountSoldInStore;
-    private final int storeTheProductBelongsID;
+    private  int storeTheProductBelongsID;
 
     public DTOProductInStore(int productSerialNumber,
                              String productName,
@@ -21,6 +21,10 @@ public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore
         this.price = price;
         this.amountSoldInStore = amountSoldInStore;
         this.storeTheProductBelongsID = storeTheProductBelongsID;
+    }
+
+    public DTOProductInStore(){
+        super();
     }
 
 
@@ -44,5 +48,8 @@ public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore
     public void setAmountSoldInStore(float amountSoldInStore) {
         this.amountSoldInStore = amountSoldInStore;
     }
+
+
 }
+
 
