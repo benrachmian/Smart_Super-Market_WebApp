@@ -171,7 +171,7 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
     return Math.sqrt(aPower2 + bPower2);
 }
 
-function addProductsInStoreForStaticOrderContainer(deliveryCost) {
+function buildAddProductsToCartStaticOrderPage(deliveryCost) {
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Make Static Order </h1>"));
     $("<br><p id=\"sub-title\"> Products In Store: </p>").appendTo($("#centerPage"));
@@ -209,9 +209,12 @@ function addProductsInStoreForStaticOrderContainer(deliveryCost) {
         "</table>\n" +
         "</div>" +
         "<div id='staticOrderSummary'>" +
-        "<div><label>Delivery cost:</label><label id='deliveryCost'>" + deliveryCost.toFixed(2) + "</label></div>" +
-        "<div><label>Products cost:</label><label id='productsCost'> 0</label></div>" +
-        "<div><label>Total order cost:</label><label id='totalOrderCost'>" +  deliveryCost.toFixed(2) + "</label></div>" +
+        "<div><label>Delivery cost:</label><label id='deliveryCost'> &ensp;" + deliveryCost.toFixed(2) + "</label></div>" +
+        "<div><label>Products cost:</label><label id='productsCost'> &ensp; 0</label></div>" +
+        "<div><label>Total order cost:</label><label id='totalOrderCost'> &ensp;" +  deliveryCost.toFixed(2) + "</label></div>" +
+        "</div>" +
+        "<div style='display: flex; justify-content: center'>" +
+        "<button class='button' > <span>Continue </span> </button>" +
         "</div>"
     ).appendTo($("#centerPage"));
 
@@ -227,22 +230,50 @@ function errorMsg(whereToAppend,errorMsg){
             + "<i class=\"fa fa-times-circle\"></i>"
             + "<span id=\"error\">" + errorMsg + " </span>"
             + "</div>").appendTo(whereToAppend).slideDown("slow");
-        $('html, body').animate({
-            scrollTop: $("#errorDiv").offset().top
-        }, 1000);
     }
     else{
         $("#error").empty().append(errorMsg);
     }
+    scrollToAnimate($("#errorDiv"));
+}
+function successMsg(whereToAppend,successMsg){
+    if ( !$( "#successDiv" ).length ) {
+        $("<div id='successDiv' style='display: none' class=\"isa_success\" >"
+            + "<i class=\"fa fa-check\"></i>"
+            + "<span id=\"success\">" + successMsg + " </span>"
+            + "</div>").appendTo(whereToAppend).slideDown("slow");
+    }
+    else{
+        $("#success").empty().append(successMsg);
+    }
+    scrollToAnimate($("#successDiv"));
+}
+
+function isFloat(n){
+    return n % 1 !== 0;
+}
+
+function scrollToAnimate(scrollTo){
+    $('html, body').animate({
+        scrollTop: scrollTo.offset().top
+    }, 1000);
 }
 
 function addProductToCart(productToAdd,rowIndex) {
     var amount = $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value;
+    var productWayOfBuying = $("#products-in-store-table")[0].rows[rowIndex+1].cells[2].innerText;
     if(amount ===""){
+        $( "#successDiv" ).remove();
         errorMsg($("#product-table-div"),"You must enter an amount!");
     }
     else if(amount <=0){
+        $( "#successDiv" ).remove();
         errorMsg($("#product-table-div"),"The amount must be a positive number!");
+    }
+    else if(productWayOfBuying === "By quantity" && isFloat(amount)){
+        $( "#successDiv" ).remove();
+        errorMsg($("#product-table-div"),"When you buy a product by quantity you must enter an integer!");
+        // scrollToAnimate($("#shoppingCartTable"));
     }
     else {
         $( "#errorDiv" ).remove();
@@ -252,9 +283,6 @@ function addProductToCart(productToAdd,rowIndex) {
             "<td>" + productToAdd.wayOfBuying + "</td>" +
             "<td>" + amount + "</td>" +
             "</tr>").appendTo($("#shoppingCartTable"));
-        $('html, body').animate({
-            scrollTop: $("#shoppingCartTable").offset().top
-        }, 1000);
         var currProductsCost = parseFloat($("#productsCost")[0].innerText);
         var updateProductsCost = currProductsCost + (productToAdd.price * amount);
         var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
@@ -263,6 +291,7 @@ function addProductToCart(productToAdd,rowIndex) {
         //init amount and cost:
         $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value = "";
         $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = "";
+        successMsg($("#product-table-div"),"The product was added to the cart successfully!");
     }
 }
 
@@ -283,7 +312,7 @@ function addProductsInStoreToTable(storeNameForAjax) {
                     "<td>" + product.price + "</td>" +
                     "<td> <input onchange=\"updateCost(this.value," + product.price + "," + index + ")\" id='amountInTableBox' type=\"number\" id=\"amount\" min='1'' name=\"amount\"></td>" +
                     "<td><button class='button addToCartButton'> Add To Cart </button></td>" +
-                    "<td>0</td>" +
+                    "<td></td>" +
                     "</tr>").appendTo($("#productsInStoreTable"));
                 $( ".addToCartButton:last" ).click(function() {
                     addProductToCart(product,index);
@@ -297,7 +326,7 @@ function addProductsInStoreToTable(storeNameForAjax) {
 
 function chooseProductsForStaticOrder(tableRow,deliveryCost) {
     var storeIDForAjax = 'chosenStoreId=' + tableRow.cells[1].innerText;
-    addProductsInStoreForStaticOrderContainer(deliveryCost);
+    buildAddProductsToCartStaticOrderPage(deliveryCost);
     addProductsInStoreToTable(storeIDForAjax);
 }
 
