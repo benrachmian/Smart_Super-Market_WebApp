@@ -7,9 +7,14 @@ var SAVE_ORDER_DATA_TYPE_LOCATION = buildUrlWithContextPath("saveOrderDateTypeLo
 var SAVE_SHOPPING_CART = buildUrlWithContextPath("saveShoppingCart");
 var CHECK_IF_HAS_DISCOUNTS = buildUrlWithContextPath("checkForDiscounts");
 var GET_DISCOUNTS = buildUrlWithContextPath("discountsInOrder");
+var ADD_PRODUCT_IN_DISCOUNT_TO_CART = buildUrlWithContextPath("addProductInDiscountToCart");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
+var discountsMap = new Map();
+var shoppingCartTableHtml;
+var shoppingCartSummaryHtml;
+var productsInStoreMap = new Map();
 
 function ProductInCart (product, amount){
     this.product = product;
@@ -76,6 +81,15 @@ function clickOnProductsInZoneButton() {
     })
 }
 
+function updateProductsCostAndTotalCost(price, amount){
+    var currProductsCost = parseFloat($("#productsCost")[0].innerText);
+    var updateProductsCost = currProductsCost + (price * amount);
+    var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
+    $("#productsCost")[0].innerText = updateProductsCost.toFixed(2);
+    $("#totalOrderCost")[0].innerText = (currTotalCost + (price * amount)).toFixed(2);
+
+}
+
 function showProductsInStore(productsInStore, chosenStoreName) {
     $("#productsInStoreDiv").remove();
     $("#centerPage").append( $("<div class='w3-container w3-border w3-round-xlarge' id='productsInStoreDiv'  <br>"));
@@ -93,6 +107,7 @@ function showProductsInStore(productsInStore, chosenStoreName) {
             "                    <p>Ammount sold in store: " + product.amountSoldInStore + "</p>" +
             "                </div>" +
             "            </div>").appendTo($("#productsInStoreDiv"));
+
     });
     $("</div>").appendTo($("#productsInStoreDiv"));
     $('html, body').animate({
@@ -186,7 +201,6 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
 
 function saveShoppingCartInSession() {
 
-    var parameters = shoppingCart;
 
     $.ajax({
         method: "post",
@@ -220,6 +234,8 @@ function addDiscountsToDiv() {
                     var msg1 = "You bought " + amountToBuyForDiscount + (productWayOfBuying === "BY_QUANTITY" ? " units " : " kilos ") +
                         "of " + productBoughtForDiscount + " (ID:" + productToBuyId + ")."
                     var msg2 = "you deserve";
+                    var offers = discountForProduct.key.offers;
+                    var amountToImplement = discountForProduct.value;
                     if(discountKind === "ONE_OF"){
                         msg2 = msg2.concat(" one of the following products:")
                     }
@@ -229,23 +245,169 @@ function addDiscountsToDiv() {
                     else{
                         msg2 = msg2.concat(":");
                     }
+                    discountsMap.set(discountForProduct.key.discountName,discountForProduct);
+                    $("<option>" + discountForProduct.key.discountName + "</option>").appendTo($("#discountSelect"));
                     $("<div class=\"singleDiscount\">" +
-                        "<br><p id=\"sub-title\">" + discountForProduct.key.discountName + " </p>" +
+                        "<br><p id=\"sub-title\">" + discountForProduct.key.discountName + "&ensp;(Amount left:<label class='amountToImplement' data-discountName='" +discountForProduct.key.discountName + " '>" + amountToImplement + "</label>) </p>" +
                         "<p>" + msg1 + "</p>" +
                         "<p>" + msg2 + "</p>" +
-                        "            </div>").appendTo($("#discountsInOrderDiv"));
+                        "            <div class='row'></div>").appendTo($("#discountsInOrderDiv"));
+                    $.each(offers || [], function (index, offer) {
+                        $("<div class=\"column\">" +
+                            "                <div class=\"card\">" +
+                            "                    <h3>" + offer.productName + "</h3>" +
+                            "                    <p>ID: " + offer.productSerialNumber + "</p>" +
+                            "                    <p>Quantity " + offer.productQuantity + "</p>" +
+                            "                    <p>Price per unit: " + offer.pricePerUnit + "</p>" +
+                            "                </div>" +
+                            "            </div>").appendTo($(".singleDiscount").find(".row"));
+                    });
+                    $("</div>").appendTo($(".singleDiscount"));
                 });
             });
         }
+
     });}
 
+
+function checkIfNeedToChooseProducts(discountName) {
+    var discount = discountsMap.get(discountName);
+    if(discount.key.discountKind === "ONE_OF"){
+        $("#selectProductDiscount").empty();
+        $.each(discount.key.offers || [], function(index, offer) {
+            $("<option>" + offer.productName + ", ID: " + offer.productSerialNumber + "</option>").appendTo($("#selectProductDiscount"));
+        });
+        // scrollToAnimate($("#productForDiscountLi"));
+        $("#productForDiscountLi").show(500);
+    }
+    else{
+        $("#productForDiscountLi").hide(500);
+    }
+
+}
+
+function ajaxAddProductInDiscountToCart(discountName, productInDiscountSerialNumber, productQuantity){
+
+    $.ajax({
+        method: "post",
+        url: ADD_PRODUCT_IN_DISCOUNT_TO_CART,
+        data: "discountName=" + discountName + "&productInDiscountSerialNumber=" + productInDiscountSerialNumber + "&productQuantity=" + productQuantity,
+        error: function(error) {
+
+        },
+        success: function () {
+
+        }
+    })
+}
+
+function addDiscountProductToCart(selectedProductAsOfferInDiscount,discountName){
+    var productInStore = productsInStoreMap.get(selectedProductAsOfferInDiscount.productSerialNumber);
+    productInStore.productName = selectedProductAsOfferInDiscount.productName + " (Discount)";
+    addProductToCartTable(productInStore,selectedProductAsOfferInDiscount.productQuantity);
+    ajaxAddProductInDiscountToCart(discountName,productInStore.productSerialNumber,selectedProductAsOfferInDiscount.productQuantity);
+    updateProductsCostAndTotalCost(selectedProductAsOfferInDiscount.pricePerUnit,selectedProductAsOfferInDiscount.productQuantity);
+
+}
+
+function getLabelWithAmount(discountName){
+    var labelToUpdateWithAmount;
+    var labels = $(".amountToImplement");
+    var i;
+    for(i=0;i<labels.length;i++) {
+        if (labels[i].dataset.discountname.slice(0,-1) === discountName) {
+            labelToUpdateWithAmount = labels[i];
+            break;
+        }
+    }
+
+    return labelToUpdateWithAmount;
+}
+
+function subAmountInAllDiscountsContainTheProduct(discount){
+    var triggerDiscountProductSerialNumber = discount.key.ifYouBuyProductAndAmount.key;
+    discountsMap.forEach(function (value, key, map){
+        if(value.key.ifYouBuyProductAndAmount.key === triggerDiscountProductSerialNumber){
+            var labelToUpdateWithAmount = getLabelWithAmount(value.key.discountName);
+            var newAmount = (labelToUpdateWithAmount.textContent - 1);
+            labelToUpdateWithAmount.textContent = newAmount;
+        }
+    });
+
+}
+
+function getDiscountAmountToImplement(discount){
+    var labelWithAmount = getLabelWithAmount(discount.key.discountName);
+    return labelWithAmount.textContent;
+}
+
+function onAddDiscountToCart(){
+    var discount = discountsMap.get($("#discountSelect").val());
+    if(typeof discount === 'undefined'){
+        errorMsg($("#addDiscountItemToShoppingCartDiv"),"You must select a discount first!");
+        $("#errorDiv").css("width","max-content");
+    }
+    else if(getDiscountAmountToImplement(discount) <= 0){
+        errorMsg($("#addDiscountItemToShoppingCartDiv"),"You can't implement this discount anymore!");
+        $("#errorDiv").css("width","max-content");
+    }
+    else {
+        $("#errorDiv").remove();
+        if (discount.key.discountKind === "ONE_OF") {
+            var selectedProductAsOfferInDiscount = discount.key.offers[$("#selectProductDiscount")[0].selectedIndex];
+            addDiscountProductToCart(selectedProductAsOfferInDiscount, discount.key.discountName);
+        } else {
+            discount.key.offers.forEach(function (offer, index) {
+                addDiscountProductToCart(offer, discount.key.discountName);
+            });
+        }
+    subAmountInAllDiscountsContainTheProduct(discount);
+    }
+
+
+}
 
 function createDiscountsInOrderPage() {
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Discounts </h1>"));
     $("<br><div class='w3-container w3-border w3-round-xlarge' id='discountsInOrderDiv'>" +
-        "</div>"
+        "</div>" +
+        // "<form id='addDiscountItemToShoppingCartButtonForm' class=\"form-style-7\">\n" +
+        "<div id='addDiscountItemToShoppingCartDiv' class=\"form-style-7\">" +
+        "<ul>\n" +
+        "<li>\n" +
+        "    <label for=\"selectDiscount\">Select Discount</label>\n" +
+        "    <select id='discountSelect'  class=\"select-css\">\n" +
+        "    <option value=\"\" disabled selected>Select a discount</option>\n" +
+        "</select>" +
+        "    <span>Select the discount you would like to implement</span>\n" +
+        "</li>\n" +
+        "<li id='productForDiscountLi' style='display: none'>\n" +
+        "    <label for=\"selectProductDiscount\">Select Product</label>\n" +
+        "    <select id='selectProductDiscount'  class=\"select-css\">\n" +
+        "    <option value=\"\" disabled selected>Select a product</option>\n" +
+        "</select>" +
+        "    <span>Select the product you would like to buy from the discount</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <button id='addDiscountItemToShoppingCartButton' class='button' > <span>Add To Cart </span> </button>\n" +
+        "</li>\n" +
+        "</ul>" +
+            "</div>"
+        // "</form>"
     ).appendTo($("#centerPage"));
+    $("<p id=\"sub-title\"> Shopping Cart: </p>").appendTo($("#centerPage"));
+    shoppingCartTableHtml.appendTo($("#centerPage"));
+    shoppingCartSummaryHtml.appendTo($("#centerPage"));
+    $(  "<div style='display: flex; justify-content: center'>" +
+        "<button class='button'> Continue </button></div>").appendTo($("#centerPage"));
+    $( "#discountSelect").change(function() {
+        checkIfNeedToChooseProducts($(this).val());
+    });
+    $( "#addDiscountItemToShoppingCartButton").click(function() {
+        onAddDiscountToCart();
+    });
+
     addDiscountsToDiv();
 }
 
@@ -322,6 +484,8 @@ function buildAddProductsToCartStaticOrderPage(deliveryCost) {
         "</div>"
     ).appendTo($("#centerPage"));
     $( "#continueToDiscountPageOrSummaryButton" ).click(function() {
+        shoppingCartTableHtml = $("#shopping-cart-table");
+        shoppingCartSummaryHtml = $("#staticOrderSummary");
         continueToDiscountPageOrSummary();
     });
 
@@ -394,11 +558,7 @@ function addProductToCart(productToAdd,rowIndex) {
     else {
         $( "#errorDiv" ).remove();
         addProductToCartTable(productToAdd,amount);
-        var currProductsCost = parseFloat($("#productsCost")[0].innerText);
-        var updateProductsCost = currProductsCost + (productToAdd.price * amount);
-        var currTotalCost = parseFloat($("#totalOrderCost")[0].innerText);
-        $("#productsCost")[0].innerText = updateProductsCost.toFixed(2);
-        $("#totalOrderCost")[0].innerText = (currTotalCost + (productToAdd.price * amount)).toFixed(2);
+        updateProductsCostAndTotalCost(productToAdd.price, amount);
         //init amount and cost:
         $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value = "";
         $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = "";
@@ -430,6 +590,7 @@ function addProductsInStoreToTable(storeIDForAjax) {
                 $( ".addToCartButton:last" ).click(function() {
                     addProductToCart(product,index);
                 });
+                productsInStoreMap.set(product.productSerialNumber,product);
             });
         }
     })

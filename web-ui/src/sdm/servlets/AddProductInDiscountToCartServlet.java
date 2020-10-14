@@ -2,12 +2,9 @@ package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
-import SDMSystemDTO.product.DTOProductInStore;
+import SDMSystemDTO.product.DTOProductInDiscount;
 import SDMSystemDTO.product.IDTOProductInStore;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import javafx.util.Pair;
-import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -15,33 +12,25 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
-public class CheckForDiscountsServlet  extends HttpServlet {
+public class AddProductInDiscountToCartServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         String zone = SessionUtils.getChosenZone(request);
         SDMSystemInZone zoneSystem = sdmSystemManager.getZoneSystem(zone);
-        String storeId = request.getParameter("chosenStoreId");
+        String discountName = request.getParameter("discountName");
+        int productInDiscountSerialNumber = Integer.parseInt(request.getParameter("productInDiscountSerialNumber"));
+        Float productQuantity = Float.parseFloat(request.getParameter("productQuantity"));
         Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCart = SessionUtils.getShoppingCart(request);
         try {
-            if(zoneSystem.storeHasDiscountWithOneOfTheProducts(
-                    Integer.parseInt(storeId),
-                    shoppingCart.get(Integer.parseInt(storeId)))){
-                out.print("true");
-            }
-            else{
-                out.print("false");
-            }
-
+            DTOProductInDiscount discountProduct = zoneSystem.getProductInDiscount(discountName,productInDiscountSerialNumber);
+            shoppingCart.get(discountProduct.getStoreTheProductBelongsID()).add(new Pair<>(discountProduct,productQuantity));
         }
         catch (RuntimeException e){
             response.setStatus(500);
@@ -85,5 +74,4 @@ public class CheckForDiscountsServlet  extends HttpServlet {
     public String getServletInfo() {
         return "Save order date,type and location";
     }// </editor-fold>
-
 }

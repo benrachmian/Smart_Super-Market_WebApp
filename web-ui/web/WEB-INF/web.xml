@@ -79,12 +79,22 @@
         <servlet-class>sdm.servlets.GetDiscountsInOrderServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>AddProductInDiscountToCartServlet</servlet-name>
+        <servlet-class>sdm.servlets.AddProductInDiscountToCartServlet</servlet-class>
+    </servlet>
+
 
 
 <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
 <!--    </servlet>-->
+
+    <servlet-mapping>
+        <servlet-name>AddProductInDiscountToCartServlet</servlet-name>
+        <url-pattern>/addProductInDiscountToCart</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>

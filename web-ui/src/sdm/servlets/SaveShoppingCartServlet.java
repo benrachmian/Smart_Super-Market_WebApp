@@ -41,8 +41,8 @@ public class SaveShoppingCartServlet extends HttpServlet {
             Type listType = new TypeToken<ArrayList<ProductAndAmount>>(){}.getType();
             List<ProductAndAmount> productsAndAmount = gson.fromJson(json, listType);
             //key: storeId, value:Map - key:product id, value: pair - key:product, value: ammount
-            Map<Integer,Map<Integer,Pair<IDTOProductInStore, Float>>> shoppingCart = new HashMap<>();
-            Map<Integer,Pair<IDTOProductInStore, Float>> shoppingCartInStaticOrder = createShoppingCartFromProductsAndAmount(productsAndAmount);
+            Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCart = new HashMap<>();
+            Collection<Pair<IDTOProductInStore, Float>> shoppingCartInStaticOrder = createShoppingCartFromProductsAndAmount(productsAndAmount);
             shoppingCart.put(productsAndAmount.get(0).product.getStoreTheProductBelongsID(),shoppingCartInStaticOrder);
             request.getSession(true).setAttribute(Constants.SHOPPING_CART, shoppingCart);
         }
@@ -53,19 +53,19 @@ public class SaveShoppingCartServlet extends HttpServlet {
         }
     }
 
-    private Map<Integer, Pair<IDTOProductInStore, Float>> createShoppingCartFromProductsAndAmount(List<ProductAndAmount> productsAndAmount) {
-        Map<Integer,Pair<IDTOProductInStore, Float>> shoppingCart = new HashMap<>();
+    private Collection<Pair<IDTOProductInStore, Float>> createShoppingCartFromProductsAndAmount(List<ProductAndAmount> productsAndAmount) {
+        Collection<Pair<IDTOProductInStore, Float>> shoppingCart = new LinkedList<>();
         for(ProductAndAmount productAndAmount : productsAndAmount){
-            //if already bought this product - need to update the amount bought
             Integer productId = productAndAmount.product.getProductSerialNumber();
-            if(shoppingCart.get(productId) != null){
-                float oldAmount = shoppingCart.get(productId).getValue();
-                shoppingCart.remove(productId);
-                shoppingCart.put(productId,new Pair<>(productAndAmount.product,productAndAmount.amount + oldAmount));
-            }
-            else{
-                shoppingCart.put(productId,new Pair<>(productAndAmount.product,productAndAmount.amount));
-            }
+            shoppingCart.add(new Pair<>(productAndAmount.product,productAndAmount.amount));
+//            if(shoppingCart.get(productId) != null){
+//                float oldAmount = shoppingCart.get(productId).getValue();
+//                shoppingCart.remove(productId);
+//                shoppingCart.put(productId,new Pair<>(productAndAmount.product,productAndAmount.amount + oldAmount));
+//            }
+//            else{
+//                shoppingCart.put(productId,new Pair<>(productAndAmount.product,productAndAmount.amount));
+//            }
         }
 
         return shoppingCart;

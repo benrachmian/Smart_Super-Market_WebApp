@@ -29,7 +29,7 @@ public class GetDiscountsInOrderServlet extends HttpServlet {
         //int storeId = Integer.parseInt(request.getParameter("chosenStoreId"));
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         SDMSystemInZone sdmSystemInZone = sdmSystemManager.getZoneSystem(zoneFromSession);
-        Map<Integer, Map<Integer, Pair<IDTOProductInStore, Float>>> shoppingCart = SessionUtils.getShoppingCart(request);
+        Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCart = SessionUtils.getShoppingCart(request);
         Collection<DTODiscount> discountsInOrder = new LinkedList<>();
         Collection<Collection<Pair<DTODiscount,Integer>>> discountsForProductsInOrder = new LinkedList<>();
 
@@ -38,7 +38,7 @@ public class GetDiscountsInOrderServlet extends HttpServlet {
             //pair: key = discount, value = amount deserved
             Collection<Pair<DTODiscount, Integer>> discountsForProduct;
             //for every product in products bought from store
-            for (Pair<IDTOProductInStore, Float> product : shoppingCart.get(storeId).values()) {
+            for (Pair<IDTOProductInStore, Float> product : shoppingCart.get(storeId)) {
                 discountsForProduct = sdmSystemInZone.getDiscountsForProductFromDiscountsCollection(product, currentStore.getStoreDiscounts(), discountsInOrder);
                 if (discountsForProduct != null) {
                         discountsForProductsInOrder.add(discountsForProduct);
