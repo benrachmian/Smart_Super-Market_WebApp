@@ -84,6 +84,26 @@
         <servlet-class>sdm.servlets.AddProductInDiscountToCartServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>StoresParticipatingServlet</servlet-name>
+        <servlet-class>sdm.servlets.StoresParticipatingServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ProductsBoughtFromStoreServlet</servlet-name>
+        <servlet-class>sdm.servlets.ProductsBoughtFromStoreServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ProductsAndDeliveryCostServlet</servlet-name>
+        <servlet-class>sdm.servlets.ProductsAndDeliveryCostServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>MakeNewStaticOrderServlet</servlet-name>
+        <servlet-class>sdm.servlets.MakeNewStaticOrderServlet</servlet-class>
+    </servlet>
+
 
 
 <!--    <servlet>-->
@@ -92,8 +112,29 @@
 <!--    </servlet>-->
 
     <servlet-mapping>
+        <servlet-name>MakeNewStaticOrderServlet</servlet-name>
+        <url-pattern>/makeNewStaticOrder</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet-mapping>
+        <servlet-name>ProductsAndDeliveryCostServlet</servlet-name>
+        <url-pattern>/productsAndDeliveryCost</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ProductsBoughtFromStoreServlet</servlet-name>
+        <url-pattern>/productsBoughtFromStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>AddProductInDiscountToCartServlet</servlet-name>
         <url-pattern>/addProductInDiscountToCart</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StoresParticipatingServlet</servlet-name>
+        <url-pattern>/storesParticipating</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

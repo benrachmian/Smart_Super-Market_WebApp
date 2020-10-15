@@ -6,6 +6,8 @@ public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore
     private  float price;
     private float amountSoldInStore;
     private  int storeTheProductBelongsID;
+    private boolean isPartOfDiscount = false;
+
 
     public DTOProductInStore(int productSerialNumber,
                              String productName,

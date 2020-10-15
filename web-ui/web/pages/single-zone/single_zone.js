@@ -8,6 +8,10 @@ var SAVE_SHOPPING_CART = buildUrlWithContextPath("saveShoppingCart");
 var CHECK_IF_HAS_DISCOUNTS = buildUrlWithContextPath("checkForDiscounts");
 var GET_DISCOUNTS = buildUrlWithContextPath("discountsInOrder");
 var ADD_PRODUCT_IN_DISCOUNT_TO_CART = buildUrlWithContextPath("addProductInDiscountToCart");
+var GET_STORES_PARTICIPATING = buildUrlWithContextPath("storesParticipating");
+var GET_PRODUCTS_BOUGHT_FROM_STORE = buildUrlWithContextPath("productsBoughtFromStore");
+var GET_PRODUCTS_AND_DELIVERY_COST = buildUrlWithContextPath("productsAndDeliveryCost");
+var MAKE_NEW_STATIC_ORDER = buildUrlWithContextPath("makeNewStaticOrder");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -15,6 +19,13 @@ var discountsMap = new Map();
 var shoppingCartTableHtml;
 var shoppingCartSummaryHtml;
 var productsInStoreMap = new Map();
+var orderDistance;
+var orderDate;
+var totalProductsCost = 0;
+var totalDeliveryCost = 0;
+var orderType;
+
+
 
 function ProductInCart (product, amount){
     this.product = product;
@@ -266,7 +277,6 @@ function addDiscountsToDiv() {
                 });
             });
         }
-
     });}
 
 
@@ -400,44 +410,227 @@ function createDiscountsInOrderPage() {
     shoppingCartTableHtml.appendTo($("#centerPage"));
     shoppingCartSummaryHtml.appendTo($("#centerPage"));
     $(  "<div style='display: flex; justify-content: center'>" +
-        "<button class='button'> Continue </button></div>").appendTo($("#centerPage"));
+        "<button id='continueToOrderSummaryButton' class='button'> Continue </button></div>").appendTo($("#centerPage"));
     $( "#discountSelect").change(function() {
         checkIfNeedToChooseProducts($(this).val());
     });
     $( "#addDiscountItemToShoppingCartButton").click(function() {
         onAddDiscountToCart();
     });
+    $( "#continueToOrderSummaryButton").click(function() {
+        createOrderSummaryPage();
+    });
 
     addDiscountsToDiv();
 }
 
-function createOrderSummaryPage() {
+function createProductFromStoreCard(productName,productId,wayOfBuying,quantity,pricePerUnit,totalCost,isPartOfDiscount){
+    return "<div class=\"column\">" +
+        "                <div class=\"card\">" +
+        "                    <h3>" + productName + "</h3>" +
+        "                    <p>ID: " + productId + "</p>" +
+        "                    <p>Way of buying: " + wayOfBuying + "</p>" +
+        "                    <p>Quantity " + quantity + "</p>" +
+        "                    <p>Price per unit: " + pricePerUnit + "</p>" +
+        "                    <p>Total cost: " + totalCost + "</p>" +
+        "                    <p>Is part of discount: " + isPartOfDiscount + "</p>" +
+        "                </div>" +
+        "            </div>";
+}
+
+function addProductsBoughtFromStore(storeId){
+    var storeIdAjaxData = "storeId=" + storeId;
+
+    $.ajax({
+        url: GET_PRODUCTS_BOUGHT_FROM_STORE,
+        data: storeIdAjaxData,
+        error: function (e) {
+
+        },
+        success: function (productsBoughtFromStore) {
+            $.each(productsBoughtFromStore || [], function (index, productBoughtFromStore) {
+                if(productBoughtFromStore.key.isPartOfDiscount) {
+                    $(createProductFromStoreCard(
+                        productBoughtFromStore.key.originalProductInStore.productName,
+                        productBoughtFromStore.key.originalProductInStore.productSerialNumber,
+                        productBoughtFromStore.key.originalProductInStore.wayOfBuying,
+                        productBoughtFromStore.value,
+                        productBoughtFromStore.key.discountPrice,
+                        (productBoughtFromStore.key.discountPrice * productBoughtFromStore.value),
+                        "Yes"
+                    )).appendTo($(".storeAndProductsParticipatingDiv:last"));
+                }
+                else{
+                    $(createProductFromStoreCard(
+                        productBoughtFromStore.key.productName,
+                        productBoughtFromStore.key.productSerialNumber,
+                        productBoughtFromStore.key.wayOfBuying,
+                        productBoughtFromStore.value,
+                        productBoughtFromStore.key.price,
+                        (productBoughtFromStore.key.price * productBoughtFromStore.value),
+                        "No"
+                    )).appendTo($(".storeAndProductsParticipatingDiv:last"));
+                }
+            });
+        }
+    });
 
 }
 
-function continueToDiscountPageOrSummary() {
-    saveShoppingCartInSession();
+function addStoresParticipatingToOrderSummaryDiv(){
+    $.ajax({
+        url: GET_STORES_PARTICIPATING,
+        error: function (e) {
+
+        },
+        success: function (storesParticipating) {
+            $.each(storesParticipating || [], function (index, storeParticipating) {
+                var distance = calcDistance(
+                    orderToLocationX,
+                    orderToLocationY,
+                    storeParticipating.storeLocation.x,
+                    storeParticipating.storeLocation.y);
+                $("<br><div class='storeAndProductsParticipatingDiv' id='storeAndProductsParticipatingDiv'>" +
+                    "<p id='sub-title2'>" + storeParticipating.storeName + "</p>" +
+                    "<div class='centerDiv'>" +
+                    "<ul class=\"notATable\">\n" +
+                    "   <li><label>Store ID</label><div>" + storeParticipating.storeSerialNumber + "</div></li>\n" +
+                    "   <li><label>PPK</label><div>" + storeParticipating.ppk + "</div></li>\n" +
+                    "   <li><label>Order distance</label><div>" + distance.toFixed(2) + "</div></li>\n" +
+                    "   <li><label>Delivery cost</label><div>" + (distance * storeParticipating.ppk).toFixed(2) + "</div></li>\n" +
+                    "</ul>" +
+                    "</div>" +
+                    "<p id='sub-title'>Products bought from store:</p>" +
+                    "</div>"
+                ).appendTo($("#storesAndProductsParticipatingDiv"));
+                addProductsBoughtFromStore(storeParticipating.storeSerialNumber);
+            });
+        }
+    });
+}
+
+function makeNewStaticOrderAjax(deliveryCost){
+    var parameters = chosenStoreIdForAjax;
+    parameters = parameters.concat("&orderDate=" + orderDate + "&deliveryCost=" + deliveryCost);
 
     $.ajax({
-        method: "GET",
-        url: CHECK_IF_HAS_DISCOUNTS,
-        data: chosenStoreIdForAjax,
+        method: "post",
+        url: MAKE_NEW_STATIC_ORDER,
+        data: parameters,
         error: function(error) {
 
         },
-        success: function (hasDiscount) {
-            if(hasDiscount === "true"){
-                createDiscountsInOrderPage();
+        success: function () {
+            var modal = document.getElementById("myModal");
+            var span = document.getElementsByClassName("close")[0];
+            modal.style.display = "block";
+            span.onclick = function() {
+                modal.style.display = "none";
+                window.location.href = "single_zone.html";
             }
-            else{
-                createOrderSummaryPage();
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    window.location.href = "single_zone.html";
+                }
             }
-
         }
     })
 }
 
+function makeNewOrder(totalDeliveryCost){
+    if(orderType ==="Static Order"){
+        makeNewStaticOrderAjax(totalDeliveryCost);
+    }
+    else{
+        makeNewDynamicOrderAjax();
+    }
+}
+
+function createOrderSummaryPage() {
+    $.ajax({
+        method: "GET",
+        url: GET_PRODUCTS_AND_DELIVERY_COST,
+        data: "orderToLocationX=" + orderToLocationX + "&orderToLocationY=" + orderToLocationY,
+        error: function (error) {
+
+        },
+        success: function (totalProductsAndDeliveryCostAjaxResponse) {
+            $("#centerPage").empty();
+            $("#welcomeTitle").empty().append( $("<h1>Order Summary </h1>"));
+            $(  "<br><p id=\'sub-title\'> Stores and products participating: </p>" +
+                "<div class='w3-container w3-border w3-round-xlarge' id='storesAndProductsParticipatingDiv'>" +
+
+                "</div>" +
+                "<div class='centerDiv'>" +
+                "<ul class=\"notATable\">\n" +
+                "   <li><label>Order date</label><div>" + orderDate + "</div></li>\n" +
+                "   <li><label>Total products cost</label><div>" + totalProductsAndDeliveryCostAjaxResponse.totalProductsCost + "</div></li>\n" +
+                "   <li><label>Total delivery cost</label><div>" + totalProductsAndDeliveryCostAjaxResponse.totalDeliveryCost.toFixed(2) + "</div></li>\n" +
+                "   <li><label>Total order cost</label><div>" + (totalProductsAndDeliveryCostAjaxResponse.totalProductsCost + totalProductsAndDeliveryCostAjaxResponse.totalDeliveryCost).toFixed(2) + "</div></li>\n" +
+                "</ul>" +
+                "</div>" +
+                "<div style='display: flex; justify-content: center'>"+
+                "        <button id='confirmOrderButton' class='button' > <span>Confirm Order </span> </button>" +
+                "        </div>" +
+                "<!-- The Modal -->\n" +
+                "<div id=\"myModal\" class=\"modal\">\n" +
+                "\n" +
+                "  <!-- Modal content -->\n" +
+                "  <div class=\"modal-content\">\n" +
+                "    <div class=\"modal-header\">\n" +
+                "      <span class=\"close\">&times;</span>\n" +
+                "      <h2>Success!</h2>\n" +
+                "    </div>\n" +
+                "    <div class=\"modal-body\">\n" +
+                "      <p>The order was made successfully!</p>\n" +
+                "    </div>\n" +
+                "    <div class=\"modal-footer\">\n" +
+                "      <h3>See you next time!</h3>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "\n" +
+                "</div>"
+            ).appendTo($("#centerPage"));
+
+            addStoresParticipatingToOrderSummaryDiv();
+            $( "#confirmOrderButton" ).click(function() {
+                makeNewOrder(totalProductsAndDeliveryCostAjaxResponse.totalDeliveryCost);
+            });
+        }
+    })
+}
+
+function continueToDiscountPageOrSummary() {
+    if(shoppingCart.length == 0){
+        errorMsg($("#centerPage"),"You can't continue with an empty shopping cart!");
+    }
+    else {
+        window.scrollTo(0, 0);
+        $( "#errorDiv" ).remove();
+        saveShoppingCartInSession();
+
+        $.ajax({
+            method: "GET",
+            url: CHECK_IF_HAS_DISCOUNTS,
+            data: chosenStoreIdForAjax,
+            error: function (error) {
+
+            },
+            success: function (hasDiscount) {
+                if (hasDiscount === "true") {
+                    createDiscountsInOrderPage();
+                } else {
+                    createOrderSummaryPage();
+                }
+
+            }
+        })
+    }
+}
+
 function buildAddProductsToCartStaticOrderPage(deliveryCost) {
+    shoppingCart = [];
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Make Static Order </h1>"));
     $("<br><p id=\"sub-title\"> Products In Store: </p>").appendTo($("#centerPage"));
@@ -606,7 +799,6 @@ function chooseProductsForStaticOrder(tableRow,deliveryCost) {
 
 function addStoresTable() {
     addStoresTableContainer();
-    var distance;
 
     $.ajax({
         url: GET_STORES,
@@ -615,13 +807,13 @@ function addStoresTable() {
         },
         success: function(storesInZone) {
             $.each(storesInZone || [], function(index, store) {
-                distance = calcDistance(orderToLocationX,orderToLocationY,store.storeLocation.x,store.storeLocation.y);
-                $("<tr onclick=\"chooseProductsForStaticOrder(this," + (distance * store.ppk) + ")\">" +
+                orderDistance = calcDistance(orderToLocationX,orderToLocationY,store.storeLocation.x,store.storeLocation.y);
+                $("<tr onclick=\"chooseProductsForStaticOrder(this," + (orderDistance * store.ppk) + ")\">" +
                     "<td>" + store.storeName + "</td>" +
                     "<td>" + store.storeSerialNumber + "</td>" +
                     "<td> X: " + store.storeLocation.x + " Y: " + store.storeLocation.y + "</td>" +
                     "<td>" + store.ppk + "</td>" +
-                    "<td>" + (distance * store.ppk).toFixed(2) + "</td>" +
+                    "<td>" + (orderDistance * store.ppk).toFixed(2) + "</td>" +
                     "</tr>").appendTo($("#storesTable"));
             });
         }
@@ -631,6 +823,7 @@ function addStoresTable() {
 function overloadOrderFirstDetailsFormSubmit() {
     $("#orderFirstDetails").submit(function() {
 
+        orderDate = $("#orderDate")[0].value;
         var parameters = $(this).serialize();
         var orderTypes = document.getElementById("orderTypeSelect");
         var orderTypeSelected = orderTypes.options[orderTypes.selectedIndex].value;
@@ -639,7 +832,6 @@ function overloadOrderFirstDetailsFormSubmit() {
         $.ajax({
             data: parameters,
             url: SAVE_ORDER_DATA_TYPE_LOCATION,
-            timeout: 4000,
             error: function(e) {
                 if ( !$( "#errorDiv" ).length ) {
                     $("<div id='errorDiv' style='display: none' class=\"isa_error\" >"
@@ -658,6 +850,7 @@ function overloadOrderFirstDetailsFormSubmit() {
                 orderToLocationX = $("#locationX").val();
                 orderToLocationY = $("#locationY").val();
                 if(r==="Static Order"){
+                    orderType = r;
                     addStoresTable();
                 }
             }
@@ -674,7 +867,7 @@ function clickOnMakeOrderButton() {
         "<ul>\n" +
         "<li>\n" +
         "    <label for=\"date\">Order Date</label>\n" +
-        "    <input type=\"date\" name=\"date\" maxlength=\"100\">\n" +
+        "    <input id='orderDate' type=\"date\" name=\"date\" maxlength=\"100\">\n" +
         "    <span>Insert the order date here</span>\n" +
         "</li>\n" +
         "<li>\n" +

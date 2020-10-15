@@ -334,14 +334,15 @@ public class SDMSystemInZone {
         return dtoProductInStore;
     }
 
-    public void makeNewStaticOrder(DTOStore chosenStore,
+    public void makeNewStaticOrder(int chosenStoreId,
                                    LocalDate orderDate,
                                    float deliveryCost,
-                                   Collection<Pair<IDTOProductInStore,Float>> dtoProductsInOrder,
-                                   DTOCustomer whoOrdered) {
+                                   Collection<Pair<IDTOProductInStore, Float>> dtoProductsInOrder,
+                                   String whoOrdered,
+                                   SDMSystem sdmSystemManager) {
         Collection<Pair<IProductInStore,Float>> productsInOrder = createProductsInOrderCollectionFromDTO(dtoProductsInOrder);
-        Store storeTheProductBelong = storesInSystem.getStoreInSystem(chosenStore.getStoreSerialNumber());
-        Customer customerOrdered = SDMSystem.getInstance().getCustomer(whoOrdered.getUsername());
+        Store storeTheProductBelong = storesInSystem.getStoreInSystem(chosenStoreId);
+        Customer customerOrdered = sdmSystemManager.getCustomer(whoOrdered);
         Order newOrder = createdNewStaticOrderObjectAndUpdateAmountSoldInStore(orderDate,deliveryCost,productsInOrder,storeTheProductBelong, customerOrdered,dtoProductsInOrder);
         updateAmountSoldInSystemForEveryProductInOrder(productsInOrder);
         storeTheProductBelong.addOrder(newOrder,deliveryCost);

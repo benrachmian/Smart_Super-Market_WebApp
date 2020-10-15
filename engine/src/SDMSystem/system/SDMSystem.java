@@ -11,6 +11,7 @@ import SDMSystemDTO.product.DTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
 import SDMSystemDTO.system.SingleZoneEntry;
 import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
+import SDMSystemDTO.user.customer.DTOCustomer;
 import xml.XMLHelper;
 import xml.generated.SuperDuperMarketDescriptor;
 

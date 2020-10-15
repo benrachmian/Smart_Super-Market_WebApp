@@ -4,6 +4,7 @@ public class DTOProductInDiscount implements IDTOProductInStore{
 
     private float discountPrice;
     private DTOProductInStore originalProductInStore;
+    private boolean isPartOfDiscount = true;
 
     public DTOProductInDiscount(DTOProductInStore originalProductInStore,float discountPrice) {
         this.originalProductInStore = originalProductInStore;
