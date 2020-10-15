@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class SaveShoppingCartServlet extends HttpServlet {
+public class SaveShoppingCartForStaticOrderServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

@@ -12,6 +12,8 @@ var GET_STORES_PARTICIPATING = buildUrlWithContextPath("storesParticipating");
 var GET_PRODUCTS_BOUGHT_FROM_STORE = buildUrlWithContextPath("productsBoughtFromStore");
 var GET_PRODUCTS_AND_DELIVERY_COST = buildUrlWithContextPath("productsAndDeliveryCost");
 var MAKE_NEW_STATIC_ORDER = buildUrlWithContextPath("makeNewStaticOrder");
+var GET_PRODCUTS_IN_SYSTEM = buildUrlWithContextPath("productsInSystem");
+var FIND_CHEAPEST_BASKET = buildUrlWithContextPath("findCheapestBasket");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -24,7 +26,8 @@ var orderDate;
 var totalProductsCost = 0;
 var totalDeliveryCost = 0;
 var orderType;
-
+var shoppingCart = [];
+var productTry = [];
 
 
 function ProductInCart (product, amount){
@@ -32,8 +35,7 @@ function ProductInCart (product, amount){
     this.amount = amount;
 }
 
-var shoppingCart = [];
-var productTry = [];
+
 
 
 function setTitle() {
@@ -211,8 +213,6 @@ function calcDistance(orderToLocationX, orderToLocationY, storeX, storeY) {
 
 
 function saveShoppingCartInSession() {
-
-
     $.ajax({
         method: "post",
         url: SAVE_SHOPPING_CART,
@@ -602,14 +602,6 @@ function createOrderSummaryPage() {
 }
 
 function continueToDiscountPageOrSummary() {
-    if(shoppingCart.length == 0){
-        errorMsg($("#centerPage"),"You can't continue with an empty shopping cart!");
-    }
-    else {
-        window.scrollTo(0, 0);
-        $( "#errorDiv" ).remove();
-        saveShoppingCartInSession();
-
         $.ajax({
             method: "GET",
             url: CHECK_IF_HAS_DISCOUNTS,
@@ -623,10 +615,8 @@ function continueToDiscountPageOrSummary() {
                 } else {
                     createOrderSummaryPage();
                 }
-
             }
         })
-    }
 }
 
 function buildAddProductsToCartStaticOrderPage(deliveryCost) {
@@ -679,7 +669,15 @@ function buildAddProductsToCartStaticOrderPage(deliveryCost) {
     $( "#continueToDiscountPageOrSummaryButton" ).click(function() {
         shoppingCartTableHtml = $("#shopping-cart-table");
         shoppingCartSummaryHtml = $("#staticOrderSummary");
-        continueToDiscountPageOrSummary();
+        if(shoppingCart.length == 0){
+            errorMsg($("#centerPage"),"You can't continue with an empty shopping cart!");
+        }
+        else{
+            window.scrollTo(0, 0);
+            $( "#errorDiv" ).remove();
+            saveShoppingCartInSession();
+            continueToDiscountPageOrSummary();
+        }
     });
 
 }
@@ -732,9 +730,7 @@ function addProductToCartTable(productToAdd,amount) {
         "</tr>").appendTo($("#shoppingCartTable"));
 }
 
-function addProductToCart(productToAdd,rowIndex) {
-    var amount = $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value;
-    var productWayOfBuying = $("#products-in-store-table")[0].rows[rowIndex+1].cells[2].innerText;
+function addProductToCart(productToAdd,rowIndex,amount,productWayOfBuying,isStaticOrder) {
     if(amount ===""){
         $( "#successDiv" ).remove();
         errorMsg($("#product-table-div"),"You must enter an amount!");
@@ -751,10 +747,12 @@ function addProductToCart(productToAdd,rowIndex) {
     else {
         $( "#errorDiv" ).remove();
         addProductToCartTable(productToAdd,amount);
-        updateProductsCostAndTotalCost(productToAdd.price, amount);
-        //init amount and cost:
-        $("#products-in-store-table")[0].rows[rowIndex+1].cells[4].children[0].value = "";
-        $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = "";
+        if(isStaticOrder) {
+            updateProductsCostAndTotalCost(productToAdd.price, amount);
+            //init amount and cost:
+            $("#products-in-store-table")[0].rows[rowIndex + 1].cells[4].children[0].value = "";
+            $("#products-in-store-table")[0].rows[rowIndex + 1].cells[6].innerText = "";
+        }
         successMsg($("#product-table-div"),"The product was added to the cart successfully!");
         var productInCart = new ProductInCart(productToAdd,amount);
         shoppingCart.push(productInCart);
@@ -781,7 +779,9 @@ function addProductsInStoreToTable(storeIDForAjax) {
                     "<td></td>" +
                     "</tr>").appendTo($("#productsInStoreTable"));
                 $( ".addToCartButton:last" ).click(function() {
-                    addProductToCart(product,index);
+                    var amount = $("#products-in-store-table")[0].rows[index+1].cells[4].children[0].value;
+                    var productWayOfBuying = $("#products-in-store-table")[0].rows[index+1].cells[2].innerText;
+                    addProductToCart(product,index,amount,productWayOfBuying,true);
                 });
                 productsInStoreMap.set(product.productSerialNumber,product);
             });
@@ -820,6 +820,124 @@ function addStoresTable() {
     })
 }
 
+function addProductsInSystemToTable(){
+    $.ajax({
+        method: "post",
+        url: GET_PRODCUTS_IN_SYSTEM,
+        error: function(error) {
+
+        },
+        success: function (productsInSystem) {
+            $.each(productsInSystem || [], function(index, product) {
+                $("<tr>" +
+                    "<td>" + product.productName + "</td>" +
+                    "<td>" + product.productSerialNumber + "</td>" +
+                    "<td>" + product.wayOfBuying + "</td>" +
+                    "<td> <input id='amountInTableBox' type=\"number\" id=\"amount\" min='1'' name=\"amount\"></td>" +
+                    "<td><button class='button addToCartButton'> Add To Cart </button></td>" +
+                    "</tr>").appendTo($("#productsInSystemTable"));
+                $( ".addToCartButton:last" ).click(function() {
+                    var amount = $("#products-in-system-table")[0].rows[index+1].cells[3].children[0].value;
+                    var productWayOfBuying = $("#products-in-system-table")[0].rows[index+1].cells[2].innerText;
+                    addProductToCart(product,index,amount,productWayOfBuying,false);
+                });
+                //productsInStoreMap.set(product.productSerialNumber,product);
+            });
+        }
+    })
+}
+
+function createStoresParticipatingInDynamicOrderPage(storesParticipating){
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Stores Participating </h1>"));
+    $("<br>").appendTo($("#centerPage"));
+    $.each(storesParticipating || [], function (index, store) {
+        var distance = calcDistance(orderToLocationX,orderToLocationY,store.store.storeLocation.x,store.store.storeLocation.y);
+        var deliveryCost = (store.store.ppk * distance);
+        $("<div class=\"column\">" +
+        "                <div class=\"card\">" +
+        "                    <h3>" + store.store.storeName + "</h3>" +
+        "                    <p>Location: X: " + store.store.storeLocation.x + " Y: " + store.store.storeLocation.y +  "</p>" +
+        "                    <p>Order distance: " + distance.toFixed(2) + "</p>" +
+        "                    <p>PPK: " + store.store.ppk + "</p>" +
+        "                    <p>Delivery cost: " + deliveryCost.toFixed(2) + "</p>" +
+        "                    <p>Number of products kinds bought: " + store.numProductsKind + "</p>" +
+        "                    <p>Total products cost: " + store.productsCost + "</p>" +
+        "                    <p>Total cost: " + (store.productsCost + deliveryCost).toFixed(2) +  "</p>" +
+        "                </div>" +
+        "            </div>").appendTo($("#centerPage"));
+    });
+}
+
+function saveShoppingCartInSessionAndCreateCheapestBasket(){
+    $.ajax({
+        method: "post",
+        data: JSON.stringify(shoppingCart),
+        url: FIND_CHEAPEST_BASKET,
+        error: function(error) {
+
+        },
+        success: function (storesParticipating) {
+            createStoresParticipatingInDynamicOrderPage(storesParticipating);
+        }
+    })
+}
+
+function createDynamicOrderPage(){
+    shoppingCart = [];
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Make Dynamic Order </h1>"));
+    $("<br><p id=\"sub-title\"> Choose products to buy: </p>").appendTo($("#centerPage"));
+    $("<div id='product-table-div' class=\"table-div\">\n" +
+        "<table id='products-in-system-table' class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Product Name</th>\n" +
+        "        <th>ID</th>\n" +
+        "        <th>Way Of Buying</th>\n" +
+        "        <th>Amount</th>\n" +
+        "        <th></th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"productsInSystemTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>" +
+        "<br><p id=\"sub-title\"> Shopping Cart: </p>" +
+        "<table id='shopping-cart-table' class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Product Name</th>\n" +
+        "        <th>ID</th>\n" +
+        "        <th>Way Of Buying</th>\n" +
+        "        <th>Amount</th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"shoppingCartTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>" +
+        "<div style='display: flex; justify-content: center'>" +
+        "<button id='continueToDiscountPageOrSummaryButton' class='button' > <span>Continue </span> </button>" +
+        "</div>"
+    ).appendTo($("#centerPage"));
+    $( "#continueToDiscountPageOrSummaryButton" ).click(function() {
+        shoppingCartTableHtml = $("#shopping-cart-table");
+        shoppingCartSummaryHtml = $("#staticOrderSummary");
+        if(shoppingCart.length == 0){
+            errorMsg($("#centerPage"),"You can't continue with an empty shopping cart!");
+        }
+        else{
+            window.scrollTo(0, 0);
+            $( "#errorDiv" ).remove();
+            saveShoppingCartInSessionAndCreateCheapestBasket();
+        }
+    });
+    addProductsInSystemToTable();
+}
+
 function overloadOrderFirstDetailsFormSubmit() {
     $("#orderFirstDetails").submit(function() {
 
@@ -852,6 +970,9 @@ function overloadOrderFirstDetailsFormSubmit() {
                 if(r==="Static Order"){
                     orderType = r;
                     addStoresTable();
+                }
+                else{
+                    createDynamicOrderPage();
                 }
             }
         });

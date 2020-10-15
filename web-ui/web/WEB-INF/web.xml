@@ -66,7 +66,7 @@
 
     <servlet>
         <servlet-name>SaveShoppingCartServlet</servlet-name>
-        <servlet-class>sdm.servlets.SaveShoppingCartServlet</servlet-class>
+        <servlet-class>sdm.servlets.SaveShoppingCartForStaticOrderServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -104,16 +104,36 @@
         <servlet-class>sdm.servlets.MakeNewStaticOrderServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>GetProductsInSystemServlet</servlet-name>
+        <servlet-class>sdm.servlets.GetProductsInSystemServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FindCheapestBasketServlet</servlet-name>
+        <servlet-class>sdm.servlets.FindCheapestBasketServlet</servlet-class>
+    </servlet>
 
 
-<!--    <servlet>-->
+
+
+    <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
 <!--    </servlet>-->
+    <servlet-mapping>
+        <servlet-name>FindCheapestBasketServlet</servlet-name>
+        <url-pattern>/findCheapestBasket</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>MakeNewStaticOrderServlet</servlet-name>
         <url-pattern>/makeNewStaticOrder</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetProductsInSystemServlet</servlet-name>
+        <url-pattern>/productsInSystem</url-pattern>
     </servlet-mapping>
 
 
