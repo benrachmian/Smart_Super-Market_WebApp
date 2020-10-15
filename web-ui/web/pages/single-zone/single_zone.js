@@ -12,6 +12,7 @@ var GET_STORES_PARTICIPATING = buildUrlWithContextPath("storesParticipating");
 var GET_PRODUCTS_BOUGHT_FROM_STORE = buildUrlWithContextPath("productsBoughtFromStore");
 var GET_PRODUCTS_AND_DELIVERY_COST = buildUrlWithContextPath("productsAndDeliveryCost");
 var MAKE_NEW_STATIC_ORDER = buildUrlWithContextPath("makeNewStaticOrder");
+var MAKE_NEW_DYNAMIC_ORDER = buildUrlWithContextPath("makeNewDynamicOrder");
 var GET_PRODCUTS_IN_SYSTEM = buildUrlWithContextPath("productsInSystem");
 var FIND_CHEAPEST_BASKET = buildUrlWithContextPath("findCheapestBasket");
 var orderToLocationX;
@@ -20,7 +21,7 @@ var chosenStoreIdForAjax;
 var discountsMap = new Map();
 var shoppingCartTableHtml;
 var shoppingCartSummaryHtml;
-var productsInStoreMap = new Map();
+var productsInOrderMap = new Map();
 var orderDistance;
 var orderDate;
 var totalProductsCost = 0;
@@ -312,7 +313,7 @@ function ajaxAddProductInDiscountToCart(discountName, productInDiscountSerialNum
 }
 
 function addDiscountProductToCart(selectedProductAsOfferInDiscount,discountName){
-    var productInStore = productsInStoreMap.get(selectedProductAsOfferInDiscount.productSerialNumber);
+    var productInStore = productsInOrderMap.get(selectedProductAsOfferInDiscount.productSerialNumber);
     productInStore.productName = selectedProductAsOfferInDiscount.productName + " (Discount)";
     addProductToCartTable(productInStore,selectedProductAsOfferInDiscount.productQuantity);
     ajaxAddProductInDiscountToCart(discountName,productInStore.productSerialNumber,selectedProductAsOfferInDiscount.productQuantity);
@@ -458,7 +459,7 @@ function addProductsBoughtFromStore(storeId){
                         productBoughtFromStore.key.discountPrice,
                         (productBoughtFromStore.key.discountPrice * productBoughtFromStore.value),
                         "Yes"
-                    )).appendTo($(".storeAndProductsParticipatingDiv:last"));
+                    )).appendTo($(".storeAndProductsParticipatingDiv").filter('[data-storeId="' + storeId + '"]'));
                 }
                 else{
                     $(createProductFromStoreCard(
@@ -469,7 +470,7 @@ function addProductsBoughtFromStore(storeId){
                         productBoughtFromStore.key.price,
                         (productBoughtFromStore.key.price * productBoughtFromStore.value),
                         "No"
-                    )).appendTo($(".storeAndProductsParticipatingDiv:last"));
+                    )).appendTo($(".storeAndProductsParticipatingDiv").filter('[data-storeId="' + storeId + '"]'));
                 }
             });
         }
@@ -490,7 +491,7 @@ function addStoresParticipatingToOrderSummaryDiv(){
                     orderToLocationY,
                     storeParticipating.storeLocation.x,
                     storeParticipating.storeLocation.y);
-                $("<br><div class='storeAndProductsParticipatingDiv' id='storeAndProductsParticipatingDiv'>" +
+                $("<br><div class='storeAndProductsParticipatingDiv' data-storeId='" + storeParticipating.storeSerialNumber + "' id='storeAndProductsParticipatingDiv'>" +
                     "<p id='sub-title2'>" + storeParticipating.storeName + "</p>" +
                     "<div class='centerDiv'>" +
                     "<ul class=\"notATable\">\n" +
@@ -516,6 +517,35 @@ function makeNewStaticOrderAjax(deliveryCost){
     $.ajax({
         method: "post",
         url: MAKE_NEW_STATIC_ORDER,
+        data: parameters,
+        error: function(error) {
+
+        },
+        success: function () {
+            var modal = document.getElementById("myModal");
+            var span = document.getElementsByClassName("close")[0];
+            modal.style.display = "block";
+            span.onclick = function() {
+                modal.style.display = "none";
+                window.location.href = "single_zone.html";
+            }
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    window.location.href = "single_zone.html";
+                }
+            }
+        }
+    })
+}
+
+function makeNewDynamicOrderAjax(){
+    var parameters = "orderDate=" + orderDate;
+    parameters = parameters.concat("&orderToX=" + orderToLocationX + "&orderToY=" + orderToLocationY);
+
+    $.ajax({
+        method: "post",
+        url: MAKE_NEW_DYNAMIC_ORDER,
         data: parameters,
         error: function(error) {
 
@@ -783,7 +813,7 @@ function addProductsInStoreToTable(storeIDForAjax) {
                     var productWayOfBuying = $("#products-in-store-table")[0].rows[index+1].cells[2].innerText;
                     addProductToCart(product,index,amount,productWayOfBuying,true);
                 });
-                productsInStoreMap.set(product.productSerialNumber,product);
+                productsInOrderMap.set(product.productSerialNumber,product);
             });
         }
     })
@@ -841,31 +871,39 @@ function addProductsInSystemToTable(){
                     var productWayOfBuying = $("#products-in-system-table")[0].rows[index+1].cells[2].innerText;
                     addProductToCart(product,index,amount,productWayOfBuying,false);
                 });
-                //productsInStoreMap.set(product.productSerialNumber,product);
+                productsInOrderMap.set(product.productSerialNumber,product);
             });
         }
     })
 }
 
-function createStoresParticipatingInDynamicOrderPage(storesParticipating){
+function createStoresParticipatingInDynamicOrderPage(storesParticipating) {
     $("#centerPage").empty();
-    $("#welcomeTitle").empty().append( $("<h1>Stores Participating </h1>"));
-    $("<br>").appendTo($("#centerPage"));
+    $("#welcomeTitle").empty().append($("<h1>Stores Participating </h1>"));
+    $("<br><div class='storeParticipatingDiv row'></div>").appendTo($("#centerPage"));
     $.each(storesParticipating || [], function (index, store) {
-        var distance = calcDistance(orderToLocationX,orderToLocationY,store.store.storeLocation.x,store.store.storeLocation.y);
+        var distance = calcDistance(orderToLocationX, orderToLocationY, store.store.storeLocation.x, store.store.storeLocation.y);
         var deliveryCost = (store.store.ppk * distance);
         $("<div class=\"column\">" +
-        "                <div class=\"card\">" +
-        "                    <h3>" + store.store.storeName + "</h3>" +
-        "                    <p>Location: X: " + store.store.storeLocation.x + " Y: " + store.store.storeLocation.y +  "</p>" +
-        "                    <p>Order distance: " + distance.toFixed(2) + "</p>" +
-        "                    <p>PPK: " + store.store.ppk + "</p>" +
-        "                    <p>Delivery cost: " + deliveryCost.toFixed(2) + "</p>" +
-        "                    <p>Number of products kinds bought: " + store.numProductsKind + "</p>" +
-        "                    <p>Total products cost: " + store.productsCost + "</p>" +
-        "                    <p>Total cost: " + (store.productsCost + deliveryCost).toFixed(2) +  "</p>" +
-        "                </div>" +
-        "            </div>").appendTo($("#centerPage"));
+            "                <div class=\"card\">" +
+            "                    <h3>" + store.store.storeName + "</h3>" +
+            "                    <p>Location: X: " + store.store.storeLocation.x + " Y: " + store.store.storeLocation.y + "</p>" +
+            "                    <p>Order distance: " + distance.toFixed(2) + "</p>" +
+            "                    <p>PPK: " + store.store.ppk + "</p>" +
+            "                    <p>Delivery cost: " + deliveryCost.toFixed(2) + "</p>" +
+            "                    <p>Number of products kinds bought: " + store.numProductsKind + "</p>" +
+            "                    <p>Total products cost: " + store.productsCost + "</p>" +
+            "                    <p>Total cost: " + (store.productsCost + deliveryCost).toFixed(2) + "</p>" +
+            "                </div>" +
+            "            </div>").appendTo($(".storeParticipatingDiv"));
+    });
+    //$("</div>").appendTo($("#centerPage"));
+
+    $("<div style='display: flex; justify-content: center'>" +
+        "<button id='continueToDiscountPageOrSummaryButton' class='button' > <span>Continue </span> </button>" +
+        "</div>").appendTo($("#centerPage"));
+    $("#continueToDiscountPageOrSummaryButton").click(function () {
+        continueToDiscountPageOrSummary();
     });
 }
 

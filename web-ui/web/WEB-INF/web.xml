@@ -114,6 +114,11 @@
         <servlet-class>sdm.servlets.FindCheapestBasketServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>MakeNewDynamicOrderServlet</servlet-name>
+        <servlet-class>sdm.servlets.MakeNewDynamicOrderServlet</servlet-class>
+    </servlet>
+
 
 
 
@@ -124,6 +129,11 @@
     <servlet-mapping>
         <servlet-name>FindCheapestBasketServlet</servlet-name>
         <url-pattern>/findCheapestBasket</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MakeNewDynamicOrderServlet</servlet-name>
+        <url-pattern>/makeNewDynamicOrder</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

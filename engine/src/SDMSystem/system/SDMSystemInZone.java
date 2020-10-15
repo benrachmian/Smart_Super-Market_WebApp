@@ -353,10 +353,11 @@ public class SDMSystemInZone {
 
     public void makeNewDynamicOrder(LocalDate orderDate,
                                     Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> cheapestBasketDTO,
-                                    DTOCustomer whoOrdered,
-                                    Point orderToLocation) {
+                                    String whoOrdered,
+                                    Point orderToLocation,
+                                    SDMSystem sdmSystemManager) {
         Collection<StaticOrder> subOrders = new LinkedList<>();
-        Customer customerMakingTheOrder = SDMSystem.getInstance().getCustomer(whoOrdered.getUsername());
+        Customer customerMakingTheOrder = sdmSystemManager.getCustomer(whoOrdered);
         float totalDeliveryCost;
         //int[0] = amount of products
         //int[1] = amount of products kinds
