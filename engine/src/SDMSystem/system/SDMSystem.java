@@ -87,16 +87,11 @@ public class SDMSystem {
         return systemsInZoneMap.size();
     }
 
-    public List<SingleZoneEntry> getZonesEntries(int fromIndex) {
+    public List<SingleZoneEntry> getZonesEntries() {
         List<SingleZoneEntry> res = new ArrayList<>();
-        if (fromIndex < 0 || fromIndex > systemsInList.size()) {
-            fromIndex = 0;
-        }
-        List<SDMSystemInZone> newZones = systemsInList.subList(fromIndex,systemsInList.size());
-        for(SDMSystemInZone zone : newZones){
+        for(SDMSystemInZone zone : systemsInList){
             res.add(zone.createSingleZoneEntry());
         }
-
         return res;
     }
 

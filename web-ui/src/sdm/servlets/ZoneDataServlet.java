@@ -15,12 +15,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class NewZoneDataServlet extends HttpServlet {
+public class ZoneDataServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-        int numOfZonesInTable = ServletUtils.getIntParameter(request, Constants.NUM_OF_ZONES);
+        //int numOfZonesInTable = ServletUtils.getIntParameter(request, Constants.NUM_OF_ZONES);
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/index.html");
@@ -30,17 +30,13 @@ public class NewZoneDataServlet extends HttpServlet {
         verify chat version given from the user is a valid number. if not it is considered an error and nothing is returned back
         Obviously the UI should be ready for such a case and handle it properly
          */
-        //int chatVersion = ServletUtils.getIntParameter(request, Constants.ZONES_TABLE_VERSION_PARAMETER);
-        if (numOfZonesInTable == Constants.INT_PARAMETER_ERROR) {
-            return;
-        }
+//        if (numOfZonesInTable == Constants.INT_PARAMETER_ERROR) {
+//            return;
+//        }
 
-//        if(sdmSystemManager.getNumOfZones() > numOfZonesInTable){
-            //SessionUtils.updateNumOfZones(getServletContext(),sdmSystemManager.getNumOfZones() - numOfZonesInTable);
-            //request.getSession(true).setAttribute(Constants.NUM_OF_ZONES,sdmSystemManager.getNumOfZones());
             List<SingleZoneEntry> zonesEntries;
             synchronized (getServletContext()) {
-                zonesEntries = sdmSystemManager.getZonesEntries(numOfZonesInTable);
+                zonesEntries = sdmSystemManager.getZonesEntries();
             }
             EntriesAndNumOfZones entriesAndNumOfZones = new EntriesAndNumOfZones(zonesEntries,sdmSystemManager.getNumOfZones());
 

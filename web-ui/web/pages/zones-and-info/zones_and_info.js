@@ -3,7 +3,7 @@ var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
 var UPLOAD_FILE_URL = buildUrlWithContextPath("uploadfile");
-var GET_NEW_ZONE_DATA_TO_TABLE = buildUrlWithContextPath("newzonedata");
+var GET_ZONE_DATA_TO_TABLE = buildUrlWithContextPath("zoneData");
 var CHARGE_MONEY_URL = buildUrlWithContextPath("chargeMoney");
 var GET_ACCOUNT_MOVEMENTS_URL = buildUrlWithContextPath("accountMovements");
 var SINGLE_ZONE_URL = buildUrlWithContextPath("singleZone");
@@ -62,61 +62,12 @@ function appendNewZoneToZonesTable(index, zoneEntry) {
         "</tr>").appendTo($("#zonesTable"));
 }
 
-function appendNewZonesToZonesTable(newZones) {
+function addZonesToTable(newZones) {
+    $("#zonesTable").empty();
     $.each(newZones || [], appendNewZoneToZonesTable);
 }
 
-function ajaxNewZoneToTable() {
-    $.ajax({
-        url: GET_NEW_ZONE_DATA_TO_TABLE,
-        data: "numOfZonesInTable=" + numOfZonesInTable,
-        dataType: "json",
-        error: function(error) {
-            triggerAjaxNewZoneToTable();
-        },
-        success: function (data) {
-            /*
-            data will arrive in the next form:
-            {
-               "zones": [
-                   {
-                       "zoneOwner":"[zoneOwnerUserName]",
-                       "zone":"darom",
-                       "kindsOfProducts":10,
-                       "numberOfStores":8,
-                       "numberOfOrders":4,
-                       "averageOrderCost ":55.4
-                   },
-                   {
-                       "zoneOwner":"[zoneOwnerUserName]",
-                       "zone":"gush dan",
-                       "kindsOfProducts":4,
-                       "numberOfStores":2,
-                       "numberOfOrders":3,
-                       "averageOrderCost ":65.4
-                   }
-               ],
-            }
-            */
-            if (data.numOfZones !== numOfZonesInTable) {
-                numOfZonesInTable = data.numOfZones;
-                appendNewZonesToZonesTable(data.zonesEntries);
-            }
-                triggerAjaxNewZoneToTable();
-        }
-    })
 
-}
-
-// function showErrorMsg(error) {
-//     //$(".actionStatusContainer").css("display", "block");
-//     $(".isa_error").css("display", "block");
-//     $(".isa_success").css("display", "none");
-//     $("#error").empty();
-//     $("#error").append(error.responseText);
-//     $("#error").append("bbbb");
-//     $("cccc").appendTo( $("#error"));
-// }
 
 function overloadFileUploadWithAjax() {
 
@@ -147,7 +98,7 @@ function overloadFileUploadWithAjax() {
                 $(".isa_error").css("display", "none");
                 // $("#success").empty();
                 // $("#success").append("The file was uploaded successfully!");
-                ajaxNewZoneToTable();
+                ajaxZoneTable();
             }
         });
         // return value of the submit operation
@@ -247,8 +198,43 @@ function ajaxButtonsByRole() {
     })
 }
 
-function triggerAjaxNewZoneToTable() {
-    setTimeout(ajaxNewZoneToTable, refreshRate);
+function ajaxZoneTable() {
+    $.ajax({
+        url: GET_ZONE_DATA_TO_TABLE,
+        //data: "numOfZonesInTable=" + numOfZonesInTable,
+        //dataType: "json",
+        error: function(error) {
+        },
+        success: function (data) {
+            /*
+            data will arrive in the next form:
+            {
+               "zones": [
+                   {
+                       "zoneOwner":"[zoneOwnerUserName]",
+                       "zone":"darom",
+                       "kindsOfProducts":10,
+                       "numberOfStores":8,
+                       "numberOfOrders":4,
+                       "averageOrderCost ":55.4
+                   },
+                   {
+                       "zoneOwner":"[zoneOwnerUserName]",
+                       "zone":"gush dan",
+                       "kindsOfProducts":4,
+                       "numberOfStores":2,
+                       "numberOfOrders":3,
+                       "averageOrderCost ":65.4
+                   }
+               ],
+            }
+            */
+            //if (data.numOfZones !== numOfZonesInTable) {
+                //numOfZonesInTable = data.numOfZones;
+                addZonesToTable(data.zonesEntries);
+            //}
+        }
+    })
 }
 
 function showAccountMovement(index, accountMovement) {
@@ -302,9 +288,9 @@ function clickOnAccountMovementsButton() {
 $(function() {
     //The users list is refreshed automatically every second
     ajaxUsersList();
-    ajaxNewZoneToTable();
+    ajaxZoneTable();
     setInterval(ajaxUsersList, refreshRate);
-    triggerAjaxNewZoneToTable();
+    setInterval(ajaxZoneTable, refreshRate);
     ajaxButtonsByRole();
     $("#accountMovementsButton").click(function (){
         clickOnAccountMovementsButton();

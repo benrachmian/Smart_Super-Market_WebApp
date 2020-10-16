@@ -20,8 +20,8 @@
     </servlet>
 
     <servlet>
-        <servlet-name>NewZoneDataServlet</servlet-name>
-        <servlet-class>sdm.servlets.NewZoneDataServlet</servlet-class>
+        <servlet-name>ZoneDataServlet</servlet-name>
+        <servlet-class>sdm.servlets.ZoneDataServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -183,8 +183,8 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>NewZoneDataServlet</servlet-name>
-        <url-pattern>/newzonedata</url-pattern>
+        <servlet-name>ZoneDataServlet</servlet-name>
+        <url-pattern>/zoneData</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
