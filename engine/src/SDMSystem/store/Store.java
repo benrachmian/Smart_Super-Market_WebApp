@@ -52,6 +52,11 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
 //        this.storeDiscounts = new LinkedList<>();
 //    }
 
+
+    public StoreOwner getStoreOwner() {
+        return storeOwner;
+    }
+
     public Collection<Discount> getStoreDiscounts() {
         return storeDiscounts;
     }

@@ -119,7 +119,10 @@
         <servlet-class>sdm.servlets.MakeNewDynamicOrderServlet</servlet-class>
     </servlet>
 
-
+    <servlet>
+        <servlet-name>CheckOrdersAlertServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckOrdersAlertServlet</servlet-class>
+    </servlet>
 
 
     <!--    <servlet>-->
@@ -130,6 +133,12 @@
         <servlet-name>FindCheapestBasketServlet</servlet-name>
         <url-pattern>/findCheapestBasket</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckOrdersAlertServlet</servlet-name>
+        <url-pattern>/checkOrdersAlert</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>MakeNewDynamicOrderServlet</servlet-name>

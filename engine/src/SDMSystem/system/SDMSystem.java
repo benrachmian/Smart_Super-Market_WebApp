@@ -122,4 +122,8 @@ public class SDMSystem {
     public SDMSystemInZone getZoneSystem(String zone) {
         return systemsInZoneMap.get(zone);
     }
+
+    public StoreOwner getStoreOwner(String username) {
+        return usersInSystem.getStoreOwnersInSystem().get(username);
+    }
 }

@@ -2,10 +2,12 @@ package SDMSystem.user;
 
 import SDMSystem.HasSerialNumber;
 import SDMSystem.user.accountAction.AccountMovement;
+import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
 import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -51,4 +53,5 @@ public abstract class User implements HasSerialNumber<Integer> {
 
         return accountMovements;
     }
+
 }

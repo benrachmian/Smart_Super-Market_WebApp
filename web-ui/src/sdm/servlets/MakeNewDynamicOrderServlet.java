@@ -2,6 +2,7 @@ package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
+import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.IDTOProductInStore;
 import javafx.util.Pair;
 import sdm.utils.ServletUtils;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -30,7 +32,12 @@ public class MakeNewDynamicOrderServlet extends HttpServlet {
 //        float deliveryCost = Float.parseFloat(request.getParameter("deliveryCost"));
         LocalDate orderDate = LocalDate.parse(request.getParameter("orderDate"));
         String userName = SessionUtils.getUsername(request);
-
+//        //key: username, value: orders in user's stores
+//        Map<String, ArrayList<DTOOrder>> usersStoreOrdersMap = ServletUtils.getUsersStoreOrdersMap(getServletContext());
+//        ArrayList<DTOOrder> thisUserStoresOrder = usersStoreOrdersMap.get(userName);
+//        if(thisUserStoresOrder == null){
+//            thisUserStoresOrder = new ArrayList<>();
+//        }
         sdmSystemInZone.makeNewDynamicOrder(
                 orderDate,
                 shoppingCart,

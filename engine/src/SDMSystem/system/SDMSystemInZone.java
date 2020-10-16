@@ -154,6 +154,7 @@ public class SDMSystemInZone {
             addStoreToSystem(loadedStore);
             List<SDMSell> sdmSellList = sdmStore.getSDMPrices().getSDMSell();
             loadProductsToStore(sdmSellList,loadedStore);
+            storeOwner.addNewStore(loadedStore);
         }
     }
 
@@ -348,6 +349,7 @@ public class SDMSystemInZone {
         storeTheProductBelong.addOrder(newOrder,deliveryCost);
         customerOrdered.addOrder(newOrder);
         ordersInSystem.put(newOrder.getSerialNumber(),newOrder);
+        storeTheProductBelong.getStoreOwner().addOrder(newOrder);
     }
 
 
@@ -466,6 +468,7 @@ public class SDMSystemInZone {
             subOrder = createdNewStaticOrderObjectAndUpdateAmountSoldInStore(orderDate,deliveryCost,createProductsInOrderCollectionFromDTO(cheapestBasketDTO.get(storeSerialNumber)), storeSellingTheProducts, whoOrdered,cheapestBasketDTO.get(storeSerialNumber));
             storeSellingTheProducts.addOrder(subOrder,deliveryCost);
             subOrders.add(subOrder);
+            storeSellingTheProducts.getStoreOwner().addOrder(subOrder);
         }
     }
 
