@@ -124,6 +124,11 @@
         <servlet-class>sdm.servlets.CheckOrdersAlertServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>GetOrderAlertVersionServlet</servlet-name>
+        <servlet-class>sdm.servlets.GetOrderAlertVersionServlet</servlet-class>
+    </servlet>
+
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
@@ -132,6 +137,11 @@
     <servlet-mapping>
         <servlet-name>FindCheapestBasketServlet</servlet-name>
         <url-pattern>/findCheapestBasket</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetOrderAlertVersionServlet</servlet-name>
+        <url-pattern>/orderAlertVersion</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

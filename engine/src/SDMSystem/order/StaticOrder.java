@@ -50,7 +50,8 @@ public class StaticOrder extends Order {
                 shoppingCartAsDTO,
                 whoOrdered.getSerialNumber(),
                 mainOrderAsDTO,
-                true);
+                true,
+                whoOrdered.getUsername());
     }
 
     public Store getStoreFromWhomTheOrderWasMade() {

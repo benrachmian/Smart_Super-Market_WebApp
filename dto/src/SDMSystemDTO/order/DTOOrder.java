@@ -11,7 +11,7 @@ import java.util.Map;
 public class DTOOrder {
     private final LocalDate orderDate;
     private final Collection<Pair<IDTOProductInStore,Float>> productsInOrder;
-    private int customerOrderedId;
+    private final int customerOrderedId;
     private final float productsCost;
     private final float deliveryCost;
     private final int orderSerialNumber;
@@ -20,7 +20,8 @@ public class DTOOrder {
     private final int amountOfProductsKinds;
     private final Map<Integer,Collection<Pair<IDTOProductInStore,Float>>> productsInOrderByStores;
     private final DTOOrder mainOrder;
-    private boolean isStaticOrder;
+    private final boolean isStaticOrder;
+    private final String customerOrderedUsername;
 
 
 
@@ -35,7 +36,8 @@ public class DTOOrder {
                     Map<Integer,Collection<Pair<IDTOProductInStore,Float>>> productsInOrderByStores,
                     int customerOrderedId,
                     DTOOrder mainOrder,
-                    boolean isStaticOrder) {
+                    boolean isStaticOrder,
+                    String customerOrderedUsername) {
         this.orderDate = orderDate;
         this.productsInOrder = productsInOrder;
         this.productsCost = productsCost;
@@ -48,6 +50,7 @@ public class DTOOrder {
         this.customerOrderedId = customerOrderedId;
         this.mainOrder = mainOrder;
         this.isStaticOrder = isStaticOrder;
+        this.customerOrderedUsername = customerOrderedUsername;
     }
 
     public Collection<DTOStore> getStoresFromWhomTheOrderWasMade() {

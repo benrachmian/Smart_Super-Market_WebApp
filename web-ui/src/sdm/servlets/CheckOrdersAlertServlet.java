@@ -5,6 +5,7 @@ import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.system.SingleZoneEntry;
 import com.google.gson.Gson;
+import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -22,13 +23,14 @@ public class CheckOrdersAlertServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-        int orderAlertVersion = Integer.parseInt(request.getParameter("orderAlertVersion"));
+        //int orderAlertVersion = Integer.parseInt(request.getParameter("orderAlertVersion"));
+        int orderAlertVersion = SessionUtils.getOrderAlertVersion(request);
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/index.html");
         }
         StoreOwner storeOwner = sdmSystemManager.getStoreOwner(username);
-        NewOrdersAndVersion newOrdersAndVersion;
+        //NewOrdersAndVersion newOrdersAndVersion;
          /*
         verify chat version given from the user is a valid number. if not it is considered an error and nothing is returned back
         Obviously the UI should be ready for such a case and handle it properly
@@ -40,11 +42,12 @@ public class CheckOrdersAlertServlet extends HttpServlet {
         ArrayList<DTOOrder> ordersFromUserStores;
         synchronized (getServletContext()) {
             ordersFromUserStores = storeOwner.getNewOrdersFromUser(orderAlertVersion);
-            newOrdersAndVersion = new NewOrdersAndVersion(ordersFromUserStores,storeOwner.getOrdersFromUser().size());
+            request.getSession(false).setAttribute(Constants.ORDER_ALERT_VERSION, storeOwner.getOrdersFromUser().size());
+            //newOrdersAndVersion = new NewOrdersAndVersion(ordersFromUserStores,storeOwner.getOrdersFromUser().size());
         }
 
         Gson gson = new Gson();
-        String jsonResponse = gson.toJson(newOrdersAndVersion);
+        String jsonResponse = gson.toJson(ordersFromUserStores);
 
         try (PrintWriter out = response.getWriter()) {
             out.print(jsonResponse);
@@ -53,31 +56,31 @@ public class CheckOrdersAlertServlet extends HttpServlet {
         // }
     }
 
-    private class NewOrdersAndVersion{
-        ArrayList<DTOOrder> newOrders;
-        int version;
-
-        public NewOrdersAndVersion(ArrayList<DTOOrder> newOrders, int version) {
-            this.newOrders = newOrders;
-            this.version = version;
-        }
-
-        public ArrayList<DTOOrder> getNewOrders() {
-            return newOrders;
-        }
-
-        public void setNewOrders(ArrayList<DTOOrder> newOrders) {
-            this.newOrders = newOrders;
-        }
-
-        public int getVersion() {
-            return version;
-        }
-
-        public void setVersion(int version) {
-            this.version = version;
-        }
-    }
+//    private class NewOrdersAndVersion{
+//        ArrayList<DTOOrder> newOrders;
+//        int version;
+//
+//        public NewOrdersAndVersion(ArrayList<DTOOrder> newOrders, int version) {
+//            this.newOrders = newOrders;
+//            this.version = version;
+//        }
+//
+//        public ArrayList<DTOOrder> getNewOrders() {
+//            return newOrders;
+//        }
+//
+//        public void setNewOrders(ArrayList<DTOOrder> newOrders) {
+//            this.newOrders = newOrders;
+//        }
+//
+//        public int getVersion() {
+//            return version;
+//        }
+//
+//        public void setVersion(int version) {
+//            this.version = version;
+//        }
+//    }
 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

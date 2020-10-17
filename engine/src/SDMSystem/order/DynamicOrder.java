@@ -41,7 +41,8 @@ public class DynamicOrder extends Order {
                 shoppingCartAsDTO,
                 whoOrdered.getSerialNumber(),
                 null,
-                false);
+                false,
+                whoOrdered.getUsername());
 
     }
 

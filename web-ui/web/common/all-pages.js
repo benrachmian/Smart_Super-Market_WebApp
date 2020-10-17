@@ -1,9 +1,22 @@
+var refreshRateForAlert = 4000; //milli seconds
 var orderAlertVersion = 0;
 var CHECK_ORDERS_ALERT = buildUrlWithContextPath("checkOrdersAlert");
+var GET_ORDER_ALERT_VERSION = buildUrlWithContextPath("orderAlertVersion");
 
 
-function alertTheUserForNewOrder(newOrders){
-
+function addOrdersToOrderAlertDiv(newOrders){
+    $.each(newOrders || [], function (index, newOrder) {
+        $("<div class=\"columnAlert\">" +
+            "                <div class=\"card\">" +
+            "                    <h3>Order ID:" + newOrder.orderSerialNumber + "</h3>" +
+            "                    <p>Customer: " + newOrder.customerOrderedUsername + "</p>" +
+            "                    <p>Amount of products kinds: " + newOrder.amountOfProductsKinds + "</p>" +
+            "                    <p>Products cost: " + newOrder.productsCost + "</p>" +
+            "                    <p>Delivery cost: " + newOrder.deliveryCost.toFixed(2) + "</p>" +
+            "                    <p>Store from whom the order was made: " + newOrder.storesFromWhomTheOrderWasMade[0].storeName + ", ID: " + newOrder.storesFromWhomTheOrderWasMade[0].storeSerialNumber + "</p>" +
+            "                </div>" +
+            "            </div>").appendTo($("#orderAlertsCards"));
+    });
 }
 
 function ajaxCheckForAlerts() {
@@ -14,32 +27,9 @@ function ajaxCheckForAlerts() {
         error: function(error) {
         },
         success: function (newOrdersAndVersion) {
-            /*
-            data will arrive in the next form:
-            {
-               "zones": [
-                   {
-                       "zoneOwner":"[zoneOwnerUserName]",
-                       "zone":"darom",
-                       "kindsOfProducts":10,
-                       "numberOfStores":8,
-                       "numberOfOrders":4,
-                       "averageOrderCost ":55.4
-                   },
-                   {
-                       "zoneOwner":"[zoneOwnerUserName]",
-                       "zone":"gush dan",
-                       "kindsOfProducts":4,
-                       "numberOfStores":2,
-                       "numberOfOrders":3,
-                       "averageOrderCost ":65.4
-                   }
-               ],
-            }
-            */
-            if (newOrdersAndVersion.version > orderAlertVersion) {
-                orderAlertVersion = (orderAlertVersion + newOrdersAndVersion.version);
-                alertTheUserForNewOrder(newOrdersAndVersion.newOrders);
+            if (newOrdersAndVersion.length > 0) {
+                //orderAlertVersion = (orderAlertVersion + newOrdersAndVersion.version);
+                $("#myModal").remove();
                 $( "<!-- The Modal -->\n" +
                     "<div id=\"myModal\" class=\"modal\">\n" +
                     "\n" +
@@ -47,17 +37,15 @@ function ajaxCheckForAlerts() {
                     "  <div class=\"modal-content\">\n" +
                     "    <div class=\"modal-header\">\n" +
                     "      <span class=\"close\">&times;</span>\n" +
-                    "      <h2>Success!</h2>\n" +
+                    "      <h2>Orders Alert!</h2>\n" +
                     "    </div>\n" +
                     "    <div class=\"modal-body\">\n" +
-                    "      <p>The order was made successfully!</p>\n" +
-                    "    </div>\n" +
-                    "    <div class=\"modal-footer\">\n" +
-                    "      <h3>See you next time!</h3>\n" +
+                    "      <div class='row' id='orderAlertsCards'></div>" +
                     "    </div>\n" +
                     "  </div>\n" +
                     "\n" +
                     "</div>").appendTo($("body"));
+                addOrdersToOrderAlertDiv(newOrdersAndVersion);
                 var modal = document.getElementById("myModal");
                 var span = document.getElementsByClassName("close")[0];
                 modal.style.display = "block";
@@ -71,7 +59,17 @@ function ajaxCheckForAlerts() {
                 }
 
             }
-                setTimeout(ajaxCheckForAlerts,refreshRate);
+                setTimeout(ajaxCheckForAlerts,refreshRateForAlert);
+        }
+    })
+}
+
+function ajaxGetOrderVersion() {
+    $.ajax({
+        url: GET_ORDER_ALERT_VERSION,
+        success: function (orderVersion) {
+            orderAlertVersion = orderVersion;
+            ajaxCheckForAlerts();
         }
     })
 }
@@ -82,8 +80,8 @@ $(function() {
         url: GET_ROLE_URL,
         success: function (role) {
             if (role === "store-owner") {
-                //setInterval(ajaxCheckForAlerts, refreshRate);
-                ajaxCheckForAlerts();
+                //ajaxCheckForAlerts();
+                ajaxGetOrderVersion();
             }
         }
     })
