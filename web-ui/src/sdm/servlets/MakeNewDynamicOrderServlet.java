@@ -1,5 +1,6 @@
 package sdm.servlets;
 
+import SDMSystem.exceptions.NoMoneyException;
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
 import SDMSystemDTO.order.DTOOrder;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +24,8 @@ import java.util.Map;
 public class MakeNewDynamicOrderServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
         String zoneFromSession = SessionUtils.getChosenZone(request);
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         SDMSystemInZone sdmSystemInZone = sdmSystemManager.getZoneSystem(zoneFromSession);
@@ -38,13 +42,25 @@ public class MakeNewDynamicOrderServlet extends HttpServlet {
 //        if(thisUserStoresOrder == null){
 //            thisUserStoresOrder = new ArrayList<>();
 //        }
-        sdmSystemInZone.makeNewDynamicOrder(
-                orderDate,
-                shoppingCart,
-                userName,
-                orderToLocation,
-                sdmSystemManager
-        );
+        try {
+            sdmSystemInZone.makeNewDynamicOrder(
+                    orderDate,
+                    shoppingCart,
+                    userName,
+                    orderToLocation,
+                    sdmSystemManager
+            );
+        }
+        catch (NoMoneyException e){
+            response.setStatus(500);
+            out.print("You don't have enough money! The order cost " + e.getOrderCost() + " whilst you have " + e.getCustomerMoney());
+            out.flush();
+        }
+        catch (RuntimeException e){
+            response.setStatus(500);
+            out.print(e.getMessage());
+            out.flush();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

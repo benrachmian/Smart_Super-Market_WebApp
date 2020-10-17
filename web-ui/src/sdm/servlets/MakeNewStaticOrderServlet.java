@@ -1,5 +1,6 @@
 package sdm.servlets;
 
+import SDMSystem.exceptions.NoMoneyException;
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
 import SDMSystemDTO.product.IDTOProductInStore;
@@ -24,6 +25,9 @@ public class MakeNewStaticOrderServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
         String zoneFromSession = SessionUtils.getChosenZone(request);
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         SDMSystemInZone sdmSystemInZone = sdmSystemManager.getZoneSystem(zoneFromSession);
@@ -33,13 +37,25 @@ public class MakeNewStaticOrderServlet extends HttpServlet {
         LocalDate orderDate = LocalDate.parse(request.getParameter("orderDate"));
         String userName = SessionUtils.getUsername(request);
 
-        sdmSystemInZone.makeNewStaticOrder(
-                storeId,
-                orderDate,
-                deliveryCost,
-                shoppingCart.get(storeId),
-                userName,
-                sdmSystemManager);
+        try {
+            sdmSystemInZone.makeNewStaticOrder(
+                    storeId,
+                    orderDate,
+                    deliveryCost,
+                    shoppingCart.get(storeId),
+                    userName,
+                    sdmSystemManager);
+        }
+        catch (NoMoneyException e){
+            response.setStatus(500);
+            out.print("You don't have enough money! The order cost " + e.getOrderCost() + " whilst you have " + e.getCustomerMoney());
+            out.flush();
+        }
+        catch (RuntimeException e){
+            response.setStatus(500);
+            out.print(e.getMessage());
+            out.flush();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

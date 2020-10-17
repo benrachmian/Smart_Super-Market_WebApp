@@ -3,7 +3,11 @@ package SDMSystem.user.customer;
 
 import SDMSystem.order.Order;
 import SDMSystem.user.User;
+import SDMSystem.user.accountAction.AccountMovement;
+import SDMSystem.user.storeOwner.StoreOwner;
+import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -23,5 +27,17 @@ public class Customer extends User {
     }
     public void addOrder(Order newOrder) {
         ordersMade.add(newOrder);
+    }
+
+    public void makeNewOrderTransaction(LocalDate orderDate, float transactionSum, StoreOwner storeOwner){
+        accountMovements.add(new AccountMovement(
+                AccountActionType.PAYMENT_TRANSFERENCE,
+                orderDate,
+                transactionSum,
+                moneyInAccount,
+                (moneyInAccount - transactionSum)
+        ));
+        moneyInAccount -= transactionSum;
+        storeOwner.orderFromTransaction(orderDate,transactionSum);
     }
 }

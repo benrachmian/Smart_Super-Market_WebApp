@@ -20,15 +20,15 @@ public class ExistenceException extends RuntimeException{
         return objectSerialNumber;
     }
 
-    @Override
-    public String getMessage() {
-        String msg;
-        if(doesExist){
-            msg =  String.format(EXCEPTION_MESSAGE_EXIST,objectKind, objectSerialNumber, objectRelevance);
+        @Override
+        public String getMessage() {
+            String msg;
+            if(doesExist){
+                msg =  String.format(EXCEPTION_MESSAGE_EXIST,objectKind, objectSerialNumber, objectRelevance);
+            }
+            else {
+                msg =  String.format(EXCEPTION_MESSAGE_NOT_EXIST,objectKind, objectSerialNumber, objectRelevance);
+            }
+            return msg;
         }
-        else {
-            msg =  String.format(EXCEPTION_MESSAGE_NOT_EXIST,objectKind, objectSerialNumber, objectRelevance);
-        }
-        return msg;
-    }
 }

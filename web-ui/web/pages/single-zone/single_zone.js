@@ -519,7 +519,7 @@ function makeNewStaticOrderAjax(deliveryCost){
         url: MAKE_NEW_STATIC_ORDER,
         data: parameters,
         error: function(error) {
-
+            errorMsg($("#centerPage"),error.responseText);
         },
         success: function () {
             var modal = document.getElementById("myModal");
@@ -548,7 +548,7 @@ function makeNewDynamicOrderAjax(){
         url: MAKE_NEW_DYNAMIC_ORDER,
         data: parameters,
         error: function(error) {
-
+            errorMsg($("#centerPage"),error.responseText);
         },
         success: function () {
             var modal = document.getElementById("myModal");
@@ -984,6 +984,7 @@ function overloadOrderFirstDetailsFormSubmit() {
         var orderTypes = document.getElementById("orderTypeSelect");
         var orderTypeSelected = orderTypes.options[orderTypes.selectedIndex].value;
         parameters = parameters.concat("&ordertype=" + orderTypeSelected);
+        orderType = orderTypeSelected;
 
         $.ajax({
             data: parameters,
@@ -1006,7 +1007,7 @@ function overloadOrderFirstDetailsFormSubmit() {
                 orderToLocationX = $("#locationX").val();
                 orderToLocationY = $("#locationY").val();
                 if(r==="Static Order"){
-                    orderType = r;
+                    //orderType = r;
                     addStoresTable();
                 }
                 else{

@@ -8,18 +8,18 @@ import java.time.LocalDate;
 public class AccountMovement {
     private AccountActionType accountActionType;
     private LocalDate actionDate;
-    private float accountSum;
+    private float transactionSum;
     private float accountMoneyBeforeAction;
     private float accountMoneyAfterAction;
 
     public AccountMovement(AccountActionType accountActionType,
                            LocalDate actionDate,
-                           float accountSum,
+                           float transactionSum,
                            float accountMoneyBeforeAction,
                            float accountMoneyAfterAction) {
         this.accountActionType = accountActionType;
         this.actionDate = actionDate;
-        this.accountSum = accountSum;
+        this.transactionSum = transactionSum;
         this.accountMoneyBeforeAction = accountMoneyBeforeAction;
         this.accountMoneyAfterAction = accountMoneyAfterAction;
     }
@@ -28,7 +28,7 @@ public class AccountMovement {
         return new DTOAccountMovement(
                 accountActionType.toString(),
                 actionDate,
-                accountSum,
+                transactionSum,
                 accountMoneyBeforeAction,
                 accountMoneyAfterAction
         );
