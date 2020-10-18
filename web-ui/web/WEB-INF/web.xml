@@ -144,6 +144,11 @@
         <servlet-class>sdm.servlets.UserOrdersHistoryServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>GetStoreOrdersHistoryServlet</servlet-name>
+        <servlet-class>sdm.servlets.GetStoreOrdersHistoryServlet</servlet-class>
+    </servlet>
+
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
@@ -152,6 +157,11 @@
     <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetStoreOrdersHistoryServlet</servlet-name>
+        <url-pattern>/storeOrdersHistory</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
