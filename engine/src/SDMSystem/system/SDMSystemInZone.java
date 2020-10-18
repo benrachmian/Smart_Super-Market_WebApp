@@ -931,8 +931,8 @@ public class SDMSystemInZone {
 
 
 
-    public boolean isAvailableStoreId(SimpleIntegerProperty storeID) {
-        return storesInSystem.getStoresInSystemBySerialNumber().get(storeID.get()) == null;
+    public boolean isAvailableStoreId(int storeID) {
+        return storesInSystem.getStoresInSystemBySerialNumber().get(storeID) == null;
     }
 
 

@@ -19,6 +19,7 @@ var RANK_STORE = buildUrlWithContextPath("rankStore");
 var GET_ORDERS_HISTORY = buildUrlWithContextPath("ordersHistory");
 var GET_STORE_ORDERS_HISTORY = buildUrlWithContextPath("storeOrdersHistory");
 var GET_FEEDBACKS = buildUrlWithContextPath("getFeedbacks");
+var CHECK_NEW_STORE_SETTINGS = buildUrlWithContextPath("checkNewStoreSettings");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -888,7 +889,8 @@ function errorMsg(whereToAppend,errorMsg){
     }
     else{
        // $("#error").empty().append(errorMsg);
-        $(whereToAppend).filter($("#error")).empty().append(errorMsg);
+        //$(whereToAppend).filter($("#error")).empty().append(errorMsg);
+        whereToAppend.find("#error").empty().append(errorMsg);
     }
     scrollToAnimate($("#errorDiv"));
 }
@@ -1370,6 +1372,68 @@ function clickOnShowFeedbacksButton(){
     })
 }
 
+function overloadNewStoreFormSubmit(){
+    $("#new-store-form").submit(function() {
+
+        //orderDate = $("#orderDate")[0].value;
+        var parameters = $(this).serialize();
+
+        $.ajax({
+            data: parameters,
+            url: CHECK_NEW_STORE_SETTINGS,
+            error: function(e) {
+                errorMsg($("#centerPage"),e.responseText);
+            },
+            success: function(r) {
+
+            }
+        });
+        // return value of the submit operation
+        return false;
+    })
+}
+
+function clickOnAddStoreButton(){
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Add New Store To Zone </h1>"));
+    $("<form id='new-store-form' method=\"GET\" class=\"form-style-7\">\n" +
+        "<ul>\n" +
+        "<li>\n" +
+        "    <label for=\"storeId\">Store ID</label>\n" +
+        "    <input id='intTextBox' type=\"text\" name=\"storeId\" maxlength=\"100\">\n" +
+        "    <span>Insert the new store ID </span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"storeName\">Store Name</label>\n" +
+        "    <input id='storeName' type=\"text\" name=\"storeName\" maxlength=\"100\">\n" +
+        "    <span>Insert the new store name</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"locationX\">X Location</label>\n" +
+        "  <input type=\"number\" id=\"locationX\" name=\"locationX\" min=\"1\" max=\"50\">" +
+        "    <span>Enter your X location</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"locationY\">Y Location</label>\n" +
+        "  <input type=\"number\" id=\"locationY\" name=\"locationY\" min=\"1\" max=\"50\">" +
+        "    <span>Enter your Y location</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"ppk\">PPK</label>\n" +
+        "  <input type=\"number\" step=\"0.01\" id=\"ppk\" name=\"ppk\" min=\"1\">" +
+        "    <span>Enter the store's price per kilometer</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <button class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
+        "</li>\n" +
+        "</ul>\n" +
+        "</form>").appendTo($("#centerPage"));
+        setInputFilter(document.getElementById("intTextBox"), function(value) {
+        return /^-?\d*$/.test(value); });
+
+    overloadNewStoreFormSubmit();
+}
+
 function setButtonsAccordingToUserRole() {
     $.ajax({
         url: GET_ROLE_URL,
@@ -1387,8 +1451,12 @@ function setButtonsAccordingToUserRole() {
             }
             else{
                 $("<a href=\"#\" id=\"show-feedbacks-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Show Feedbacks</a>").insertBefore("#backButton");
+                $("<a href=\"#\" id=\"add-store-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Add Store To Zone</a>").insertBefore("#backButton");
                 $("#show-feedbacks-button").click(function (){
                     clickOnShowFeedbacksButton();
+                });
+                $("#add-store-button").click(function (){
+                    clickOnAddStoreButton();
                 });
             }
         }
@@ -1460,4 +1528,22 @@ function scroll_to(div){
 function adjust_textarea(h) {
     h.style.height = "20px";
     h.style.height = (h.scrollHeight)+"px";
+}
+
+//make text feild only numbers:
+function setInputFilter(textbox, inputFilter) {
+    ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+        textbox.addEventListener(event, function() {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            } else {
+                this.value = "";
+            }
+        });
+    });
 }

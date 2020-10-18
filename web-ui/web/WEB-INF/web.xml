@@ -154,6 +154,11 @@
         <servlet-class>sdm.servlets.GetFeedbacksServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CheckNewStoreSettingsServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckNewStoreSettingsServlet</servlet-class>
+    </servlet>
+
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
@@ -162,6 +167,11 @@
     <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckNewStoreSettingsServlet</servlet-name>
+        <url-pattern>/checkNewStoreSettings</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
