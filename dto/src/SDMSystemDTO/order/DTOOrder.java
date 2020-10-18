@@ -4,6 +4,7 @@ import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
@@ -22,6 +23,9 @@ public class DTOOrder {
     private final DTOOrder mainOrder;
     private final boolean isStaticOrder;
     private final String customerOrderedUsername;
+    private final Point orderToLocation;
+    private final int amountOfStoresParticipating;
+    private final float totalOrderCost;
 
 
 
@@ -37,7 +41,8 @@ public class DTOOrder {
                     int customerOrderedId,
                     DTOOrder mainOrder,
                     boolean isStaticOrder,
-                    String customerOrderedUsername) {
+                    String customerOrderedUsername,
+                    Point orderToLocation) {
         this.orderDate = orderDate;
         this.productsInOrder = productsInOrder;
         this.productsCost = productsCost;
@@ -51,6 +56,9 @@ public class DTOOrder {
         this.mainOrder = mainOrder;
         this.isStaticOrder = isStaticOrder;
         this.customerOrderedUsername = customerOrderedUsername;
+        this.orderToLocation = orderToLocation;
+        this.amountOfStoresParticipating = storesFromWhomTheOrderWasMade.size();
+        this.totalOrderCost = deliveryCost + productsCost;
     }
 
     public Collection<DTOStore> getStoresFromWhomTheOrderWasMade() {

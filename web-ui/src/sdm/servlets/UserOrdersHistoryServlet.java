@@ -1,12 +1,9 @@
 package sdm.servlets;
 
-import SDMSystem.exceptions.NoMoneyException;
 import SDMSystem.system.SDMSystem;
-import SDMSystem.system.SDMSystemInZone;
-import SDMSystemDTO.product.IDTOProductInStore;
-import SDMSystemDTO.user.customer.DTOCustomer;
+import SDMSystemDTO.order.DTOOrder;
+import SDMSystemDTO.product.DTOProductInStore;
 import com.google.gson.Gson;
-import javafx.util.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -14,50 +11,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Map;
 
-public class MakeNewStaticOrderServlet extends HttpServlet {
-
+public class UserOrdersHistoryServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
-        String zoneFromSession = SessionUtils.getChosenZone(request);
+        response.setContentType("application/json");
+        //String zoneFromSession = SessionUtils.getChosenZone(request);
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-        SDMSystemInZone sdmSystemInZone = sdmSystemManager.getZoneSystem(zoneFromSession);
-        Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCart = SessionUtils.getShoppingCart(request);
-        int storeId = Integer.parseInt(request.getParameter("chosenStoreId"));
-        float deliveryCost = Float.parseFloat(request.getParameter("deliveryCost"));
-        LocalDate orderDate = LocalDate.parse(request.getParameter("orderDate"));
-        String userName = SessionUtils.getUsername(request);
-        int orderToX = Integer.parseInt(request.getParameter("orderToX"));
-        int orderToY = Integer.parseInt(request.getParameter("orderToY"));
-        Point orderToLocation = new Point(orderToX,orderToY);
+        String username = SessionUtils.getUsername(request);
+        Collection<DTOOrder> userOrdersHistory;
+        synchronized (getServletContext()) {
+            userOrdersHistory = sdmSystemManager.getUserOrdersHistory(username);
+        }
 
-        try {
-            sdmSystemInZone.makeNewStaticOrder(
-                    storeId,
-                    orderDate,
-                    deliveryCost,
-                    shoppingCart.get(storeId),
-                    userName,
-                    sdmSystemManager,
-                    orderToLocation);
-        }
-        catch (NoMoneyException e){
-            response.setStatus(500);
-            out.print("You don't have enough money! The order cost " + e.getOrderCost() + " whilst you have " + e.getCustomerMoney());
-            out.flush();
-        }
-        catch (RuntimeException e){
-            response.setStatus(500);
-            out.print(e.getMessage());
+        Gson gson = new Gson();
+        String jsonResponse = gson.toJson(userOrdersHistory);
+
+        try (PrintWriter out = response.getWriter()) {
+            out.print(jsonResponse);
             out.flush();
         }
     }

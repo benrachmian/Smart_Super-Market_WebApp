@@ -2,10 +2,12 @@ package SDMSystem.system;
 
 import SDMSystem.discount.Discount;
 import SDMSystem.location.Locationable;
+import SDMSystem.order.Order;
 import SDMSystem.system.usersInSystem.UsersInSystem;
 import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
+import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.DTOProduct;
 import SDMSystemDTO.product.DTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
@@ -125,5 +127,15 @@ public class SDMSystem {
 
     public StoreOwner getStoreOwner(String username) {
         return usersInSystem.getStoreOwnersInSystem().get(username);
+    }
+
+    public Collection<DTOOrder> getUserOrdersHistory(String username) {
+        Collection<DTOOrder> orderHistoryDTO = new LinkedList<>();
+        Customer customer = usersInSystem.getCustomer(username);
+        for(Order order : customer.getOrdersMade()){
+            orderHistoryDTO.add(order.createDTOOrderFromOrder());
+        }
+
+        return orderHistoryDTO;
     }
 }

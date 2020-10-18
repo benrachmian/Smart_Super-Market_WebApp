@@ -8,6 +8,7 @@ import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,8 +26,10 @@ public class StaticOrder extends Order {
                        Store storeFromWhomTheOrderWasMade,
                        Customer whoOrdered,
                        Order mainOrder,
-                       Map<Integer, Collection<Pair<IProductInStore, Float>>> shoppingCart, Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCartAsDto) {
-        super(orderDate, productsInOrder, productsCost, deliveryCost, amountOfProducts, amountOfProductsKinds, whoOrdered, mainOrder,shoppingCart,shoppingCartAsDto);
+                       Map<Integer, Collection<Pair<IProductInStore, Float>>> shoppingCart,
+                       Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCartAsDto,
+                       Point orderToLocation) {
+        super(orderDate, productsInOrder, productsCost, deliveryCost, amountOfProducts, amountOfProductsKinds, whoOrdered, mainOrder,shoppingCart,shoppingCartAsDto,orderToLocation);
         this.storeFromWhomTheOrderWasMade = storeFromWhomTheOrderWasMade;
     }
 
@@ -51,7 +54,8 @@ public class StaticOrder extends Order {
                 whoOrdered.getSerialNumber(),
                 mainOrderAsDTO,
                 true,
-                whoOrdered.getUsername());
+                whoOrdered.getUsername(),
+                orderToLocation);
     }
 
     public Store getStoreFromWhomTheOrderWasMade() {

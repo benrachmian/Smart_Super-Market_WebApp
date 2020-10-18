@@ -16,6 +16,7 @@ var MAKE_NEW_DYNAMIC_ORDER = buildUrlWithContextPath("makeNewDynamicOrder");
 var GET_PRODCUTS_IN_SYSTEM = buildUrlWithContextPath("productsInSystem");
 var FIND_CHEAPEST_BASKET = buildUrlWithContextPath("findCheapestBasket");
 var RANK_STORE = buildUrlWithContextPath("rankStore");
+var GET_ORDERS_HISTORY = buildUrlWithContextPath("ordersHistory");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -626,6 +627,7 @@ function createRankingStoresPage(){
 function makeNewStaticOrderAjax(deliveryCost){
     var parameters = chosenStoreIdForAjax;
     parameters = parameters.concat("&orderDate=" + orderDate + "&deliveryCost=" + deliveryCost);
+    parameters = parameters.concat("&orderToX=" + orderToLocationX + "&orderToY=" + orderToLocationY);
 
     $.ajax({
         method: "post",
@@ -1137,6 +1139,116 @@ function overloadOrderFirstDetailsFormSubmit() {
     })
 }
 
+function createCardsForProductsInOrderHistory(productName,id,wayOfBuying,storeTheProductsBelongsName,storeTheProductsBelongsId,amountBought,price,totalCost,isPartOfDiscount){
+    return  "<div style='width: 33%' class=\"column\">" +
+        "                <div class=\"card\">" +
+        "                    <h3>" + productName + "</h3>" +
+        "                    <p>ID: " + id + "</p>" +
+        "                    <p>Way of buying: " + wayOfBuying + "</p>" +
+        "                    <p>Store the product was bought from name: " + storeTheProductsBelongsName + "</p>" +
+        "                    <p>Store the product was bought from ID: " + storeTheProductsBelongsId + "</p>" +
+        "                    <p>Amount bought: " + amountBought + "</p>" +
+        "                    <p>Price per unit/kilo: " + price + "</p>" +
+        "                    <p>Total product cost: " + totalCost + "</p>" +
+        "                    <p>Is part of discount: " + isPartOfDiscount + "</p>" +
+        "                </div>" +
+        "            </div>";
+}
+
+function showChosenOrderProducts(orderId, productsInOrder){
+    $("#productsInOrderDiv").remove();
+    $("#centerPage").append( $("<div class='w3-container w3-border w3-round-xlarge' id='productsInOrderDiv'  <br>"));
+    $("<div><h1 style='text-align: center'> Products in order ID: " + orderId + ": </h1></div>").appendTo( $("#productsInOrderDiv"));
+
+
+    $("#productsInOrderDiv").append( $("<div class=\"row\"> <br>"));
+    $.each(productsInOrder || [], function(index, product) {
+        var isPartOfDiscount = product.key.isPartOfDiscount === true ? "Yes" : "No";
+        if(product.key.isPartOfDiscount){
+            $(createCardsForProductsInOrderHistory(
+                product.key.originalProductInStore.productName,
+                product.key.originalProductInStore.productSerialNumber,
+                product.key.originalProductInStore.wayOfBuying,
+                product.key.originalProductInStore.storeTheProductBelongsName,
+                product.key.originalProductInStore.storeTheProductBelongsID,
+                product.value,
+                product.key.discountPrice,
+                (product.key.discountPrice *product.value),
+                isPartOfDiscount,
+            )).appendTo($("#productsInOrderDiv"));
+        }
+        else{
+            $(createCardsForProductsInOrderHistory(
+                product.key.productName,
+                product.key.productSerialNumber,
+                product.key.wayOfBuying,
+                product.key.storeTheProductBelongsName,
+                product.key.storeTheProductBelongsID,
+                product.value,
+                product.key.price,
+                (product.key.price * product.value),
+                isPartOfDiscount,
+            )).appendTo($("#productsInOrderDiv"));
+        }
+        // $("<div class=\"column\">" +
+        //     "                <div class=\"card\">" +
+        //     "                    <h3>" + product.key.productName + "</h3>" +
+        //     "                    <p>ID: " + product.key.productSerialNumber + "</p>" +
+        //     "                    <p>Way of buying: " + product.key.wayOfBuying + "</p>" +
+        //     "                    <p>Store the product was bought from name: " + product.key.storeTheProductBelongsName + "</p>" +
+        //     "                    <p>Store the product was bought from ID: " + product.key.storeTheProductBelongsID + "</p>" +
+        //     "                    <p>Amount bought: " + product.value + "</p>" +
+        //     "                    <p>Price per unit/kilo: " + product.key.price + "</p>" +
+        //     "                    <p>Total product cost: " + (product.key.price * product.value) + "</p>" +
+        //     "                    <p>Is part of discount: " + isPartOfDiscount + "</p>" +
+        //     "                </div>" +
+        //     "            </div>").appendTo($("#productsInOrderDiv"));
+
+    });
+    $("</div>").appendTo($("#productsInOrderDiv"));
+    $('html, body').animate({
+        scrollTop: $("#productsInOrderDiv").offset().top
+    },1000);
+
+}
+
+function showOrdersHistory(ordersHistory){
+    $.each(ordersHistory || [], function(index, order) {
+        $("<div class=\"column\">" +
+            "                <div class=\"card\">" +
+            "                    <h3>Order ID:" + order.orderSerialNumber + "</h3>" +
+            "                    <p>Order date: " + order.orderDate.day + "/" + order.orderDate.month + "/" + order.orderDate.year + "</p>" +
+            "                    <p>Order to location: X: " + order.orderToLocation.x + " Y: " + order.orderToLocation.y +  "</p>" +
+            "                    <p>Number of stores particiapting: " + order.amountOfStoresParticipating + "</p>" +
+            "                    <p>Amount of products in order:  " + order.amountOfProducts + "</p>" +
+            "                    <p>Products cost:  " + order.productsCost.toFixed(2) + "</p>" +
+            "                    <p>Delivery cost:  " + order.deliveryCost.toFixed(2) + "</p>" +
+            "                    <p>Total order cost:  " + order.totalOrderCost.toFixed(2) + "</p>" +
+            "                    <button class=\"button products-in-order-button\" data-chosenOrderId=\'" + order.orderSerialNumber + "\'><span>Show products in order </span></button>" +
+            "                </div>" +
+            "            </div>").appendTo($("#centerPage"));
+        $(".products-in-order-button").filter('[data-chosenOrderId="' + order.orderSerialNumber + '"]').click(function (){
+            showChosenOrderProducts(order.orderSerialNumber,order.productsInOrder);
+        })
+    });
+    $("</div>").appendTo($("#centerPage"));
+}
+
+function clickOnMyOrdersHistoryButton(){
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>My Orders History </h1>"));
+    $.ajax({
+        url: GET_ORDERS_HISTORY,
+        error: function (e){
+
+        },
+        success: function(ordersHistory) {
+            showOrdersHistory(ordersHistory);
+        }
+    })
+
+}
+
 function clickOnMakeOrderButton() {
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Make New Order </h1>"));
@@ -1181,8 +1293,12 @@ function setButtonsAccordingToUserRole() {
         success: function (role) {
             if(role === "customer"){
                 $("<a href=\"#\" id=\"makeOrder\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Make Order</a>").insertBefore("#backButton");
+                $("<a href=\"#\" id=\"userOrdersHistory\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">My Orders History</a>").insertBefore("#backButton");
                 $("#makeOrder").click(function (){
                     clickOnMakeOrderButton();
+                });
+                $("#userOrdersHistory").click(function (){
+                    clickOnMyOrdersHistoryButton();
                 });
             }
         }

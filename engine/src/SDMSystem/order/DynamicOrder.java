@@ -7,6 +7,7 @@ import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -22,8 +23,11 @@ public class DynamicOrder extends Order {
                         int amountOfProducts,
                         int amountOfProductsKinds,
                         Collection<StaticOrder> subOrders,
-                        Customer whoOrdered, Map<Integer, Collection<Pair<IProductInStore, Float>>> shoppingCartForOrder, Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> cheapestBasketDTO) {
-        super(orderDate, productsInOrder, productsCost, deliveryCost, amountOfProducts, amountOfProductsKinds, whoOrdered, null,shoppingCartForOrder,cheapestBasketDTO);
+                        Customer whoOrdered,
+                        Map<Integer, Collection<Pair<IProductInStore, Float>>> shoppingCartForOrder,
+                        Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> cheapestBasketDTO,
+                        Point orderToLocation) {
+        super(orderDate, productsInOrder, productsCost, deliveryCost, amountOfProducts, amountOfProductsKinds, whoOrdered, null,shoppingCartForOrder,cheapestBasketDTO,orderToLocation);
         this.subOrders = subOrders;
     }
 
@@ -42,7 +46,8 @@ public class DynamicOrder extends Order {
                 whoOrdered.getSerialNumber(),
                 null,
                 false,
-                whoOrdered.getUsername());
+                whoOrdered.getUsername(),
+                orderToLocation);
 
     }
 

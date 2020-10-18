@@ -3,9 +3,10 @@ package SDMSystemDTO.product;
 
 
 public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore{
-    private  float price;
+    private float price;
     private float amountSoldInStore;
-    private  int storeTheProductBelongsID;
+    private int storeTheProductBelongsID;
+    private String storeTheProductBelongsName;
     private boolean isPartOfDiscount = false;
 
 
@@ -18,11 +19,13 @@ public class DTOProductInStore extends DTOProduct implements  IDTOProductInStore
                              float amountSoldInStore,
                              int storeTheProductBelongsID,
                              int numOfStoresSellingTheProduct,
-                             float avgPrice) {
+                             float avgPrice,
+                             String storeTheProductBelongsName) {
         super(productSerialNumber, productName, wayOfBuying, /*storesSellingTheProduct*/ amountSoldInAllStores,numOfStoresSellingTheProduct,avgPrice);
         this.price = price;
         this.amountSoldInStore = amountSoldInStore;
         this.storeTheProductBelongsID = storeTheProductBelongsID;
+        this.storeTheProductBelongsName = storeTheProductBelongsName;
     }
 
     public DTOProductInStore(){

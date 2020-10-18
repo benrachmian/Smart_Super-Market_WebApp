@@ -8,6 +8,7 @@ import SDMSystemDTO.product.WayOfBuying;
 import SDMSystemDTO.order.DTOOrder;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -27,6 +28,7 @@ public abstract class Order implements Serializable, HasSerialNumber<Integer> {
     protected Order mainOrder;
     protected Map<Integer, Collection<Pair<IProductInStore, Float>>> productsInOrderByStores;
     protected Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCartAsDTO;
+    protected Point orderToLocation;
 
 
     public Order(LocalDate orderDate,
@@ -38,7 +40,8 @@ public abstract class Order implements Serializable, HasSerialNumber<Integer> {
                  Customer whoOrdered,
                  Order mainOrder,
                  Map<Integer, Collection<Pair<IProductInStore, Float>>> shoppingCart,
-                 Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCartAsDTO){
+                 Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCartAsDTO,
+                 Point orderToLocation){
         this.whoOrdered = whoOrdered;
         this.mainOrder = mainOrder;
         this.orderSerialNumber = generatedSerialNumber++;
@@ -50,6 +53,7 @@ public abstract class Order implements Serializable, HasSerialNumber<Integer> {
         this.amountOfProductsKinds = amountOfProductsKinds;
         this.productsInOrderByStores = shoppingCart;
         this.shoppingCartAsDTO = shoppingCartAsDTO;
+        this.orderToLocation = orderToLocation;
     }
 
     public void setMainOrder(Order mainOrder) {

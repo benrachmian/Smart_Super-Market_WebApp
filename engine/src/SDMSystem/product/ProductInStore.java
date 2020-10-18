@@ -42,7 +42,8 @@ public class ProductInStore extends Product implements IProductInStore {
                 amountSoldInStore,
                 storeTheProductBelongs.getSerialNumber(),
                 storesSellingTheProduct.size(),
-                averagePriceOfProduct());
+                averagePriceOfProduct(),
+                storeTheProductBelongs.getStoreName());
     }
 
     public void setPrice(float newPrice) {
@@ -63,7 +64,10 @@ public class ProductInStore extends Product implements IProductInStore {
                 amountSoldInAllStores,
                 getPrice(),
                 amountSoldInStore,
-                storeTheProductBelongs.getSerialNumber(), storesSellingTheProduct.size(), averagePriceOfProduct());
+                storeTheProductBelongs.getSerialNumber(),
+                storesSellingTheProduct.size(),
+                averagePriceOfProduct(),
+                storeTheProductBelongs.getStoreName());
     }
 
     //    @Override
