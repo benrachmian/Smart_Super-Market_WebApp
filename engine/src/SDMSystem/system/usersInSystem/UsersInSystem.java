@@ -51,4 +51,8 @@ public class UsersInSystem {
     public User getUser(String username) {
         return usersInSystem.get(username);
     }
+
+    public StoreOwner getStoreOwner(String username) {
+        return storeOwnersInSystem.get(username);
+    }
 }

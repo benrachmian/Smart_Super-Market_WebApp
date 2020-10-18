@@ -9,12 +9,8 @@ import SDMSystem.order.Order;
 import SDMSystem.product.Product;
 import SDMSystem.product.ProductInStore;
 import SDMSystem.exceptions.*;
-import SDMSystem.system.ItemInSystem;
-import SDMSystem.user.User;
 import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.discount.DTODiscount;
-import SDMSystemDTO.product.DTOProduct;
-import SDMSystemDTO.product.DTOProductInDiscount;
 import SDMSystemDTO.product.DTOProductInStore;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.IDTOProductInStore;
@@ -30,7 +26,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
 
     private static int generatedSerialNumber = 1000;
     private StoreOwner storeOwner;
-    private String storeArea;
+    private String storeZone;
     private final Map<Integer,ProductInStore> productsInStore;
     private final Point storeLocation;
     private final float ppk;
@@ -62,7 +58,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         return storeDiscounts;
     }
 
-    public Store(int storeSerialNumber, Point storeLocation, float ppk, String storeName, Collection<Discount> storeDiscounts, StoreOwner storeOwner) {
+    public Store(int storeSerialNumber, Point storeLocation, float ppk, String storeName, Collection<Discount> storeDiscounts, StoreOwner storeOwner, String storeZone) {
         this.storeDiscounts = storeDiscounts; //ctor
         this.productsInStore = new HashMap<>();
         this.storeLocation = storeLocation;
@@ -73,6 +69,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         this.storeOwner = storeOwner;
         this.storeFeedbacks = new LinkedList<>();
         //this.storeFeedbacks = null;
+        this.storeZone = storeZone;
     }
 
     public void addNewProductToStore(Product newProduct, float price){
@@ -333,6 +330,6 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
 
     public void giveFeedback(Feedback feedback) {
         storeFeedbacks.add(feedback);
-        storeOwner.giveFeedback(feedback);
+        storeOwner.giveFeedback(storeZone,feedback);
     }
 }

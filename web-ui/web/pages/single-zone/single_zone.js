@@ -18,6 +18,7 @@ var FIND_CHEAPEST_BASKET = buildUrlWithContextPath("findCheapestBasket");
 var RANK_STORE = buildUrlWithContextPath("rankStore");
 var GET_ORDERS_HISTORY = buildUrlWithContextPath("ordersHistory");
 var GET_STORE_ORDERS_HISTORY = buildUrlWithContextPath("storeOrdersHistory");
+var GET_FEEDBACKS = buildUrlWithContextPath("getFeedbacks");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -602,7 +603,7 @@ function startCountingTextArea(storeId) {
 
 
 function rankStoreAjax(storeToRankId, comment, starRating){
-    var parameters = "storeToRankId=" + storeToRankId + "&comment=" + comment + "&starRating=" + starRating;
+    var parameters = "storeToRankId=" + storeToRankId + "&comment=" + comment + "&starRating=" + starRating + "&orderDate=" + orderDate;
     var whereToAppend = $(".wrapper").filter('[data-storeId="' + storeToRankId + '"]');
 
     $.ajax({
@@ -1334,6 +1335,41 @@ function clickOnMakeOrderButton() {
     overloadOrderFirstDetailsFormSubmit();
 }
 
+function showFeedbacks(feedbacks){
+    $("<br>").appendTo($("#centerPage"));
+    $.each(feedbacks || [], function(index, feedback) {
+        $("<div class=\"column\">" +
+            "                <div class=\"card\">" +
+            "                    <h3><div class=\"my-rating\"></div></h3>" +
+            "                    <p>Feedback giver: " + feedback.feedbackGiver +"</p>" +
+            "                    <p>Order date: " + feedback.date.day + "/" + feedback.date.month + "/" + feedback.date.year + "</p>" +
+            "                    <p>Comment: " + (feedback.comment==="" ? "No Comment" : feedback.comment) + "</p>" +
+            "                </div>" +
+            "            </div>").appendTo($("#centerPage"));
+        $(".my-rating").starRating({
+            starSize: 25,
+            initialRating: feedback.rank,
+            readOnly: true
+        });
+    });
+    $("</div>").appendTo($("#centerPage"));
+
+}
+
+function clickOnShowFeedbacksButton(){
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>My Feedbacks In Zone </h1>"));
+    $.ajax({
+        url: GET_FEEDBACKS,
+        error: function (e){
+
+        },
+        success: function(feedbacks) {
+            showFeedbacks(feedbacks);
+        }
+    })
+}
+
 function setButtonsAccordingToUserRole() {
     $.ajax({
         url: GET_ROLE_URL,
@@ -1347,6 +1383,12 @@ function setButtonsAccordingToUserRole() {
                 });
                 $("#userOrdersHistory").click(function (){
                     clickOnMyOrdersHistoryButton();
+                });
+            }
+            else{
+                $("<a href=\"#\" id=\"show-feedbacks-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Show Feedbacks</a>").insertBefore("#backButton");
+                $("#show-feedbacks-button").click(function (){
+                    clickOnShowFeedbacksButton();
                 });
             }
         }

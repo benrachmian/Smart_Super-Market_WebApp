@@ -4,6 +4,8 @@ import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystemDTO.feedback.DTOFeedback;
 
+import java.time.LocalDate;
+
 public class Feedback {
     private static final int MIN_RANK = 1;
     private static final int MAX_RANK = 5;
@@ -11,12 +13,13 @@ public class Feedback {
     private String comment;
     private final String feedbackGiver;
     private final int storeGotFeedbackId;
-
-    public Feedback(float rank, String comment, String feedbackGiver, int storeGotFeedbackId) {
+    private LocalDate date;
+    public Feedback(float rank, String comment, String feedbackGiver, int storeGotFeedbackId, LocalDate date) {
         this.rank = rank;
         this.comment = comment;
         this.feedbackGiver = feedbackGiver;
         this.storeGotFeedbackId = storeGotFeedbackId;
+        this.date = date;
     }
 
     public float getRank() {
@@ -40,7 +43,8 @@ public class Feedback {
                 rank,
                 comment,
                 feedbackGiver,
-                storeGotFeedbackId
+                storeGotFeedbackId,
+                date
         );
     }
 }

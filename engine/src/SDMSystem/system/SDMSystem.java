@@ -7,6 +7,7 @@ import SDMSystem.system.usersInSystem.UsersInSystem;
 import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.user.storeOwner.StoreOwner;
+import SDMSystemDTO.feedback.DTOFeedback;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.DTOProduct;
 import SDMSystemDTO.product.DTOProductInStore;
@@ -137,5 +138,10 @@ public class SDMSystem {
         }
 
         return orderHistoryDTO;
+    }
+
+    public Collection<DTOFeedback> getZoneFeedbacks(String username, String zoneFromSession) {
+        StoreOwner user = usersInSystem.getStoreOwner(username);
+        return user.getFeedbacksInZoneDTO(zoneFromSession);
     }
 }

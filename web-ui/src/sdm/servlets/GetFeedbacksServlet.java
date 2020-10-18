@@ -2,11 +2,12 @@ package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
-import SDMSystem.user.storeOwner.StoreOwner;
-import SDMSystemDTO.order.DTOOrder;
+import SDMSystemDTO.discount.DTODiscount;
+import SDMSystemDTO.feedback.DTOFeedback;
+import SDMSystemDTO.product.IDTOProductInStore;
+import SDMSystemDTO.store.DTOStore;
 import com.google.gson.Gson;
-import org.omg.SendingContext.RunTime;
-import sdm.constants.Constants;
+import javafx.util.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -16,38 +17,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 
-public class RankStoreServlet extends HttpServlet {
+public class GetFeedbacksServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-            int storeToRankId = Integer.parseInt(request.getParameter("storeToRankId"));
-            String comment = request.getParameter("comment");
-            float rank = Float.parseFloat(request.getParameter("starRating"));
-            LocalDate orderDate = LocalDate.parse(request.getParameter("orderDate"));
-            if(rank ==0){
-                throw new RuntimeException("You must rank the store!");
-            }
-            String zone = SessionUtils.getChosenZone(request);
-            SDMSystemInZone sdmSystemInZone = sdmSystemManager.getZoneSystem(zone);
-            String username = SessionUtils.getUsername(request);
-            if (username == null) {
-                response.sendRedirect(request.getContextPath() + "/index.html");
-            }
-            sdmSystemInZone.giveFeedback(storeToRankId, comment, rank, username,orderDate);
-        }
-        catch (RuntimeException e){
-            PrintWriter out = response.getWriter();
-            response.setStatus(500);
-            out.print(e.getMessage());
+        response.setContentType("application/json");
+        String zoneFromSession = SessionUtils.getChosenZone(request);
+        SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
+        String username = SessionUtils.getUsername(request);
+
+        Collection<DTOFeedback> zoneFeedbacks = sdmSystemManager.getZoneFeedbacks(username,zoneFromSession);
+
+
+        Gson gson = new Gson();
+        String jsonResponse = gson.toJson(zoneFeedbacks);
+
+        try (PrintWriter out = response.getWriter()) {
+            out.print(jsonResponse);
             out.flush();
         }
     }
-
-
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
@@ -86,6 +78,6 @@ public class RankStoreServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "get row data";
+        return "get products in store";
     }// </editor-fold>
 }

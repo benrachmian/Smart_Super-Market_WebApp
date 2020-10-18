@@ -18,12 +18,16 @@ public class StoreOwner extends User {
     private Map<Integer, Store> ownedStores;
     private ArrayList<Order> ordersFromUser;
     private ArrayList<Feedback> feedbacks;
+    //key: zone name, value: feedbacks in zone
+    private Map<String,ArrayList<Feedback>> feedbacksByZone;
+    private int numOfFeedbacks;
 
     public StoreOwner(String username) {
         super(username);
         ownedStores = new HashMap<>();
         ordersFromUser = new ArrayList<>();
         feedbacks = new ArrayList<>();
+        feedbacksByZone = new HashMap<>();
     }
     public void addNewStore(Store storeToAdd){
         ownedStores.put(storeToAdd.getSerialNumber(),storeToAdd);
@@ -77,11 +81,28 @@ public class StoreOwner extends User {
         return ordersFromUser;
     }
 
-    public void giveFeedback(Feedback feedback){
+    public void giveFeedback(String zone,Feedback feedback){
         feedbacks.add(feedback);
+        ArrayList<Feedback> feedbacksOfZone = feedbacksByZone.get(zone);
+        if(feedbacksOfZone == null){
+            feedbacksByZone.put(zone,new ArrayList<>());
+            feedbacksByZone.get(zone).add(feedback);
+        }
+        else{
+            feedbacksOfZone.add(feedback);
+        }
     }
 
     public int getFeedbacksAmount() {
         return feedbacks.size();
+    }
+
+    public Collection<DTOFeedback> getFeedbacksInZoneDTO(String zone) {
+        Collection<DTOFeedback> zoneFeedbacksDTO = new LinkedList<>();
+        for(Feedback feedback : feedbacksByZone.get(zone)){
+            zoneFeedbacksDTO.add(feedback.createDTOFeedbackFromFeedback());
+        }
+
+        return zoneFeedbacksDTO;
     }
 }

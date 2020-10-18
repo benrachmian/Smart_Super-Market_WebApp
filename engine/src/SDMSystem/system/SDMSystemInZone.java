@@ -106,7 +106,7 @@ public class SDMSystemInZone {
         discountsInSystem = new HashMap<>();
         try {
             loadProducts(superDuperMarketDescriptor.getSDMItems());
-            loadStores(superDuperMarketDescriptor.getSDMStores(), superDuperMarketDescriptor.getSDMItems(),storeOwner);
+            loadStores(superDuperMarketDescriptor.getSDMStores(), superDuperMarketDescriptor.getSDMItems(),storeOwner,zone);
             scanForProductsWithoutStore();
         }
         catch (Exception e){
@@ -144,13 +144,13 @@ public class SDMSystemInZone {
 //        }
 //    }
 
-    private void loadStores(SDMStores sdmStores, SDMItems sdmItems, StoreOwner storeOwner) {
+    private void loadStores(SDMStores sdmStores, SDMItems sdmItems, StoreOwner storeOwner, String zone) {
         Store loadedStore;
         List<SDMStore> sdmStoreList = sdmStores.getSDMStore();
         for (SDMStore sdmStore : sdmStoreList) {
             Point loadedStoreLocation = getLoadedLocation(sdmStore.getLocation());
             Collection<Discount> loadedDiscounts = getLoadedDiscounts(sdmStore.getSDMDiscounts(), sdmStore.getSDMPrices().getSDMSell(),sdmItems,sdmStore.getId());
-            loadedStore = new Store(sdmStore.getId(),loadedStoreLocation,sdmStore.getDeliveryPpk(),sdmStore.getName(), loadedDiscounts,storeOwner);
+            loadedStore = new Store(sdmStore.getId(),loadedStoreLocation,sdmStore.getDeliveryPpk(),sdmStore.getName(), loadedDiscounts,storeOwner,zone);
             addStoreToSystem(loadedStore);
             List<SDMSell> sdmSellList = sdmStore.getSDMPrices().getSDMSell();
             loadProductsToStore(sdmSellList,loadedStore);
@@ -997,9 +997,9 @@ public class SDMSystemInZone {
         return chosenStore.getDTOProductsInStore().values();
     }
 
-    public void giveFeedback(int storeToRankId, String comment, float rank, String username) {
+    public void giveFeedback(int storeToRankId, String comment, float rank, String username, LocalDate date) {
         Store storeToRank = storesInSystem.getStoreInSystem(storeToRankId);
-        Feedback feedback = new Feedback(rank,comment,username,storeToRankId);
+        Feedback feedback = new Feedback(rank,comment,username,storeToRankId,date);
         storeToRank.giveFeedback(feedback);
     }
 }
