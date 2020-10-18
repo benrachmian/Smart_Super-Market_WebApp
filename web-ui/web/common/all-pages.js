@@ -1,7 +1,9 @@
 var refreshRateForAlert = 4000; //milli seconds
 var orderAlertVersion = 0;
 var CHECK_ORDERS_ALERT = buildUrlWithContextPath("checkOrdersAlert");
-var GET_ORDER_ALERT_VERSION = buildUrlWithContextPath("orderAlertVersion");
+var CHECK_FEEDBACKS_ALERT = buildUrlWithContextPath("checkFeedbacksAlert");
+// var GET_ORDER_ALERT_VERSION = buildUrlWithContextPath("orderAlertVersion");
+// var GET_FEEDBACK_ALERT_VERSION = buildUrlWithContextPath("feedbackAlertVersion");
 
 
 function addOrdersToOrderAlertDiv(newOrders){
@@ -19,10 +21,9 @@ function addOrdersToOrderAlertDiv(newOrders){
     });
 }
 
-function ajaxCheckForAlerts() {
+function ajaxCheckForOrdersAlerts() {
     $.ajax({
         url: CHECK_ORDERS_ALERT,
-        data: "orderAlertVersion=" + orderAlertVersion,
         //dataType: "json",
         error: function(error) {
         },
@@ -59,20 +60,87 @@ function ajaxCheckForAlerts() {
                 }
 
             }
-                setTimeout(ajaxCheckForAlerts,refreshRateForAlert);
+                setTimeout(ajaxCheckForOrdersAlerts,refreshRateForAlert);
         }
     })
 }
 
-function ajaxGetOrderVersion() {
+function addFeedbacksToFeedbackAlertDiv(newFeedbacks) {
+    $.each(newFeedbacks || [], function (index, newFeedback) {
+        $("<div class=\"columnAlert\">" +
+            "                <div class=\"card\">" +
+            "                    <h3>Ranking: " + newFeedback.rank + "/5 </h3>" +
+            "                    <p>Feedback giver:" + newFeedback.feedbackGiver +"</p>" +
+            "                    <p>Comment: " + (newFeedback.comment.length == 0 ? "No Comment" : newFeedback.comment) + "</p>" +
+            "                    <p>Store who got the feedback ID: " + newFeedback.storeGotFeedbackId + "</p>" +
+            "                </div>" +
+            "            </div>").appendTo($("#feedbackAlertsCards"));
+    });
+}
+
+function ajaxCheckForFeedbacksAlerts() {
     $.ajax({
-        url: GET_ORDER_ALERT_VERSION,
-        success: function (orderVersion) {
-            orderAlertVersion = orderVersion;
-            ajaxCheckForAlerts();
+        url: CHECK_FEEDBACKS_ALERT,
+        //dataType: "json",
+        error: function(error) {
+        },
+        success: function (newFeedbacks) {
+            if (newFeedbacks.length > 0) {
+                $("#myModal").remove();
+                $( "<!-- The Modal -->\n" +
+                    "<div id=\"myModal\" class=\"modal\">\n" +
+                    "\n" +
+                    "  <!-- Modal content -->\n" +
+                    "  <div class=\"modal-content\">\n" +
+                    "    <div class=\"modal-header\">\n" +
+                    "      <span class=\"close\">&times;</span>\n" +
+                    "      <h2>Feedbacks Alert!</h2>\n" +
+                    "    </div>\n" +
+                    "    <div class=\"modal-body\">\n" +
+                    "      <div class='row' id='feedbackAlertsCards'></div>" +
+                    "    </div>\n" +
+                    "  </div>\n" +
+                    "\n" +
+                    "</div>").appendTo($("body"));
+                addFeedbacksToFeedbackAlertDiv(newFeedbacks);
+                var modal = document.getElementById("myModal");
+                var span = document.getElementsByClassName("close")[0];
+                modal.style.display = "block";
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+            }
+            setTimeout(ajaxCheckForFeedbacksAlerts,refreshRateForAlert);
         }
     })
 }
+// function ajaxGetOrderVersion() {
+//     $.ajax({
+//         url: GET_ORDER_ALERT_VERSION,
+//         success: function (orderVersion) {
+//             orderAlertVersion = orderVersion;
+//             ajaxCheckForOrdersAlerts();
+//         }
+//     })
+// }
+
+// function ajaxGetFeedbackVersion() {
+//     $.ajax({
+//         url: GET_FEEDBACK_ALERT_VERSION,
+//         success: function (feedbackVersion) {
+//             orderAlertVersion = orderVersion;
+//             ajaxCheckForOrdersAlerts();
+//         }
+//     })
+// }
+
+
 
 //activate the timer calls after the page is loaded
 $(function() {
@@ -80,8 +148,9 @@ $(function() {
         url: GET_ROLE_URL,
         success: function (role) {
             if (role === "store-owner") {
-                //ajaxCheckForAlerts();
-                ajaxGetOrderVersion();
+                //ajaxGetOrderVersion();
+                ajaxCheckForOrdersAlerts();
+                ajaxCheckForFeedbacksAlerts();
             }
         }
     })

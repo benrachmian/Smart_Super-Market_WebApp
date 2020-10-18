@@ -333,6 +333,6 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
 
     public void giveFeedback(Feedback feedback) {
         storeFeedbacks.add(feedback);
-        storeOwner.giveFeedback(this.storeSerialNumber,feedback);
+        storeOwner.giveFeedback(feedback);
     }
 }

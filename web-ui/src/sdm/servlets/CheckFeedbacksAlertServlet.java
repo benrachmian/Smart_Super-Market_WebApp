@@ -2,8 +2,7 @@ package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystem.user.storeOwner.StoreOwner;
-import SDMSystemDTO.order.DTOOrder;
-import SDMSystemDTO.system.SingleZoneEntry;
+import SDMSystemDTO.feedback.DTOFeedback;
 import com.google.gson.Gson;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
@@ -16,14 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 
-public class CheckOrdersAlertServlet extends HttpServlet {
+public class CheckFeedbacksAlertServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-        int orderAlertVersion = SessionUtils.getOrderAlertVersion(request);
+        int feedbacksAlertVersion = SessionUtils.getFeedbackAlertVersion(request);
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/index.html");
@@ -31,14 +29,14 @@ public class CheckOrdersAlertServlet extends HttpServlet {
         StoreOwner storeOwner = sdmSystemManager.getStoreOwner(username);
 
 
-        ArrayList<DTOOrder> ordersFromUserStores;
+        ArrayList<DTOFeedback> feedbacksUserGot;
         synchronized (getServletContext()) {
-            ordersFromUserStores = storeOwner.getNewOrdersFromUser(orderAlertVersion);
-            request.getSession(false).setAttribute(Constants.ORDER_ALERT_VERSION, storeOwner.getOrdersFromUser().size());
+            feedbacksUserGot = storeOwner.getNewFeedbacksFromUser(feedbacksAlertVersion);
+            request.getSession(false).setAttribute(Constants.FEEDBACK_ALERT_VERSION, storeOwner.getFeedbacksAmount());
         }
 
         Gson gson = new Gson();
-        String jsonResponse = gson.toJson(ordersFromUserStores);
+        String jsonResponse = gson.toJson(feedbacksUserGot);
 
         try (PrintWriter out = response.getWriter()) {
             out.print(jsonResponse);

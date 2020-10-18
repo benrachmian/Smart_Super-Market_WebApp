@@ -134,6 +134,11 @@
         <servlet-class>sdm.servlets.RankStoreServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CheckFeedbacksAlertServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckFeedbacksAlertServlet</servlet-class>
+    </servlet>
+
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
@@ -142,6 +147,11 @@
     <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckFeedbacksAlertServlet</servlet-name>
+        <url-pattern>/checkFeedbacksAlert</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

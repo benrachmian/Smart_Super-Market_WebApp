@@ -3,6 +3,7 @@ package SDMSystem.user;
 import SDMSystem.HasSerialNumber;
 import SDMSystem.user.accountAction.AccountMovement;
 import SDMSystem.user.storeOwner.StoreOwner;
+import SDMSystemDTO.feedback.DTOFeedback;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
 import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;

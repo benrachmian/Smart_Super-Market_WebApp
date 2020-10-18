@@ -1,18 +1,12 @@
-package feedback;
+package SDMSystemDTO.feedback;
 
-import SDMSystem.user.User;
-import SDMSystem.user.customer.Customer;
-import SDMSystemDTO.feedback.DTOFeedback;
-
-public class Feedback {
-    private static final int MIN_RANK = 1;
-    private static final int MAX_RANK = 5;
+public class DTOFeedback {
     private float rank;
     private String comment;
     private final String feedbackGiver;
     private final int storeGotFeedbackId;
 
-    public Feedback(float rank, String comment, String feedbackGiver, int storeGotFeedbackId) {
+    public DTOFeedback(float rank, String comment, String feedbackGiver, int storeGotFeedbackId) {
         this.rank = rank;
         this.comment = comment;
         this.feedbackGiver = feedbackGiver;
@@ -33,14 +27,5 @@ public class Feedback {
 
     public int getStoreGotFeedbackId() {
         return storeGotFeedbackId;
-    }
-
-    public DTOFeedback createDTOFeedbackFromFeedback() {
-        return new DTOFeedback(
-                rank,
-                comment,
-                feedbackGiver,
-                storeGotFeedbackId
-        );
     }
 }

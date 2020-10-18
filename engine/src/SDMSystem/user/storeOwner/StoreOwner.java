@@ -4,9 +4,11 @@ import SDMSystem.order.Order;
 import SDMSystem.store.Store;
 import SDMSystem.user.User;
 import SDMSystem.user.accountAction.AccountMovement;
+import SDMSystemDTO.feedback.DTOFeedback;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
 import feedback.Feedback;
+import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -15,14 +17,13 @@ public class StoreOwner extends User {
     //key: storeId, value: store
     private Map<Integer, Store> ownedStores;
     private ArrayList<Order> ordersFromUser;
-    //key: store id, value: the feedbacks the stores got
-    private Map<Integer, Collection<Feedback>> feedbacks;
+    private ArrayList<Feedback> feedbacks;
 
     public StoreOwner(String username) {
         super(username);
         ownedStores = new HashMap<>();
         ordersFromUser = new ArrayList<>();
-        feedbacks = new HashMap<>();
+        feedbacks = new ArrayList<>();
     }
     public void addNewStore(Store storeToAdd){
         ownedStores.put(storeToAdd.getSerialNumber(),storeToAdd);
@@ -44,6 +45,19 @@ public class StoreOwner extends User {
         return res;
     }
 
+    public ArrayList<DTOFeedback> getNewFeedbacksFromUser(int fromIndex){
+        ArrayList<DTOFeedback> res = new ArrayList<>();
+        if (fromIndex < 0 || fromIndex > feedbacks.size()) {
+            fromIndex = 0;
+        }
+        List<Feedback> newFeedbacks =  feedbacks.subList(fromIndex,feedbacks.size());
+        for(Feedback feedback : newFeedbacks){
+            res.add(feedback.createDTOFeedbackFromFeedback());
+        }
+        return res;
+    }
+
+
     public void orderFromTransaction(LocalDate orderDate, float transactionSum){
         accountMovements.add(new AccountMovement(
                 AccountActionType.PAYMENT_RECEIVE,
@@ -63,12 +77,11 @@ public class StoreOwner extends User {
         return ordersFromUser;
     }
 
-    public void giveFeedback(int storeSerialNumber, Feedback feedback){
-        //first feedback to store
-        if(feedbacks.get(storeSerialNumber) == null){
-            feedbacks.put(storeSerialNumber,new LinkedList<>());
-        }
-        feedbacks.get(storeSerialNumber).add(feedback);
+    public void giveFeedback(Feedback feedback){
+        feedbacks.add(feedback);
     }
 
+    public int getFeedbacksAmount() {
+        return feedbacks.size();
+    }
 }
