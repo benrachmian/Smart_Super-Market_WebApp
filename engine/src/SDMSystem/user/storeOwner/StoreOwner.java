@@ -6,22 +6,23 @@ import SDMSystem.user.User;
 import SDMSystem.user.accountAction.AccountMovement;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
+import feedback.Feedback;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StoreOwner extends User {
     //key: storeId, value: store
     private Map<Integer, Store> ownedStores;
     private ArrayList<Order> ordersFromUser;
+    //key: store id, value: the feedbacks the stores got
+    private Map<Integer, Collection<Feedback>> feedbacks;
 
     public StoreOwner(String username) {
         super(username);
         ownedStores = new HashMap<>();
         ordersFromUser = new ArrayList<>();
+        feedbacks = new HashMap<>();
     }
     public void addNewStore(Store storeToAdd){
         ownedStores.put(storeToAdd.getSerialNumber(),storeToAdd);
@@ -61,4 +62,13 @@ public class StoreOwner extends User {
     public ArrayList<Order> getOrdersFromUser() {
         return ordersFromUser;
     }
+
+    public void giveFeedback(int storeSerialNumber, Feedback feedback){
+        //first feedback to store
+        if(feedbacks.get(storeSerialNumber) == null){
+            feedbacks.put(storeSerialNumber,new LinkedList<>());
+        }
+        feedbacks.get(storeSerialNumber).add(feedback);
+    }
+
 }

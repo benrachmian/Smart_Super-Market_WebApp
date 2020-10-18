@@ -22,6 +22,7 @@ import SDMSystemDTO.system.SingleZoneEntry;
 import SDMSystemDTO.product.*;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.store.DTOStore;
+import feedback.Feedback;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.Pair;
 import xml.generated.*;
@@ -990,5 +991,11 @@ public class SDMSystemInZone {
             throw new RuntimeException("There are no store with ID: " + storeId);
         }
         return chosenStore.getDTOProductsInStore().values();
+    }
+
+    public void giveFeedback(int storeToRankId, String comment, float rank, String username) {
+        Store storeToRank = storesInSystem.getStoreInSystem(storeToRankId);
+        Feedback feedback = new Feedback(rank,comment,username,storeToRankId);
+        storeToRank.giveFeedback(feedback);
     }
 }

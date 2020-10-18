@@ -19,6 +19,7 @@ import SDMSystemDTO.product.DTOProductInStore;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
+import feedback.Feedback;
 import javafx.util.Pair;
 
 import java.awt.*;
@@ -36,7 +37,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
     private final int storeSerialNumber;
     private final String storeName;
     private final Collection<Order> ordersFromStore;
-    //private final Collection<Feedback> storeFeedbacks;
+    private final Collection<Feedback> storeFeedbacks;
     private float totalProfitFromDelivery;
     private final Collection<Discount> storeDiscounts;
 
@@ -70,6 +71,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         this.storeName = storeName;
         this.ordersFromStore = new HashSet<>();
         this.storeOwner = storeOwner;
+        this.storeFeedbacks = new LinkedList<>();
         //this.storeFeedbacks = null;
     }
 
@@ -329,4 +331,8 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
     }
 
 
+    public void giveFeedback(Feedback feedback) {
+        storeFeedbacks.add(feedback);
+        storeOwner.giveFeedback(this.storeSerialNumber,feedback);
+    }
 }

@@ -15,6 +15,7 @@ var MAKE_NEW_STATIC_ORDER = buildUrlWithContextPath("makeNewStaticOrder");
 var MAKE_NEW_DYNAMIC_ORDER = buildUrlWithContextPath("makeNewDynamicOrder");
 var GET_PRODCUTS_IN_SYSTEM = buildUrlWithContextPath("productsInSystem");
 var FIND_CHEAPEST_BASKET = buildUrlWithContextPath("findCheapestBasket");
+var RANK_STORE = buildUrlWithContextPath("rankStore");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -510,6 +511,118 @@ function addStoresParticipatingToOrderSummaryDiv(){
     });
 }
 
+
+function startCountingTextArea(storeId) {
+        $('textarea:last').keyup(function () {
+
+            var characterCount = $(this).val().length,
+                current = $('.current').filter('[data-storeId="' + storeId + '"]'),
+                maximum = $('.maximum').filter('[data-storeId="' + storeId + '"]'),
+                theCount = $('.the-count').filter('[data-storeId="' + storeId + '"]');
+
+            current.text(characterCount);
+
+
+            /*This isn't entirely necessary, just playin around*/
+            if (characterCount < 70) {
+                current.css('color', '#666');
+            }
+            if (characterCount > 70 && characterCount < 90) {
+                current.css('color', '#6d5555');
+            }
+            if (characterCount > 90 && characterCount < 100) {
+                current.css('color', '#793535');
+            }
+            if (characterCount > 100 && characterCount < 120) {
+                current.css('color', '#841c1c');
+            }
+            if (characterCount > 120 && characterCount < 139) {
+                current.css('color', '#8f0001');
+            }
+
+            if (characterCount >= 140) {
+                maximum.css('color', '#8f0001');
+                current.css('color', '#8f0001');
+                theCount.css('font-weight', 'bold');
+            } else {
+                maximum.css('color', '#666');
+                theCount.css('font-weight', 'normal');
+            }
+
+
+        });
+}
+
+
+function rankStoreAjax(storeToRankId, comment, starRating){
+    var parameters = "storeToRankId=" + storeToRankId + "&comment=" + comment + "&starRating=" + starRating;
+    var whereToAppend = $(".wrapper").filter('[data-storeId="' + storeToRankId + '"]');
+
+    $.ajax({
+        method: "post",
+        url: RANK_STORE,
+        data: parameters,
+        error: function(error) {
+            errorMsg(whereToAppend,error.responseText);
+        },
+        success: function () {
+            $( whereToAppend.find("#errorDiv")).remove();
+            successMsg(whereToAppend,"You rank the store successfully!");
+            $(".rankButton").filter('[data-storeId="' + storeToRankId + '"]').prop('disabled', true); //TO DISABLED
+        }
+    })
+}
+
+function createRankingStoresPage(){
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Rank Stores </h1>"));
+    $("<div id=rankStoresDiv> </div>").appendTo($("#centerPage"));
+
+
+    $.ajax({
+        url: GET_STORES_PARTICIPATING,
+        error: function (e) {
+
+        },
+        success: function (storesParticipating) {
+            $.each(storesParticipating || [], function (index, storeParticipating) {
+                var storeId = storeParticipating.storeSerialNumber;
+                $(  "<p class='centerDiv' id='sub-title2'> " + storeParticipating.storeName + "</p>" +
+                   "<div class=\"containerRanking\">\n" +
+                    "<div data-storeId='" + storeId + "' class=\"my-rating centerDiv\"></div>" +
+                    "<div data-storeId='" + storeId + "' class=\"wrapper\">\n" +
+                    "  <h1>Enter your feedback here</h1>\n" +
+                    "  <textarea name=\"the-textarea\" data-storeId='" + storeId + "' class='comment-text-area' id=\"the-textarea\" maxlength=\"300\" placeholder=\"Start Typing...\"autofocus></textarea>\n" +
+                    "  <div data-storeId='" + storeId + "' class=\"the-count\">\n" +
+                    "    <span data-storeId='" + storeId + "' class=\"current\">0</span>\n" +
+                    "    <span data-storeId='" + storeId + "' class=\"maximum\">/ 300</span>\n" +
+                    "  </div>\n" +
+                    "<div><button data-storeId='" + storeId + "' class='button rankButton' > <span>Click here to rank the store </span> </button></div>" +
+                    "</div>"
+                ).appendTo($("#rankStoresDiv"));
+
+                 startCountingTextArea(storeId);
+                 $(".rankButton").filter('[data-storeId="' + storeId + '"]').click(function (){
+                     rankStoreAjax(storeId,
+                         $(".comment-text-area").filter('[data-storeId="' + storeId + '"]').val(),
+                         $(".my-rating").filter('[data-storeId="' + storeId + '"]').starRating('getRating'));
+
+                 })
+            });
+            $("<div class='centerDiv'><button style='width: 15%' class='button' id='finishRankingButton' > <span>Finish </span> </button></div>").appendTo($("#centerPage"));
+            $("#finishRankingButton").click(function (){
+                window.location.replace("single_zone.html");
+            });
+            $(".my-rating").starRating({
+                starSize: 25,
+                starShape: "rounded",
+            });
+        }
+    });
+}
+
+
+
 function makeNewStaticOrderAjax(deliveryCost){
     var parameters = chosenStoreIdForAjax;
     parameters = parameters.concat("&orderDate=" + orderDate + "&deliveryCost=" + deliveryCost);
@@ -527,12 +640,12 @@ function makeNewStaticOrderAjax(deliveryCost){
             modal.style.display = "block";
             span.onclick = function() {
                 modal.style.display = "none";
-                window.location.href = "single_zone.html";
+                createRankingStoresPage();
             }
             window.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
-                    window.location.href = "single_zone.html";
+                    createRankingStoresPage();
                 }
             }
         }
@@ -556,12 +669,12 @@ function makeNewDynamicOrderAjax(){
             modal.style.display = "block";
             span.onclick = function() {
                 modal.style.display = "none";
-                window.location.href = "single_zone.html";
+                createRankingStoresPage();
             }
             window.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
-                    window.location.href = "single_zone.html";
+                    createRankingStoresPage();
                 }
             }
         }
@@ -717,26 +830,30 @@ function updateCost(ammount,price,rowIndex){
 }
 
 function errorMsg(whereToAppend,errorMsg){
-    if ( !$( "#errorDiv" ).length ) {
+    //if ( !$( "#errorDiv" ).length ) {
+    if (!whereToAppend.find("#errorDiv").length ) {
         $("<div id='errorDiv' style='display: none' class=\"isa_error\" >"
             + "<i class=\"fa fa-times-circle\"></i>"
             + "<span id=\"error\">" + errorMsg + " </span>"
             + "</div>").appendTo(whereToAppend).slideDown("slow");
     }
     else{
-        $("#error").empty().append(errorMsg);
+       // $("#error").empty().append(errorMsg);
+        $(whereToAppend).filter($("#error")).empty().append(errorMsg);
     }
     scrollToAnimate($("#errorDiv"));
 }
 function successMsg(whereToAppend,successMsg){
-    if ( !$( "#successDiv" ).length ) {
+    //if ( !$( "#successDiv" ).length ) {
+    if ( !whereToAppend.find($("#successDiv")).length ) {
         $("<div id='successDiv' style='display: none' class=\"isa_success\" >"
             + "<i class=\"fa fa-check\"></i>"
             + "<span id=\"success\">" + successMsg + " </span>"
             + "</div>").appendTo(whereToAppend).slideDown("slow");
     }
     else{
-        $("#success").empty().append(successMsg);
+        //$("#success").empty().append(successMsg);
+        $(whereToAppend).filter($("#success")).empty().append(successMsg);
     }
     scrollToAnimate($("#successDiv"));
 }
