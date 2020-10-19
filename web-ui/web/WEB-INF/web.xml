@@ -159,6 +159,11 @@
         <servlet-class>sdm.servlets.CheckNewStoreSettingsServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>NewStoreToZoneServlet</servlet-name>
+        <servlet-class>sdm.servlets.NewStoreToZoneServlet</servlet-class>
+    </servlet>
+
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
@@ -167,6 +172,11 @@
     <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>NewStoreToZoneServlet</servlet-name>
+        <url-pattern>/newStoreToZone</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -937,23 +937,25 @@ public class SDMSystemInZone {
 
 
 
-//    public void addStoreToSystem(int storeID, String storeName, int x, int y, float ppk, Map<Integer, DTOProductInStore> productsInStore) {
-//        Store newStore = new Store(
-//                storeID,
-//                new Point(x,y),
-//                ppk,
-//                storeName,
-//                null
-//        );
-//        for(DTOProductInStore product : productsInStore.values()){
-//            newStore.addNewProductToStore(
-//                    productsInSystem.get(product.getSerialNumber()),
-//                    product.getPrice()
-//            );
-//        }
-//
-//        addStoreToSystem(newStore);
-//    }
+    public void addNewStoreToSystem(int storeID, String storeName, int x, int y, float ppk, Collection <DTOProductInStore> productsInStore, StoreOwner storeOwner, String storeZone) {
+        Store newStore = new Store(
+                storeID,
+                new Point(x,y),
+                ppk,
+                storeName,
+                null,
+                storeOwner,
+                storeZone
+        );
+        for(DTOProductInStore product : productsInStore){
+            newStore.addNewProductToStore(
+                    productsInSystem.get(product.getSerialNumber()),
+                    product.getPrice()
+            );
+        }
+
+        addStoreToSystem(newStore);
+    }
 
     public boolean isAvailableProductId(int productId) {
         return productsInSystem.get(productId) == null;
