@@ -28,15 +28,22 @@ public class GetFeedbacksServlet extends HttpServlet {
         String zoneFromSession = SessionUtils.getChosenZone(request);
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         String username = SessionUtils.getUsername(request);
+        try {
+            Collection<DTOFeedback> zoneFeedbacks = sdmSystemManager.getZoneFeedbacks(username, zoneFromSession);
 
-        Collection<DTOFeedback> zoneFeedbacks = sdmSystemManager.getZoneFeedbacks(username,zoneFromSession);
 
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(zoneFeedbacks);
 
-        Gson gson = new Gson();
-        String jsonResponse = gson.toJson(zoneFeedbacks);
-
-        try (PrintWriter out = response.getWriter()) {
-            out.print(jsonResponse);
+            try (PrintWriter out = response.getWriter()) {
+                out.print(jsonResponse);
+                out.flush();
+            }
+        }
+        catch (RuntimeException e){
+            PrintWriter out = response.getWriter();
+            response.setStatus(500);
+            out.print(e.getMessage());
             out.flush();
         }
     }

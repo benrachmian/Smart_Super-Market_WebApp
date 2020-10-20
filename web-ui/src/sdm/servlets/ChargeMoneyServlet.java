@@ -25,6 +25,10 @@ public class ChargeMoneyServlet extends HttpServlet {
             if(money.isEmpty() || chargeDate.isEmpty()){
                 throw new RuntimeException("You must enter both money and charge date!");
             }
+            float moneyInFloat = Float.parseFloat(money);
+            if(moneyInFloat<= 0){
+                throw new RuntimeException("You must charge your account with a positive number!");
+            }
             sdmSystemManager.chargeUserMoney(SessionUtils.getUsername(request), Float.parseFloat(money), chargeDate);
         }
         catch (RuntimeException e){

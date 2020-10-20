@@ -2,20 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Super Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SDM By Ben Rachmian</title>
+
+
+    <script src="common/jquery-2.0.3.min.js"></script>
+    <script src="common/context-path-helper.js"></script>
+    <script src="common/anime.min.js"></script>
+    <script src="common/all-pages.js"></script>
 
     <link rel="stylesheet" href="common/bootstrap.min.css">
-    <link rel="stylesheet" href="common/css/index.css">
+    <link rel="stylesheet" href="common/w3.css">
+    <link rel="stylesheet" href="common/css/allPages.css">
 
 </head>
 <body>
-    <div class="welcome deepshadow" >
-       <h1> Welcome to Smart Super-Marker!!</h1>
-    </div>
-    <div>
-        <a href="pages/signup/signup.html" class="login-btn" role="button">Enter to system</a>
+<div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+    <button class="w3-bar-item w3-button w3-large"
+            onclick="w3_close()">Close &times;</button>
+    <a href="index.html" class="w3-bar-item w3-button" onclick="w3_close()">Home</a>
+    <a href="pages/signup/signup.html" class="w3-bar-item w3-button">Login/Sign up</a>
+</div>
+
+<div id="main">
+
+    <div class="w3-teal">
+        <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+        <div class="w3-container" id="SDMTitle">
+            <h1 class="ml5">
+  <span class="text-wrapper">
+    <span class="line line1"></span>
+    <span class="letters letters-left">Super</span>
+    <span class="letters ampersand">Duper</span>
+    <span class="letters letters-right">Market</span>
+    <span class="line line2"></span>
+  </span>
+            </h1>
+        </div>
+        <div class="w3-container" id="welcomeTitle">
+            <h1>Welcome! </h1>
+        </div>
     </div>
 
 
+    <div class="w3-container" id="centerPage">
+        <div id="picStore">
+            <img src="common/storeImg.png" alt="Store" class="w3-circle center" style="width:25%">
+        </div>
+        <br><p style="text-align: center ">Login or sign up to the system first</p>
+    </div>
+</div>
 </body>
 </html>

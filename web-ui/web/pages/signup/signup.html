@@ -2,32 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login to system</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login/Sign Up</title>
 
-    <link rel="stylesheet" href="../../common/bootstrap.min.css">
-    <link rel="stylesheet" href="../../common/css/signup.css">
 
     <script src="../../common/jquery-2.0.3.min.js"></script>
-    <script src="../../common/popper.min.js"></script>
-    <script src="../../common/bootstrap.min.js"></script>
+    <script src="../../common/context-path-helper.js"></script>
+    <script src="../../common/anime.min.js"></script>
+    <script src="../../common/all-pages.js"></script>
 
-        </head>
+    <link rel="stylesheet" href="../../common/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/w3.css">
+    <link rel="stylesheet" href="../../common/css/allPages.css">
+
+</head>
 <body>
-<div class="container">
-    <h2>Please enter a unique user name:</h2>
-    <form id="login" method="GET" action="login">
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
-        </div>
-        <p>Please select your role:</p>
-        <input type="radio" id="customer" name="role" value="customer">
-        <label for="customer">Customer</label><br>
-        <input type="radio" id="store-owner" name="role" value="store-owner">
-        <label for="store-owner">Store Owner</label><br>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+<div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+    <button class="w3-bar-item w3-button w3-large"
+            onclick="w3_close()">Close &times;</button>
+    <a href="../../index.html" class="w3-bar-item w3-button" onclick="w3_close()">Home</a>
+    <a href="../../pages/signup/signup.html" class="w3-bar-item w3-button">Login/Sign up</a>
 </div>
 
+<div id="main">
+
+    <div class="w3-teal">
+        <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+        <div class="w3-container" id="SDMTitle">
+            <h1 class="ml5">
+  <span class="text-wrapper">
+    <span class="line line1"></span>
+    <span class="letters letters-left">Super</span>
+    <span class="letters ampersand">Duper</span>
+    <span class="letters letters-right">Market</span>
+    <span class="line line2"></span>
+  </span>
+            </h1>
+        </div>
+        <div class="w3-container" id="welcomeTitle">
+            <h1>Login or sign up </h1>
+        </div>
+    </div>
+
+
+    <div class="w3-container " id="centerPage">
+        <h4 id="sub-title2">Please enter a unique user name:</h4>
+        <form id="login" method="GET" action="login">
+            <div class="form-group">
+                <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+            </div>
+            <h4 id="sub-title2">Please select your role:</h4>
+            <input type="radio" id="customer" name="role" value="customer">
+            <label for="customer">Customer</label><br>
+            <input type="radio" id="store-owner" name="role" value="store-owner">
+            <label for="store-owner">Store Owner</label><br>
+            <div class="centerDiv">
+            <button type="submit" class="button ">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

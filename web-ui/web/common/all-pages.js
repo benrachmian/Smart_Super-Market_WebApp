@@ -3,9 +3,47 @@ var orderAlertVersion = 0;
 var CHECK_ORDERS_ALERT = buildUrlWithContextPath("checkOrdersAlert");
 var CHECK_FEEDBACKS_ALERT = buildUrlWithContextPath("checkFeedbacksAlert");
 var CHECK_NEW_STORES_IN_ZONE_ALERT = buildUrlWithContextPath("checkNewStoresInZoneAlert");
+var GET_ROLE_URL = buildUrlWithContextPath("role");
+
 // var GET_ORDER_ALERT_VERSION = buildUrlWithContextPath("orderAlertVersion");
 // var GET_FEEDBACK_ALERT_VERSION = buildUrlWithContextPath("feedbackAlertVersion");
 
+function scrollToAnimate(scrollTo){
+    $('html, body').animate({
+        scrollTop: scrollTo.offset().top
+    }, 1000);
+}
+
+function successMsg(whereToAppend,successMsg){
+    //if ( !$( "#successDiv" ).length ) {
+    if ( !whereToAppend.find($("#successDiv")).length ) {
+        $("<div id='successDiv' style='display: none' class=\"isa_success\" >"
+            + "<i class=\"fa fa-check\"></i>"
+            + "<span id=\"success\">" + successMsg + " </span>"
+            + "</div>").appendTo(whereToAppend).slideDown("slow");
+    }
+    else{
+        //$("#success").empty().append(successMsg);
+        $(whereToAppend).filter($("#success")).empty().append(successMsg);
+    }
+    scrollToAnimate($("#successDiv"));
+}
+
+function errorMsg(whereToAppend,errorMsg){
+    //if ( !$( "#errorDiv" ).length ) {
+    if (!whereToAppend.find("#errorDiv").length ) {
+        $("<div id='errorDiv' style='display: none' class=\"isa_error\" >"
+            + "<i class=\"fa fa-times-circle\"></i>"
+            + "<span id=\"error\">" + errorMsg + " </span>"
+            + "</div>").appendTo(whereToAppend).slideDown("slow");
+    }
+    else{
+        // $("#error").empty().append(errorMsg);
+        //$(whereToAppend).filter($("#error")).empty().append(errorMsg);
+        whereToAppend.find("#error").empty().append(errorMsg);
+    }
+    scrollToAnimate($("#errorDiv"));
+}
 
 function addOrdersToOrderAlertDiv(newOrders){
     $.each(newOrders || [], function (index, newOrder) {
@@ -194,3 +232,89 @@ $(function() {
         }
     })
 });
+
+$(function() {
+    anime.timeline({loop: false})
+        .add({
+            targets: '.ml5 .line',
+            opacity: [0.5,1],
+            scaleX: [0, 1],
+            easing: "easeInOutExpo",
+            duration: 700
+        }).add({
+        targets: '.ml5 .line',
+        duration: 600,
+        easing: "easeOutExpo",
+        translateY: (el, i) => (-0.625 + 0.625*2*i) + "em"
+    }).add({
+        targets: '.ml5 .ampersand',
+        opacity: [0,1],
+        scaleY: [0.5, 1],
+        easing: "easeOutExpo",
+        duration: 600,
+        offset: '-=600'
+    }).add({
+        targets: '.ml5 .letters-left',
+        opacity: [0,1],
+        translateX: ["0.5em", 0],
+        easing: "easeOutExpo",
+        duration: 600,
+        offset: '-=300'
+    }).add({
+        targets: '.ml5 .letters-right',
+        opacity: [0, 1],
+        translateX: ["-0.5em", 0],
+        easing: "easeOutExpo",
+        duration: 600,
+        offset: '-=600'
+    });
+    // }).add({
+    //     targets: '.ml5',
+    //     opacity: 0,
+    //     duration: 1000,
+    //     easing: "easeOutExpo",
+    //     delay: 1000
+    // });
+});
+
+function w3_open() {
+    document.getElementById("main").style.marginLeft = "25%";
+    document.getElementById("mySidebar").style.width = "25%";
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("openNav").style.display = 'none';
+}
+function w3_close() {
+    document.getElementById("main").style.marginLeft = "0%";
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("openNav").style.display = "inline-block";
+}
+
+function scroll_to(div){
+    $('html, body').animate({
+        scrollTop: $("moreStoreDetailsDiv").offset().top
+    },1000);
+}
+
+//auto expand textarea
+function adjust_textarea(h) {
+    h.style.height = "20px";
+    h.style.height = (h.scrollHeight)+"px";
+}
+
+//make text feild only numbers:
+function setInputFilter(textbox, inputFilter) {
+    ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+        textbox.addEventListener(event, function() {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            } else {
+                this.value = "";
+            }
+        });
+    });
+}

@@ -12,6 +12,7 @@ import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
 import feedback.Feedback;
 import javafx.util.Pair;
 
+import java.beans.FeatureDescriptor;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -122,7 +123,11 @@ public class StoreOwner extends User {
 
     public Collection<DTOFeedback> getFeedbacksInZoneDTO(String zone) {
         Collection<DTOFeedback> zoneFeedbacksDTO = new LinkedList<>();
-        for(Feedback feedback : feedbacksByZone.get(zone)){
+        ArrayList<Feedback> feedbacks = feedbacksByZone.get(zone);
+        if(feedbacks == null){
+            throw new RuntimeException("There are no feedbacks yet!");
+        }
+        for(Feedback feedback : feedbacks){
             zoneFeedbacksDTO.add(feedback.createDTOFeedbackFromFeedback());
         }
 

@@ -108,8 +108,8 @@ function overloadFileUploadWithAjax() {
 
 }
 
-function overloadChargeSumbit() {
-    $("#chargeMoney").submit(function() {
+function overloadChargeSubmit() {
+    $("#chargeMoneyForm").submit(function() {
 
         var parameters = $(this).serialize();
 
@@ -118,18 +118,19 @@ function overloadChargeSumbit() {
             url: CHARGE_MONEY_URL,
             timeout: 4000,
             error: function(e) {
-                $(".actionStatusContainer").css("display", "block");
-                console.error("Failed to submit");
-                $(".isa_error").css("display", "block");
-                $(".isa_success").css("display", "none");
-                $("#error").empty();
-                $("#error").append(e.responseText);
+                // $(".actionStatusContainer").css("display", "block");
+                // console.error("Failed to submit");
+                // $(".isa_error").css("display", "block");
+                // $(".isa_success").css("display", "none");
+                // $("#error").empty();
+                // $("#error").append(e.responseText);
                 //showErrorMsg(e);
+                errorMsg($("#centerPage"),e.responseText);
             },
             success: function(r) {
-                //$(".actionStatusContainer").css("display", "block");
-                $(".isa_success").css("display", "block");
-                $(".isa_error").css("display", "none");
+                $("#errorDiv").remove();
+                successMsg($("#centerPage"),"You charged your account successfully!");
+                $("#chargeMoneySubmit").attr("disabled",true);
             }
         });
         // return value of the submit operation
@@ -138,34 +139,43 @@ function overloadChargeSumbit() {
 }
 
 function clickOnChargeMoneyButton() {
-    $(".actionContainer").empty();
-    $(".actionStatusContainer").empty();
-    $(".actionContainer").css("display","block");
-    $("<form method=\"GET\" id='chargeMoney' action=\"chargeMoney\">" +
-        "        <div class=\"form-group\">" +
-        "            <label for=\"money\">Money To Charge:</label>" +
-        "            <input type=\"number\" step=\"0.01\" class=\"form-control\" id=\"number\" placeholder=\"Enter Money To Charge\" name=\"money\">" +
-        "<br><label for=\"chargeDate\">Charge Date:</label>" +
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Charge Money </h1>"));
+
+    // $("<form method=\"GET\" id='chargeMoney' action=\"chargeMoney\">" +
+    //     "        <div class=\"form-group\">" +
+    //     "            <label for=\"money\">Money To Charge:</label>" +
+    //     "            <input type=\"number\" step=\"0.01\" class=\"form-control\" id=\"number\" placeholder=\"Enter Money To Charge\" name=\"money\">" +
+    //     "<br><label for=\"chargeDate\">Charge Date:</label>" +
+    //     "  <input type=\"date\" id=\"chargeDate\" name=\"chargeDate\">" +
+    //     "<input type=\"submit\" value=\"Charge!\">" +
+    //     + "</div>").appendTo($("#centerPage"));
+
+    $("<form id='chargeMoneyForm' method=\"GET\" action=\"chargeMoney\" class=\"form-style-7\">\n" +
+        "<ul>\n" +
+        "<li>\n" +
+        "     <label for=\"money\">Money To Charge:</label>" +
+        "    <input type=\"number\" step=\"0.01\" class=\"form-control\" id=\"number\" placeholder=\"Enter Money To Charge\" name=\"money\">" +
+        "    <span>Insert the amount of money you would like to charge</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"chargeDate\">Charge Date:</label>\n" +
         "  <input type=\"date\" id=\"chargeDate\" name=\"chargeDate\">" +
-        "<input type=\"submit\" value=\"Charge!\">" +
-        + "</div>").appendTo($(".actionContainer"));
-
-    $("<div class=\"isa_error\" style='display: none'>"
-    + "<i class=\"fa fa-times-circle\"></i>"
-    + "<span id=\"error\"></span>"
-    + "</div>"
-    + "<div class=\"isa_success\" style='display: none'>"
-    + "<i class=\"fa fa-check\"></i>"
-    + "<span id=\"success\">You successfully charged your account!</span>"
-    ).appendTo($(".actionStatusContainer"));
+        "    <span>Enter the date of charge</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <button id='chargeMoneySubmit' class='button' type=\"submit\" value=\"Charge\" > <span>Charge </span> </button>\n" +
+        "</li>\n" +
+        "</ul>\n" +
+        "</form>").appendTo($("#centerPage"));
 
 
-    overloadChargeSumbit();
+    overloadChargeSubmit();
 }
 
 function addButtonsByRole(role) {
     if(role === "customer"){
-        $(".box").prepend("<a href=\"#\" id='chargeMoneyButton' class=\"btn btn-turquoise  btn-animation-1\" role=\"button\"'>Charge Money</a>");
+        $("<a href=\"#\" id=\"chargeMoneyButton\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Charge Money</a>").insertAfter("#accountMovementsButton");
         $("#chargeMoneyButton").click(function (){
             clickOnChargeMoneyButton();
         });
@@ -247,39 +257,25 @@ function showAccountMovement(index, accountMovement) {
         "    <p>Movement Sum: " + accountMovement.movementSum + "</p>" +
         "    <p>Money In Account Before This Movement: " + accountMovement.accountMoneyBeforeAction + "</p>" +
         "    <p>Money In Account After This Movement: " + accountMovement.accountMoneyAfterAction + "</p>" +
-        "</details>").appendTo($(".actionContainer"));
+        "</details>").appendTo($("#centerPage"));
 }
 
 function showAccountMovements(accountMovements) {
     $.each(accountMovements || [], showAccountMovement);
-        // $('<li>' + "Username: " +  user.username + "<br> Role: " +  user.role  +  '</li>').appendTo($("#userslist"));
 }
 
 function clickOnAccountMovementsButton() {
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Account Movements </h1>"));
+
     $.ajax({
         url: GET_ACCOUNT_MOVEMENTS_URL,
         timeout: 4000,
-        error: function(e) {
-            $(".actionStatusContainer").empty();
-            // $("<div class=\"isa_error\" style='display: none'>" +
-            //     "<i class=\"fa fa-times-circle\"></i>" +
-            //     "<span id=\"error\"></span>" +
-            //     "</div>").appendTo($(".actionStatusContainer"));
-            //$(".actionStatusContainer").empty();
-            $(".actionStatusContainer").css("display", "block");
-            $(".actionContainer").empty();
-            console.error("Failed to submit");
-            $(".isa_error").css("display", "block");
-            $(".isa_success").css("display", "none");
-            $("#error").empty();
-            $("#error").append(e.responseText);
-            //showErrorMsg(e);
+        error: function(error) {
+            errorMsg($("#centerPage"),error.responseText)
         },
-        success: function(r) {
-            $(".actionContainer").empty();
-            $(".actionStatusContainer").empty();
-            $(".actionContainer").css("display", "block");
-            showAccountMovements(r);
+        success: function(accountMovements) {
+             showAccountMovements(accountMovements);
         }
     });
 }
