@@ -2,10 +2,12 @@ package SDMSystem.user.storeOwner;
 
 import SDMSystem.order.Order;
 import SDMSystem.store.Store;
+import SDMSystem.system.SDMSystemInZone;
 import SDMSystem.user.User;
 import SDMSystem.user.accountAction.AccountMovement;
 import SDMSystemDTO.feedback.DTOFeedback;
 import SDMSystemDTO.order.DTOOrder;
+import SDMSystemDTO.store.DTOStore;
 import SDMSystemDTO.user.DTOAccountAction.AccountActionType;
 import feedback.Feedback;
 import javafx.util.Pair;
@@ -20,14 +22,15 @@ public class StoreOwner extends User {
     private ArrayList<Feedback> feedbacks;
     //key: zone name, value: feedbacks in zone
     private Map<String,ArrayList<Feedback>> feedbacksByZone;
-    private int numOfFeedbacks;
-
+    //key: zone name, value: zone
+    private ArrayList<Store> storesInUserZones;
     public StoreOwner(String username) {
         super(username);
         ownedStores = new HashMap<>();
         ordersFromUser = new ArrayList<>();
         feedbacks = new ArrayList<>();
         feedbacksByZone = new HashMap<>();
+        storesInUserZones = new ArrayList<>();
     }
     public void addNewStore(Store storeToAdd){
         ownedStores.put(storeToAdd.getSerialNumber(),storeToAdd);
@@ -47,6 +50,26 @@ public class StoreOwner extends User {
             res.add(order.createDTOOrderFromOrder());
         }
         return res;
+    }
+
+    public ArrayList<DTOStore> getNewStoresFromUser(int fromIndex) {
+        ArrayList<DTOStore> res = new ArrayList<>();
+        if (fromIndex < 0 || fromIndex > storesInUserZones.size()) {
+            fromIndex = 0;
+        }
+        List<Store> newStores =  storesInUserZones.subList(fromIndex,storesInUserZones.size());
+        for(Store store : newStores){
+            res.add(store.createDTOStore());
+        }
+        return res;
+    }
+
+    public int getNumOfStoresInZones(){
+        return storesInUserZones.size();
+    }
+
+    public void addNewStoreToUserZone(Store newStore){
+        storesInUserZones.add(newStore);
     }
 
     public ArrayList<DTOFeedback> getNewFeedbacksFromUser(int fromIndex){
@@ -105,4 +128,6 @@ public class StoreOwner extends User {
 
         return zoneFeedbacksDTO;
     }
+
+
 }

@@ -47,9 +47,9 @@ public class SDMSystemInZone {
     private Map<String,Discount> discountsInSystem;
     private String zone;
 //    private static SDMSystemInZone single_Instance = null;
-    private User zoneOwner;
+    private StoreOwner zoneOwner;
 
-    public SDMSystemInZone(User zoneOwner, String zone) {
+    public SDMSystemInZone(StoreOwner zoneOwner, String zone) {
         storesInSystem = new StoresInSystem();
         productsInSystem = new HashMap<>();
         ordersInSystem = new HashMap<>();
@@ -97,7 +97,7 @@ public class SDMSystemInZone {
         Map<Integer, Order> oldOrdersInSystem = this.ordersInSystem;
         Map<String,Discount> oldDiscountsInSystem = this.discountsInSystem;
         String oldZone = zone;
-        User oldOwner = zoneOwner;
+        StoreOwner oldOwner = zoneOwner;
         this.zone = superDuperMarketDescriptor.getSDMZone().getName();
         this.zoneOwner = storeOwner;
         storesInSystem = new StoresInSystem();
@@ -150,11 +150,12 @@ public class SDMSystemInZone {
         for (SDMStore sdmStore : sdmStoreList) {
             Point loadedStoreLocation = getLoadedLocation(sdmStore.getLocation());
             Collection<Discount> loadedDiscounts = getLoadedDiscounts(sdmStore.getSDMDiscounts(), sdmStore.getSDMPrices().getSDMSell(),sdmItems,sdmStore.getId());
-            loadedStore = new Store(sdmStore.getId(),loadedStoreLocation,sdmStore.getDeliveryPpk(),sdmStore.getName(), loadedDiscounts,storeOwner,zone);
+            loadedStore = new Store(sdmStore.getId(),loadedStoreLocation,sdmStore.getDeliveryPpk(),sdmStore.getName(), loadedDiscounts,storeOwner,zone,productsInSystem.size());
             addStoreToSystem(loadedStore);
             List<SDMSell> sdmSellList = sdmStore.getSDMPrices().getSDMSell();
             loadProductsToStore(sdmSellList,loadedStore);
             storeOwner.addNewStore(loadedStore);
+            storeOwner.addNewStoreToUserZone(loadedStore);
         }
     }
 
@@ -479,14 +480,7 @@ public class SDMSystemInZone {
         return res;
     }
 
-//    private float calcTotalDeliveryCostInDynamicOrder(Collection<StaticOrder> subOrders) {
-//        float totalDeliveryCost = 0;
-//        for(Order order : subOrders) {
-//            totalDeliveryCost += order.getDeliveryCost();
-//        }
-//
-//        return totalDeliveryCost;
-//    }
+
 
     private void makeSubOrderFromEachStore(LocalDate orderDate,
                                            Point orderLocation,
@@ -945,7 +939,8 @@ public class SDMSystemInZone {
                 storeName,
                 null,
                 storeOwner,
-                storeZone
+                storeZone,
+                productsInSystem.size()
         );
         for(DTOProductInStore product : productsInStore){
             newStore.addNewProductToStore(
@@ -953,7 +948,8 @@ public class SDMSystemInZone {
                     product.getPrice()
             );
         }
-
+        storeOwner.addNewStore(newStore);
+        zoneOwner.addNewStoreToUserZone(newStore);
         addStoreToSystem(newStore);
     }
 

@@ -36,6 +36,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
     private final Collection<Feedback> storeFeedbacks;
     private float totalProfitFromDelivery;
     private final Collection<Discount> storeDiscounts;
+    private final int numOfProductsKindsInStoreZone;
 
 //    public Store(Point storeLocation, float ppk, String storeName) { //ctor
 //        this.productsInStore = new HashMap<>();
@@ -58,7 +59,14 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         return storeDiscounts;
     }
 
-    public Store(int storeSerialNumber, Point storeLocation, float ppk, String storeName, Collection<Discount> storeDiscounts, StoreOwner storeOwner, String storeZone) {
+    public Store(int storeSerialNumber,
+                 Point storeLocation,
+                 float ppk,
+                 String storeName,
+                 Collection<Discount> storeDiscounts,
+                 StoreOwner storeOwner,
+                 String storeZone,
+                 int numOfProductsKindsInStoreZone) {
         this.storeDiscounts = storeDiscounts; //ctor
         this.productsInStore = new HashMap<>();
         this.storeLocation = storeLocation;
@@ -70,6 +78,7 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
         this.storeFeedbacks = new LinkedList<>();
         //this.storeFeedbacks = null;
         this.storeZone = storeZone;
+        this.numOfProductsKindsInStoreZone = numOfProductsKindsInStoreZone;
     }
 
     public void addNewProductToStore(Product newProduct, float price){
@@ -147,7 +156,8 @@ public class Store implements Locationable, HasSerialNumber<Integer>, Serializab
                 getDTODiscountsInStore(),
                 ordersFromStore.size(),
                 storeOwner.getUsername(),
-                calcProductsSoldCost());
+                calcProductsSoldCost(),
+                numOfProductsKindsInStoreZone);
     }
 
     private float calcProductsSoldCost() {

@@ -22,6 +22,12 @@ public class SessionUtils {
         return sessionAttribute != null ? (int)sessionAttribute : 0;
     }
 
+    public static int getNewStoresAlertVersion (HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Object sessionAttribute = session != null ? session.getAttribute(Constants.NEW_STORES_ALERT_VERSION) : null;
+        return sessionAttribute != null ? (int)sessionAttribute : 0;
+    }
+
     public static int getFeedbackAlertVersion (HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         Object sessionAttribute = session != null ? session.getAttribute(Constants.FEEDBACK_ALERT_VERSION) : null;
