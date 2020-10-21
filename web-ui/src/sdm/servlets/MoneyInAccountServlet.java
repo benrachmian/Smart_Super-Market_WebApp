@@ -1,8 +1,8 @@
 package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
-import SDMSystem.system.SDMSystemInZone;
-import sdm.constants.Constants;
+import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
+import com.google.gson.Gson;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -10,11 +10,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 
-public class SaveOrderDateTypeLocationServlet extends HttpServlet {
+public class MoneyInAccountServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
@@ -22,32 +22,9 @@ public class SaveOrderDateTypeLocationServlet extends HttpServlet {
 
         try {
             SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-            String zone = SessionUtils.getChosenZone(request);
-            SDMSystemInZone zoneSystem = sdmSystemManager.getZoneSystem(zone);
-            String xLocation = request.getParameter("locationX");
-            String yLocation = request.getParameter("locationY");
-            String orderDate = request.getParameter("date");
-            String orderType = request.getParameter("ordertype");
-            if(xLocation.isEmpty() || yLocation.isEmpty() || orderDate.isEmpty() || orderType.isEmpty()){
-                throw new RuntimeException("All fields must be filled!");
-            }
-            int xLocationInt = Integer.parseInt(xLocation);
-            int yLocationInt = Integer.parseInt(yLocation);
-            if(xLocationInt < zoneSystem.MIN_COORDINATE || yLocationInt < zoneSystem.MIN_COORDINATE){
-                throw new RuntimeException("X and Y coordinate must be at least " + zoneSystem.MIN_COORDINATE);
-            }
-            if(xLocationInt > zoneSystem.MAX_COORDINATE || yLocationInt > zoneSystem.MAX_COORDINATE){
-                throw new RuntimeException("X and Y coordinate must be maximum " + zoneSystem.MAX_COORDINATE);
-            }
-            if(!zoneSystem.checkIfLocationIsUnique(new Point(xLocationInt,yLocationInt))){
-                throw new RuntimeException("There is a store is that location. Please insert a different location!");
-            }
-            request.getSession(true).setAttribute(Constants.X_COORDINATE, xLocationInt);
-            request.getSession(true).setAttribute(Constants.Y_COORDINATE, yLocationInt);
-            request.getSession(true).setAttribute(Constants.ORDER_DATE, orderDate);
-            request.getSession(true).setAttribute(Constants.ORDER_TYPE, orderType);
-            out.print(orderType);
-            //out.flush();
+            String username = SessionUtils.getUsername(request);
+            float moneyInAccount = sdmSystemManager.getMoneyInAccountOfUser(username);
+            out.print(moneyInAccount);
         }
         catch (RuntimeException e){
             response.setStatus(500);
@@ -89,6 +66,6 @@ public class SaveOrderDateTypeLocationServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Save order date,type and location";
+        return "Charge Money";
     }// </editor-fold>
 }

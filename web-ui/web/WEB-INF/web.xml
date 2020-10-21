@@ -169,6 +169,11 @@
         <servlet-class>sdm.servlets.CheckNewStoresInZoneAlertServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>MoneyInAccountServlet</servlet-name>
+        <servlet-class>sdm.servlets.MoneyInAccountServlet</servlet-class>
+    </servlet>
+
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
@@ -177,6 +182,11 @@
     <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MoneyInAccountServlet</servlet-name>
+        <url-pattern>/moneyInAccount</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

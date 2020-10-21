@@ -144,4 +144,8 @@ public class SDMSystem {
         StoreOwner user = usersInSystem.getStoreOwner(username);
         return user.getFeedbacksInZoneDTO(zoneFromSession);
     }
+
+    public float getMoneyInAccountOfUser(String username) {
+        return usersInSystem.getUser(username).getMoneyInAccount();
+    }
 }

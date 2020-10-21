@@ -6,6 +6,7 @@ var UPLOAD_FILE_URL = buildUrlWithContextPath("uploadfile");
 var GET_ZONE_DATA_TO_TABLE = buildUrlWithContextPath("zoneData");
 var CHARGE_MONEY_URL = buildUrlWithContextPath("chargeMoney");
 var GET_ACCOUNT_MOVEMENTS_URL = buildUrlWithContextPath("accountMovements");
+var GET_MONEY_IN_ACCOUNT = buildUrlWithContextPath("moneyInAccount");
 var SINGLE_ZONE_URL = buildUrlWithContextPath("singleZone");
 
 
@@ -86,19 +87,12 @@ function overloadFileUploadWithAjax() {
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
             timeout: 4000,
             error: function(e) {
-                console.error("Failed to submit");
-                $(".isa_error").css("display", "block");
-                $(".isa_success").css("display", "none");
-                $("#error").empty();
-                $("#error").append(e.responseText);
+                errorMsg($("#centerPage"),e.responseText);
             },
             success: function(r) {
-                //$(".actionStatusContainer").css("display", "block");
-                $(".isa_success").css("display", "block");
-                $(".isa_error").css("display", "none");
-                // $("#success").empty();
-                // $("#success").append("The file was uploaded successfully!");
-                ajaxZoneTable();
+                $("#errorDiv").remove();
+                successMsg()
+                ajaxZoneTable($("#centerPage"),"The zone was successfully loaded!");
             }
         });
         // return value of the submit operation
@@ -185,14 +179,6 @@ function addButtonsByRole(role) {
         $("#uploadform").css("display","block");
         $("<input type='file' name='file1'>" +
             "<input type='submit' value='Upload File'/><br>"
-            + "<div class=\"isa_error\" style='display: none'>"
-            + "<i class=\"fa fa-times-circle\"></i>"
-            + "<span id=\"error\"></span>"
-            + "</div>"
-            + "<div class=\"isa_success\" style='display: none'>"
-            + "<i class=\"fa fa-check\"></i>"
-            + "<span id=\"success\">The zone system was uploaded successfully!</span>"
-            + "</div>"
         ).appendTo($("#upload-file"));
 
         overloadFileUploadWithAjax();
@@ -280,6 +266,28 @@ function clickOnAccountMovementsButton() {
     });
 }
 
+function clickOnMoneyInAccountButton() {
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Money In Account </h1>"));
+
+    $.ajax({
+        url: GET_MONEY_IN_ACCOUNT,
+        timeout: 4000,
+        error: function(error) {
+            errorMsg($("#centerPage"),error.responseText)
+        },
+        success: function(moneyInAccount) {
+            $("  <div class=\"w3-panel w3-light-grey\" style='background-color: white'>\n" +
+                "    <span style=\"font-size:150px;line-height:0.6em;opacity:0.2\">$</span>\n" +
+                "    <p class=\"w3-xlarge\" style=\"margin-top: -55px;margin-left: 120px;\"><i>You've got " + moneyInAccount + "$ in your account</i></p>\n" +
+                "  </div>")
+                .appendTo($("#centerPage"));
+        }
+    });
+}
+
+
+
 //activate the timer calls after the page is loaded
 $(function() {
     //The users list is refreshed automatically every second
@@ -290,6 +298,9 @@ $(function() {
     ajaxButtonsByRole();
     $("#accountMovementsButton").click(function (){
         clickOnAccountMovementsButton();
+    });
+    $("#moneyInAccountButton").click(function (){
+        clickOnMoneyInAccountButton();
     });
 });
 

@@ -40,9 +40,8 @@ public class UploadFileServlet extends HttpServlet {
 
         Collection<Part> parts = request.getParts();
 
-
+        try {
         Collection<InputStream> fileInputStreamList = new LinkedList<>();
-
         for (Part part : parts) {
             if(part.getContentType() == null){
                 throw new RuntimeException("You must choose an xml file!");
@@ -53,21 +52,13 @@ public class UploadFileServlet extends HttpServlet {
 
         SequenceInputStream fileInputStream =  new SequenceInputStream(Collections.enumeration(fileInputStreamList));
 
-        try {
+
             sdmSystem.loadSystemWithInputStream(fileInputStream,usernameFromSession);
-//            ErrorMsg cav = new ErrorMsg("BENNNN");
-//            Gson gson = new Gson();
-//            String jsonResponse = gson.toJson(cav);
-//            out.println();
-//            out.flush();
+
         } catch (Exception e) {
-//            request.setAttribute(Constants.ERROR, e.getMessage());
             ErrorMsg cav = new ErrorMsg(e.getMessage());
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(cav);
-//            out.println();
-//            out.flush();
-//            response.sendError(404,e.getMessage());
             response.setStatus(500);
             out.print(e.getMessage());
             out.flush();
