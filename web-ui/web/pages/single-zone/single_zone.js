@@ -1336,7 +1336,12 @@ function clickOnMyOrdersHistoryButton(){
 
         },
         success: function(ordersHistory) {
-            showOrdersHistory(ordersHistory);
+            if (ordersHistory.length == 0) {
+                errorMsg($("#centerPage"), "There are no any orders yet!");
+            } else {
+                $("#errorDiv").remove();
+                showOrdersHistory(ordersHistory);
+            }
         }
     })
 
