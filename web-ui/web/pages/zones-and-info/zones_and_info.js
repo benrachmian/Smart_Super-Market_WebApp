@@ -1,4 +1,5 @@
 var numOfZonesInTable = 0;
+var chatVersion = 0;
 var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var GET_ROLE_URL = buildUrlWithContextPath("role");
@@ -8,6 +9,9 @@ var CHARGE_MONEY_URL = buildUrlWithContextPath("chargeMoney");
 var GET_ACCOUNT_MOVEMENTS_URL = buildUrlWithContextPath("accountMovements");
 var GET_MONEY_IN_ACCOUNT = buildUrlWithContextPath("moneyInAccount");
 var SINGLE_ZONE_URL = buildUrlWithContextPath("singleZone");
+var CHAT_LIST_URL = buildUrlWithContextPath("chat");
+var SEND_CHAT = buildUrlWithContextPath("sendChat");
+
 
 
 //users = a list of usernames, essentially an array of javascript strings:
@@ -266,6 +270,127 @@ function clickOnAccountMovementsButton() {
     });
 }
 
+function createChatEntry(entry,index) {
+    var chatEntry;
+    if(index % 2 == 0){
+        chatEntry = "<div class=\"containerChat\">\n" +
+            "  <p>" + entry.username + ": " +  entry.chatString + "</p>\n" +
+            "  <span class=\"time-right\">" + entry.time + "</span>\n" +
+            "</div>";
+    }
+    else{
+        chatEntry = "<div class=\"containerChat darker\">\n" +
+            "  <p>" + entry.username + ": " +  entry.chatString + "</p>\n" +
+            "  <span class=\"time-left\">" + entry.time + "</span>\n" +
+            "</div>";
+    }
+
+    return chatEntry;
+}
+
+function appendChatEntry(index, entry,numOfNewMsg){
+    var entryElement = createChatEntry(entry,numOfNewMsg);
+    $(".chatDiv").append(entryElement).append("<br>");
+}
+
+function appendToChatArea(entries,oldVersion) {
+    var numOfNewMsg = oldVersion;
+    $.each(entries || [], function (index,entry,oldVersion)
+    {
+        appendChatEntry(index,entry,numOfNewMsg);
+        numOfNewMsg++;
+    });
+
+    // handle the scroller to auto scroll to the end of the chat area
+    var scroller = $(".chatDiv");
+    var height = scroller[0].scrollHeight - $(scroller).height();
+    $(scroller).stop().animate({ scrollTop: height }, "slow");
+    
+}
+
+function ajaxChatContent(){
+    $.ajax({
+        url: CHAT_LIST_URL,
+        data: "chatversion=" + chatVersion,
+        dataType: 'json',
+        success: function(data) {
+            /*
+             data will arrive in the next form:
+             {
+                "entries": [
+                    {
+                        "chatString":"Hi",
+                        "username":"bbb",
+                        "time":1485548397514
+                    },
+                    {
+                        "chatString":"Hello",
+                        "username":"bbb",
+                        "time":1485548397514
+                    }
+                ],
+                "version":1
+             }
+             */
+            console.log("Server chat version: " + data.version + ", Current chat version: " + chatVersion);
+            if (data.version !== chatVersion) {
+                var oldVersion = chatVersion;
+                chatVersion = data.version;
+                appendToChatArea(data.entries,oldVersion);
+            }
+            triggerAjaxChatContent();
+        },
+        error: function(error) {
+            triggerAjaxChatContent();
+        }
+    });
+}
+
+function triggerAjaxChatContent(){
+    setTimeout(ajaxChatContent, 500);
+}
+
+function overloadChatFormSubmit(){
+    $("#chatForm").submit(function() {
+        $.ajax({
+            data: $(this).serialize(),
+            url: SEND_CHAT,
+            timeout: 2000,
+            error: function() {
+                console.error("Failed to submit");
+            },
+            success: function(r) {
+                //do not add the user string to the chat area
+                //since it's going to be retrieved from the server
+                //$("#result h1").text(r);
+            }
+        });
+
+        $("#userstring").val("");
+        // by default - we'll always return false so it doesn't redirect the user.
+        return false;
+    });
+}
+
+function clickOnChatButton(){
+    chatVersion = 0;
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Chat </h1>"));
+    $("<div class='chatDiv'></div>" +
+        "<form class='centerDiv' style='margin-top: 20px' id='chatForm' >\n" +
+        "\t\t\t\t\t\t<input style='margin-right: 15px' type=\"text\" id=\"userstring\" name=\"userstring\"/>\n" +
+        "\t\t\t\t\t\t<input type=\"submit\" value=\"Send\"/>\n" +
+        "\t\t\t\t\t</form><br>")
+        .appendTo($("#centerPage"));
+    $("<div class=\"usersDiv\" class=\"users-in-system\">\n" +
+        "            <h4>Users in system:</h4>\n" +
+        "            <ul id=\"userslist\">\n" +
+        "            </ul>\n" +
+        "        </div>").appendTo($("#centerPage"));
+    overloadChatFormSubmit();
+    ajaxChatContent();
+}
+
 function clickOnMoneyInAccountButton() {
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Money In Account </h1>"));
@@ -302,9 +427,17 @@ $(function() {
     $("#moneyInAccountButton").click(function (){
         clickOnMoneyInAccountButton();
     });
+    $("#chatButton").click(function (){
+        clickOnChatButton();
+    });
 });
 
 
-
+// //add a method to the button in order to make that form use AJAX
+// //and not actually submit the form
+// $(function() { // onload...do
+//     //add a function to the submit event
+//
+// });
 
 

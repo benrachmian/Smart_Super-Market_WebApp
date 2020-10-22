@@ -3,6 +3,7 @@ package sdm.utils;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystemDTO.order.DTOOrder;
+import chat.ChatManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +19,14 @@ public class ServletUtils {
     private static final String SDM_SYSTEM_MANAGER_ATTRIBUTE_NAME = "sdmSystemManager";
     private static final String USERS_STORES_ORDERS_ATTRIBUTE_NAME = "usersStoresOrders";
     private static final String NUM_OF_ZONE_IN_TABLE_ATTRIBUTE_NAME = "numOfZonesInTable";
+    private static final String CHAT_MANAGER_ATTRIBUTE_NAME = "chatManager";
+
 
     private static final Object sdmSystemManagerLock = new Object();
     private static final Object usersAlertManagerLock = new Object();
     private static final Object numOfZonesLock = new Object();
+    private static final Object chatManagerLock = new Object();
+
 
     public static SDMSystem getSDMSystem(ServletContext servletContext) {
         synchronized (sdmSystemManagerLock) {
@@ -59,6 +64,15 @@ public class ServletUtils {
             }
         }
         return INT_PARAMETER_ERROR;
+    }
+
+    public static ChatManager getChatManager(ServletContext servletContext) {
+        synchronized (chatManagerLock) {
+            if (servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME) == null) {
+                servletContext.setAttribute(CHAT_MANAGER_ATTRIBUTE_NAME, new ChatManager());
+            }
+        }
+        return (ChatManager) servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME);
     }
 
 //    public static void updateNumOfZones(ServletContext servletContext, int newNum) {

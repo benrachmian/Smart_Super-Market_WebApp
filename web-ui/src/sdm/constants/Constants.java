@@ -15,4 +15,7 @@ public class Constants {
     public static final String ORDER_ALERT_VERSION = "orderAlertVersion";
     public static final String FEEDBACK_ALERT_VERSION = "feedbackAlertVersion";
     public static final String NEW_STORES_ALERT_VERSION = "newStoresAlertVersion";
+    public static final String CHAT_VERSION_PARAMETER = "chatversion";
+    public static final String CHAT_PARAMETER = "userstring";
+
 }

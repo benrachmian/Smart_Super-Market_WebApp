@@ -6,6 +6,19 @@
     margin: 10px;
 }
 
+.chatDiv{
+    border-radius:20px;
+    border: 1px solid #ccc!important;
+    padding: 10px;
+    width: 80%;
+    height: 450px;
+    display: flow-root;
+    justify-content: center;
+    margin: auto;
+    margin-top: 30px;
+    overflow: scroll;
+}
+
 details {
     margin: 1rem auto;
     padding: 0 1rem;
@@ -109,4 +122,37 @@ pre > code {
 ::before,
 ::after {
     box-sizing: border-box;
+}
+
+
+/*chat:*/
+.containerChat {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.darker {
+    border-color: #ccc;
+    background-color: #ddd;
+}
+
+.containerChat::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+
+
+.time-right {
+    float: right;
+    color: #aaa;
+}
+
+.time-left {
+    float: left;
+    color: #999;
 }
