@@ -95,8 +95,8 @@ function overloadFileUploadWithAjax() {
             },
             success: function(r) {
                 $("#errorDiv").remove();
-                successMsg()
-                ajaxZoneTable($("#centerPage"),"The zone was successfully loaded!");
+                successMsg($("#centerPage"),"The zone was successfully loaded!");
+                ajaxZoneTable();
             }
         });
         // return value of the submit operation

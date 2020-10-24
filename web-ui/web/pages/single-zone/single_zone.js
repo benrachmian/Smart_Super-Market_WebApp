@@ -20,7 +20,9 @@ var GET_ORDERS_HISTORY = buildUrlWithContextPath("ordersHistory");
 var GET_STORE_ORDERS_HISTORY = buildUrlWithContextPath("storeOrdersHistory");
 var GET_FEEDBACKS = buildUrlWithContextPath("getFeedbacks");
 var CHECK_NEW_STORE_SETTINGS = buildUrlWithContextPath("checkNewStoreSettings");
+var CHECK_NEW_PRODUCT_SETTINGS = buildUrlWithContextPath("checkNewProductSettings");
 var ADD_NEW_STORE_TO_ZONE = buildUrlWithContextPath("newStoreToZone");
+var ADD_NEW_PRODUCT_TO_ZONE = buildUrlWithContextPath("newProductToZone");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -37,6 +39,7 @@ var shoppingCart = [];
 var productsToNewStore = [];
 var productTry = [];
 var userRole;
+var storesToSellNewProduct = [];
 
 
 function ProductInCart (product, amount){
@@ -46,6 +49,11 @@ function ProductInCart (product, amount){
 
 function ProductInNewStore (product, price){
     this.product = product;
+    this.price = price;
+}
+
+function StoreSellingNewProduct (store, price){
+    this.store = store;
     this.price = price;
 }
 
@@ -1048,6 +1056,29 @@ function addProductsInSystemToTableForOrder(){
 }
 
 
+function addStoreToStoreSellingTable(storeName,storeId,productPrice,store){
+    if(productPrice ===""){
+        $( "#successDiv" ).remove();
+        errorMsg($("#store-table-div"),"You must enter a price!");
+    }
+    else if(productPrice <=0){
+        $( "#successDiv" ).remove();
+        errorMsg($("#store-table-div"),"The price must be a positive number!");
+    }
+    else {
+        $( "#errorDiv" ).remove();
+        $("tr").filter('[data-storeId="' + storeId + '"]').remove();
+        $("<tr>" +
+            "<td>" + storeName + "</td>" +
+            "<td>" + storeId + "</td>" +
+            "<td>" + productPrice + "</td>" +
+            "</tr>").appendTo($("#storesSellingTable"));
+        successMsg($("#store-table-div"),"The product was added to the store successfully!");
+        var storeToSellTheProduct = new StoreSellingNewProduct(store,productPrice);
+        storesToSellNewProduct.push(storeToSellTheProduct);
+    }
+}
+
 function addProductToNewStoreTable(productToAdd,price,productId) {
     if(price ===""){
         $( "#successDiv" ).remove();
@@ -1065,6 +1096,34 @@ function addProductToNewStoreTable(productToAdd,price,productId) {
          var productInNewStore = new ProductInNewStore(productToAdd,price);
          productsToNewStore.push(productInNewStore);
     }
+}
+
+function addStoresOfUserToTable(){
+    $.ajax({
+        method: "post",
+        url: GET_STORES,
+        error: function(error) {
+
+        },
+        success: function (storesInZone) {
+            $.each(storesInZone || [], function(index, store) {
+                if(store.storeOwner === username) {
+                    $("<tr data-storeId=\'" + store.storeSerialNumber + "\'>" +
+                        "<td>" + store.storeName + "</td>" +
+                        "<td>" + store.storeSerialNumber + "</td>" +
+                        "<td>X: " + store.storeLocation.x + ",Y: " + store.storeLocation.y + "</td>" +
+                        "<td>" + store.ppk + "</td>" +
+                        "<td class='priceId' data-storeId=\'" + store.storeSerialNumber + "\'> <input style='width: 60px' id='PriceTableBox' type=\"number\" id=\"amount\" min='1'' name=\"price\"></td>" +
+                        "<td><button class='button addToStoreSellingButton'> Add product to this store </button></td>" +
+                        "</tr>").appendTo($("#storesInSystemTable"));
+                    $(".addToStoreSellingButton:last").click(function () {
+                        var price = $($(".priceId").filter('[data-storeId="' + store.storeSerialNumber + '"]')[0]).find("input")[0].value;
+                        addStoreToStoreSellingTable(store.storeName,store.storeSerialNumber,price,store);
+                    });
+                }
+            });
+        }
+    })
 }
 
 function addProductsInSystemToTableForNewStore(){
@@ -1435,6 +1494,13 @@ function NewStoreDetails (storeId,storeName,locationX,locationY,ppk,productsInNe
     this.productsInNewStore = productsInNewStore;
 }
 
+function NewProductDetails (productId,productName,productWayOfBuying,storesThatSellTheProduct){
+    this.productId = productId;
+    this.productName = productName;
+    this.productWayOfBuying = productWayOfBuying;
+    this.storesThatSellTheProduct = storesThatSellTheProduct;
+}
+
 function showAlert(msg,title1,title2){
     $("<!-- The Modal -->\n" +
         "<div id=\"myModal\" class=\"modal\">\n" +
@@ -1469,6 +1535,24 @@ function showAlert(msg,title1,title2){
     }
 }
 
+function ajaxAddNewProduct(newProductId, newProductName, newProductWayOfBuying){
+    var newProductDetails = new NewProductDetails(newProductId,newProductName,newProductWayOfBuying,storesToSellNewProduct);
+    $.ajax({
+        method: "post",
+        //data: {data: JSON.stringify(newStoreDetails)},
+        //dataType: "JSON",
+        data: JSON.stringify(newProductDetails),
+        url: ADD_NEW_PRODUCT_TO_ZONE,
+        error: function(error) {
+
+        },
+        success: function () {
+            showAlert("The product was added successfully!","Success","");
+        }
+    })
+}
+
+
 function ajaxAddNewStore(storeId,storeName,x,y,ppk){
     var newStoreDetails = new NewStoreDetails(storeId,storeName,x,y,ppk,productsToNewStore);
     $.ajax({
@@ -1484,6 +1568,60 @@ function ajaxAddNewStore(storeId,storeName,x,y,ppk){
             showAlert("The store was added successfully!","Success","");
         }
     })
+}
+
+function createChooseStoresToNewProductPage(newProductId, newProductName, newProductWayOfBuying){
+   // productsToNewStore = [];
+    storesToSellNewProduct = [];
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Add stores that would sell the product </h1>"));
+    $("<br><p id=\"sub-title\"> Choose stores: </p>").appendTo($("#centerPage"));
+    $("<div id='store-table-div' class=\"table-div\">\n" +
+        "<table id='stores-in-system-table' class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Store Name</th>\n" +
+        "        <th>ID</th>\n" +
+        "        <th>Location</th>\n" +
+        "        <th>PPK</th>\n" +
+        "        <th>Price</th>\n" +
+        "        <th></th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"storesInSystemTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>" +
+        "<br><p id=\"sub-title\"> Stores selling the product: </p>" +
+        "<table id='store-selling-table' class=\"styled-table\">\n" +
+        "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th>Store Name</th>\n" +
+        "        <th>ID</th>\n" +
+        "        <th>Product Price</th>\n" +
+        "    </tr>\n" +
+        "    </thead>\n" +
+        "    <tbody id=\"storesSellingTable\">\n" +
+        "    <!-- and so on... -->\n" +
+        "    </tbody>\n" +
+        "</table>\n" +
+        "</div>" +
+        "<div style='display: flex; justify-content: center'>" +
+        "<button id='finishButton' class='button' > <span>Finish </span> </button>" +
+        "</div>"
+    ).appendTo($("#centerPage"));
+    $( "#finishButton" ).click(function() {
+        if(storesToSellNewProduct.length == 0){
+            errorMsg($("#centerPage"),"You can't make a new product without at least one store that would sell it!");
+        }
+        else{
+            window.scrollTo(0, 0);
+            $( "#errorDiv" ).remove();
+            ajaxAddNewProduct(newProductId, newProductName, newProductWayOfBuying);
+        }
+    });
+    addStoresOfUserToTable();
 }
 
 function createChooseProductsToNewStorePage(storeId,StoreName,x,y,ppk){
@@ -1539,6 +1677,29 @@ function createChooseProductsToNewStorePage(storeId,StoreName,x,y,ppk){
     addProductsInSystemToTableForNewStore();
 }
 
+function overloadNewProductFormSubmit(){
+    $("#new-product-form").submit(function() {
+
+        var parameters = $(this).serialize();
+        var productId = $(this).find("#intTextBox")[0].value;
+        var productName = $(this).find("#product-name")[0].value;
+        var wayOfBuying = $("#wayOfBuyingSelect")[0].value;
+        parameters = parameters.concat("&wayOfBuying=" + wayOfBuying);
+        $.ajax({
+            data: parameters,
+            url: CHECK_NEW_PRODUCT_SETTINGS,
+            error: function(e) {
+                errorMsg($("#centerPage"),e.responseText);
+            },
+            success: function(r) {
+                createChooseStoresToNewProductPage(productId,productName,wayOfBuying);
+            }
+        });
+        // return value of the submit operation
+        return false;
+    })
+}
+
 function overloadNewStoreFormSubmit(){
     $("#new-store-form").submit(function() {
 
@@ -1562,6 +1723,41 @@ function overloadNewStoreFormSubmit(){
         // return value of the submit operation
         return false;
     })
+}
+
+function clickOnAddProductButton(){
+    $("#centerPage").empty();
+    $("#welcomeTitle").empty().append( $("<h1>Add New Product To Zone </h1>"));
+    $("<form id='new-product-form' method=\"GET\" class=\"form-style-7\">\n" +
+        "<ul>\n" +
+        "<li>\n" +
+        "    <label for=\"productId\">Product ID</label>\n" +
+        "    <input id='intTextBox' type=\"text\" name=\"productId\" maxlength=\"100\">\n" +
+        "    <span>Insert the new product ID </span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"productName\">Product Name</label>\n" +
+        "    <input id='product-name' type=\"text\" name=\"product-name\" maxlength=\"100\">\n" +
+        "    <span>Insert the new product name</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <label for=\"wayOfBuying\">Way Of Buying</label>\n" +
+        "    <select id='wayOfBuyingSelect' form='new-store-form' class=\"select-css\">\n" +
+        "    <option value=\"\" disabled selected>Select way of buying</option>\n" +
+        "    <option>By quantity</option>\n" +
+        "    <option>By weight</option>\n" +
+        "</select>" +
+        "    <span>Choose way of buying</span>\n" +
+        "</li>\n" +
+        "<li>\n" +
+        "    <button class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
+        "</li>\n" +
+        "</ul>\n" +
+        "</form>").appendTo($("#centerPage"));
+    setInputFilter(document.getElementById("intTextBox"), function(value) {
+        return /^-?\d*$/.test(value); });
+
+    overloadNewProductFormSubmit();
 }
 
 function clickOnAddStoreButton(){
@@ -1629,14 +1825,19 @@ function setButtonsAccordingToUserRole() {
                     clickOnMyOrdersHistoryButton();
                 });
             }
+            //role = store-owner
             else{
                 $("<a href=\"#\" id=\"show-feedbacks-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Show Feedbacks</a>").insertBefore("#backButton");
                 $("<a href=\"#\" id=\"add-store-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Add Store To Zone</a>").insertBefore("#backButton");
+                $("<a href=\"#\" id=\"add-product-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Add Product To Zone</a>").insertBefore("#backButton");
                 $("#show-feedbacks-button").click(function (){
                     clickOnShowFeedbacksButton();
                 });
                 $("#add-store-button").click(function (){
                     clickOnAddStoreButton();
+                });
+                $("#add-product-button").click(function (){
+                    clickOnAddProductButton();
                 });
             }
         }

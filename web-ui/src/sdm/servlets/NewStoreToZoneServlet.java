@@ -41,10 +41,7 @@ public class NewStoreToZoneServlet extends HttpServlet {
                 json = br.readLine();
                 System.out.println(json);
             }
-            //String json = request.getParameter("data");
             Gson gson = new Gson();
-//            Type listType = new TypeToken<ArrayList<FindCheapestBasketServlet.ProductAndAmount>>(){}.getType();
-//            java.util.List<FindCheapestBasketServlet.ProductAndAmount> productsAndAmount = gson.fromJson(json, listType);
             NewStoreDetails newStoreDetails = gson.fromJson(json, NewStoreDetails.class);
             Collection<DTOProductInStore> productsInNewStore = makeProductsInNewStoreCollectionFromNewStoreDetails(newStoreDetails);
             sdmSystemInZone.addNewStoreToSystem(

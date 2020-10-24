@@ -189,15 +189,33 @@
         <servlet-class>sdm.servlets.GetUserNameServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CheckNewProductSettingsServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckNewProductSettingsServlet</servlet-class>
+    </servlet>
 
+    <servlet>
+        <servlet-name>NewProductToZoneServlet</servlet-name>
+        <servlet-class>sdm.servlets.NewProductToZoneServlet</servlet-class>
+    </servlet>
 
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
 <!--    </servlet>-->
     <servlet-mapping>
+        <servlet-name>NewProductToZoneServlet</servlet-name>
+        <url-pattern>/newProductToZone</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckNewProductSettingsServlet</servlet-name>
+        <url-pattern>/checkNewProductSettings</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
