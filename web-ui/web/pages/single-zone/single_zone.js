@@ -206,8 +206,8 @@ function showStoresInZone(storesInZone) {
 
             "                </div>" +
             "            </div>").appendTo($("#centerPage"));
-        if(userRole !== "customer"){
-            $("<button class=\"button show-store-order-history-button\" data-chosenStoreId=\'" + store.storeSerialNumber + "\'><span>Show Order History </span></button>")
+        if(store.storeOwner === username){
+            $("<button class=\"button show-store-order-history-button\" data-chosenStoreId=\'" + store.storeSerialNumber + "\'><span>Show Orders History </span></button>")
                 .insertBefore($(".showProductsButton").filter('[data-chosenStoreId="' + store.storeSerialNumber + '"]'));
             $(".show-store-order-history-button").filter('[data-chosenStoreId="' + store.storeSerialNumber + '"]').click(function (){
                 showChosenStoreOrderHistory(store.storeSerialNumber,store.storeName);
@@ -1600,6 +1600,15 @@ function clickOnAddStoreButton(){
     overloadNewStoreFormSubmit();
 }
 
+// function ajaxGetUsername(){
+//     $.ajax({
+//         url: GET_USERNAME,
+//         success: function (usernameFromAjax) {
+//             username = usernameFromAjax;
+//         }
+//     })
+// }
+
 function setButtonsAccordingToUserRole() {
     $.ajax({
         url: GET_ROLE_URL,
@@ -1638,6 +1647,7 @@ $(function() {
         clickOnStoresInZoneButton();
     });
     setButtonsAccordingToUserRole();
+
 });
 
 // $(function() {

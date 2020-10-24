@@ -184,6 +184,11 @@
         <servlet-class>sdm.servlets.SendChatServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>GetUserNameServlet</servlet-name>
+        <servlet-class>sdm.servlets.GetUserNameServlet</servlet-class>
+    </servlet>
+
 
 
     <!--    <servlet>-->
@@ -193,6 +198,11 @@
     <servlet-mapping>
         <servlet-name>RankStoreServlet</servlet-name>
         <url-pattern>/rankStore</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetUserNameServlet</servlet-name>
+        <url-pattern>/username</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
