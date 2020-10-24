@@ -158,31 +158,36 @@ function showChosenStoreOrderHistory(storeId,storeName){
         success: function(ordersFromStore) {
             $("#moreStoreDetailsDiv").remove();
             $("#centerPage").append( $("<div class='w3-container w3-border w3-round-xlarge' id='moreStoreDetailsDiv'  <br>"));
-            $("<div><h1 style='text-align: center'> Orders History of " + storeName + ": </h1></div>").appendTo( $("#moreStoreDetailsDiv"));
+            if(ordersFromStore.length == 0){
+                errorMsg($("#moreStoreDetailsDiv"),"There are no orders from this store yet!");
+            }
+            else {
+                $("<div><h1 style='text-align: center'> Orders History of " + storeName + ": </h1></div>").appendTo($("#moreStoreDetailsDiv"));
 
 
-            $("#moreStoreDetailsDiv").append( $("<div class=\"row\"> <br>"));
-            $.each(ordersFromStore || [], function(index, order) {
-                $("<div class=\"column\">" +
-                    "                <div class=\"card\">" +
-                    "                    <h3>Order ID:" + order.orderSerialNumber + "</h3>" +
-                    "                    <p>Order date: " + order.orderDate.day + "/" + order.orderDate.month + "/" + order.orderDate.year + "</p>" +
-                    "                    <p>Who ordered: " + order.customerOrderedUsername + "</p>" +
-                    "                    <p>Order to location: X: " + order.orderToLocation.x + " Y: " + order.orderToLocation.y +  "</p>" +
-                    "                    <p>Amount of products in order:  " + order.amountOfProducts + "</p>" +
-                    "                    <p>Products cost:  " + order.productsCost.toFixed(2) + "</p>" +
-                    "                    <p>Delivery cost:  " + order.deliveryCost.toFixed(2) + "</p>" +
-                    "                    <button class=\"button products-in-order-button\" data-chosenOrderId=\'" + order.orderSerialNumber + "\'><span>Show products in order </span></button>" +
-                    "                </div>" +
-                    "            </div>").appendTo($("#moreStoreDetailsDiv"));
-                $(".products-in-order-button").filter('[data-chosenOrderId="' + order.orderSerialNumber + '"]').click(function (){
-                    showChosenOrderProducts(order.orderSerialNumber,order.productsInOrder,$("#moreStoreDetailsDiv"));
-                })
-            });
-            $("</div>").appendTo($("#moreStoreDetailsDiv"));
-            $('html, body').animate({
-                scrollTop: $("#moreStoreDetailsDiv").offset().top
-            },1000);
+                $("#moreStoreDetailsDiv").append($("<div class=\"row\"> <br>"));
+                $.each(ordersFromStore || [], function (index, order) {
+                    $("<div class=\"column\">" +
+                        "                <div class=\"card\">" +
+                        "                    <h3>Order ID:" + order.orderSerialNumber + "</h3>" +
+                        "                    <p>Order date: " + order.orderDate.day + "/" + order.orderDate.month + "/" + order.orderDate.year + "</p>" +
+                        "                    <p>Who ordered: " + order.customerOrderedUsername + "</p>" +
+                        "                    <p>Order to location: X: " + order.orderToLocation.x + " Y: " + order.orderToLocation.y + "</p>" +
+                        "                    <p>Amount of products in order:  " + order.amountOfProducts + "</p>" +
+                        "                    <p>Products cost:  " + order.productsCost.toFixed(2) + "</p>" +
+                        "                    <p>Delivery cost:  " + order.deliveryCost.toFixed(2) + "</p>" +
+                        "                    <button class=\"button products-in-order-button\" data-chosenOrderId=\'" + order.orderSerialNumber + "\'><span>Show products in order </span></button>" +
+                        "                </div>" +
+                        "            </div>").appendTo($("#moreStoreDetailsDiv"));
+                    $(".products-in-order-button").filter('[data-chosenOrderId="' + order.orderSerialNumber + '"]').click(function () {
+                        showChosenOrderProducts(order.orderSerialNumber, order.productsInOrder, $("#moreStoreDetailsDiv"));
+                    })
+                });
+                $("</div>").appendTo($("#moreStoreDetailsDiv"));
+                $('html, body').animate({
+                    scrollTop: $("#moreStoreDetailsDiv").offset().top
+                }, 1000);
+            }
         }
     })
 }
