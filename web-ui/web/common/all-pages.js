@@ -48,17 +48,63 @@ function errorMsg(whereToAppend,errorMsg){
 
 function addOrdersToOrderAlertDiv(newOrders){
     $.each(newOrders || [], function (index, newOrder) {
-        $("<div class=\"columnAlert\">" +
+        // $("<div class=\"columnAlert\">" +
+        //     "                <div class=\"card\">" +
+        //     "                    <h3>New Order</h3>" +
+        //     "                    <p>Order ID:" + newOrder.orderSerialNumber + "</p>" +
+        //     "                    <p>Customer: " + newOrder.customerOrderedUsername + "</p>" +
+        //     "                    <p>Amount of products kinds: " + newOrder.amountOfProductsKinds + "</p>" +
+        //     "                    <p>Products cost: " + newOrder.productsCost + "</p>" +
+        //     "                    <p>Delivery cost: " + newOrder.deliveryCost.toFixed(2) + "</p>" +
+        //     "                    <p>Store from whom the order was made: " + newOrder.storesFromWhomTheOrderWasMade[0].storeName + ", ID: " + newOrder.storesFromWhomTheOrderWasMade[0].storeSerialNumber + "</p>" +
+        //     "                </div>" +
+        //     "            </div>").appendTo($("#alertsCards"));
+        $("#alertsCards").prepend("<div class=\"columnAlert\">" +
             "                <div class=\"card\">" +
-            "                    <h3>Order ID:" + newOrder.orderSerialNumber + "</h3>" +
+            "                    <h3>New Order</h3>" +
+            "                    <p>Order ID:" + newOrder.orderSerialNumber + "</p>" +
             "                    <p>Customer: " + newOrder.customerOrderedUsername + "</p>" +
             "                    <p>Amount of products kinds: " + newOrder.amountOfProductsKinds + "</p>" +
             "                    <p>Products cost: " + newOrder.productsCost + "</p>" +
             "                    <p>Delivery cost: " + newOrder.deliveryCost.toFixed(2) + "</p>" +
             "                    <p>Store from whom the order was made: " + newOrder.storesFromWhomTheOrderWasMade[0].storeName + ", ID: " + newOrder.storesFromWhomTheOrderWasMade[0].storeSerialNumber + "</p>" +
             "                </div>" +
-            "            </div>").appendTo($("#orderAlertsCards"));
+            "            </div>");
     });
+}
+
+function createAlertsDivToBody(){
+    $("<!-- The Modal -->\n" +
+        "<div id=\"myModal\" class=\"modal\">\n" +
+        "\n" +
+        "  <!-- Modal content -->\n" +
+        "  <div class=\"modal-content\">\n" +
+        "    <div class=\"modal-header\">\n" +
+        "      <span class=\"close\">&times;</span>\n" +
+        "      <h2>Alerts!</h2>\n" +
+        "    </div>\n" +
+        "    <div class=\"modal-body\">\n" +
+        "      <div class='row' id='alertsCards'></div>" +
+        "    </div>\n" +
+        "  </div>\n" +
+        "\n" +
+        "</div>").appendTo($("body"));
+}
+
+function showAlerts(){
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+    modal.style.display = "block";
+    span.onclick = function () {
+        modal.style.display = "none";
+        $("#myModal").remove();
+    }
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            $("#myModal").remove();
+        }
+    }
 }
 
 function ajaxCheckForOrdersAlerts() {
@@ -69,36 +115,14 @@ function ajaxCheckForOrdersAlerts() {
         },
         success: function (newOrdersAndVersion) {
             if (newOrdersAndVersion.length > 0) {
-                //orderAlertVersion = (orderAlertVersion + newOrdersAndVersion.version);
-                $("#myModal").remove();
-                $( "<!-- The Modal -->\n" +
-                    "<div id=\"myModal\" class=\"modal\">\n" +
-                    "\n" +
-                    "  <!-- Modal content -->\n" +
-                    "  <div class=\"modal-content\">\n" +
-                    "    <div class=\"modal-header\">\n" +
-                    "      <span class=\"close\">&times;</span>\n" +
-                    "      <h2>Orders Alert!</h2>\n" +
-                    "    </div>\n" +
-                    "    <div class=\"modal-body\">\n" +
-                    "      <div class='row' id='orderAlertsCards'></div>" +
-                    "    </div>\n" +
-                    "  </div>\n" +
-                    "\n" +
-                    "</div>").appendTo($("body"));
-                addOrdersToOrderAlertDiv(newOrdersAndVersion);
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
-                modal.style.display = "block";
-                span.onclick = function() {
-                    modal.style.display = "none";
+                if($("#myModal").length > 0){
+                    addOrdersToOrderAlertDiv(newOrdersAndVersion);
                 }
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
+                else {
+                    createAlertsDivToBody();
+                    addOrdersToOrderAlertDiv(newOrdersAndVersion);
+                    showAlerts();
                 }
-
             }
                 setTimeout(ajaxCheckForOrdersAlerts,refreshRateForAlert);
         }
@@ -108,28 +132,46 @@ function ajaxCheckForOrdersAlerts() {
 function addNewStoresAlertDiv(newStores){
     $.each(newStores || [], function (index, newStore) {
         if(newStore.storeOwner !== username) {
-            $("<div class=\"columnAlert\">" +
+            // $("<div class=\"columnAlert\">" +
+            //     "                <div class=\"card\">" +
+            //     "                    <h3>New store name: " + newStore.storeName + " </h3>" +
+            //     "                    <p>Store owner:" + newStore.storeOwner + "</p>" +
+            //     "                    <p>Store location: X: " + newStore.storeLocation.x + " Y: " + newStore.storeLocation.y + "</p>" +
+            //     "                    <p>Num of products: " + newStore.numOfProductsKindsInStore + " out of " + newStore.numOfProductsKindsInStoreZone + " possible</p>" +
+            //     "                </div>" +
+            //     "            </div>").appendTo($("#newStoresAlertCards"));
+            $("#alertsCards").prepend("<div class=\"columnAlert\">" +
                 "                <div class=\"card\">" +
-                "                    <h3>New store name: " + newStore.storeName + " </h3>" +
+                "                    <h3>New Store</h3>" +
+                "                    <p>New store name: " + newStore.storeName + " </p>" +
                 "                    <p>Store owner:" + newStore.storeOwner + "</p>" +
                 "                    <p>Store location: X: " + newStore.storeLocation.x + " Y: " + newStore.storeLocation.y + "</p>" +
                 "                    <p>Num of products: " + newStore.numOfProductsKindsInStore + " out of " + newStore.numOfProductsKindsInStoreZone + " possible</p>" +
                 "                </div>" +
-                "            </div>").appendTo($("#newStoresAlertCards"));
+                "            </div>");
         }
     });
 }
 
 function addFeedbacksToFeedbackAlertDiv(newFeedbacks) {
     $.each(newFeedbacks || [], function (index, newFeedback) {
-        $("<div class=\"columnAlert\">" +
+        // $("<div class=\"columnAlert\">" +
+        //     "                <div class=\"card\">" +
+        //     "                    <h3>Ranking: " + newFeedback.rank + "/5 </h3>" +
+        //     "                    <p>Feedback giver:" + newFeedback.feedbackGiver +"</p>" +
+        //     "                    <p>Comment: " + (newFeedback.comment.length == 0 ? "No Comment" : newFeedback.comment) + "</p>" +
+        //     "                    <p>Store who got the feedback ID: " + newFeedback.storeGotFeedbackId + "</p>" +
+        //     "                </div>" +
+        //     "            </div>").appendTo($("#alertsCards"));
+        $("#alertsCards").prepend("<div class=\"columnAlert\">" +
             "                <div class=\"card\">" +
-            "                    <h3>Ranking: " + newFeedback.rank + "/5 </h3>" +
+            "                    <h3>New Ranking</h3>" +
+            "                    <p>Ranking: " + newFeedback.rank + "/5 </p>" +
             "                    <p>Feedback giver:" + newFeedback.feedbackGiver +"</p>" +
             "                    <p>Comment: " + (newFeedback.comment.length == 0 ? "No Comment" : newFeedback.comment) + "</p>" +
             "                    <p>Store who got the feedback ID: " + newFeedback.storeGotFeedbackId + "</p>" +
             "                </div>" +
-            "            </div>").appendTo($("#feedbackAlertsCards"));
+            "            </div>");
     });
 }
 
@@ -141,35 +183,13 @@ function ajaxCheckForFeedbacksAlerts() {
         },
         success: function (newFeedbacks) {
             if (newFeedbacks.length > 0) {
-                $("#myModal").remove();
-                $( "<!-- The Modal -->\n" +
-                    "<div id=\"myModal\" class=\"modal\">\n" +
-                    "\n" +
-                    "  <!-- Modal content -->\n" +
-                    "  <div class=\"modal-content\">\n" +
-                    "    <div class=\"modal-header\">\n" +
-                    "      <span class=\"close\">&times;</span>\n" +
-                    "      <h2>Feedbacks Alert!</h2>\n" +
-                    "    </div>\n" +
-                    "    <div class=\"modal-body\">\n" +
-                    "      <div class='row' id='feedbackAlertsCards'></div>" +
-                    "    </div>\n" +
-                    "  </div>\n" +
-                    "\n" +
-                    "</div>").appendTo($("body"));
-                addFeedbacksToFeedbackAlertDiv(newFeedbacks);
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
-                modal.style.display = "block";
-                span.onclick = function() {
-                    modal.style.display = "none";
+                if ($("#myModal").length > 0) {
+                    addFeedbacksToFeedbackAlertDiv(newFeedbacks);
+                } else {
+                    createAlertsDivToBody();
+                    addFeedbacksToFeedbackAlertDiv(newFeedbacks);
+                    showAlerts();
                 }
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-
             }
             setTimeout(ajaxCheckForFeedbacksAlerts,refreshRateForAlert);
         }
@@ -195,34 +215,14 @@ function ajaxCheckForNewStoresInZoneAlerts() {
         },
         success: function (newStores) {
             if (newStores.length > 0) {
-                if(checkIfNewStoresHasStoreOfOtherUser(newStores)) {
-                    $("#myModal").remove();
-                    $("<!-- The Modal -->\n" +
-                        "<div id=\"myModal\" class=\"modal\">\n" +
-                        "\n" +
-                        "  <!-- Modal content -->\n" +
-                        "  <div class=\"modal-content\">\n" +
-                        "    <div class=\"modal-header\">\n" +
-                        "      <span class=\"close\">&times;</span>\n" +
-                        "      <h2>New Stores Alert!</h2>\n" +
-                        "    </div>\n" +
-                        "    <div class=\"modal-body\">\n" +
-                        "      <div class='row' id='newStoresAlertCards'></div>" +
-                        "    </div>\n" +
-                        "  </div>\n" +
-                        "\n" +
-                        "</div>").appendTo($("body"));
+                if($("#myModal").length > 0){
                     addNewStoresAlertDiv(newStores);
-                    var modal = document.getElementById("myModal");
-                    var span = document.getElementsByClassName("close")[0];
-                    modal.style.display = "block";
-                    span.onclick = function () {
-                        modal.style.display = "none";
-                    }
-                    window.onclick = function (event) {
-                        if (event.target == modal) {
-                            modal.style.display = "none";
-                        }
+                }
+                else {
+                    if (checkIfNewStoresHasStoreOfOtherUser(newStores)) {
+                        createAlertsDivToBody();
+                        addNewStoresAlertDiv(newStores);
+                        showAlerts();
                     }
                 }
             }
