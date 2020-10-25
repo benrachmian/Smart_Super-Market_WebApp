@@ -23,6 +23,7 @@ var CHECK_NEW_STORE_SETTINGS = buildUrlWithContextPath("checkNewStoreSettings");
 var CHECK_NEW_PRODUCT_SETTINGS = buildUrlWithContextPath("checkNewProductSettings");
 var ADD_NEW_STORE_TO_ZONE = buildUrlWithContextPath("newStoreToZone");
 var ADD_NEW_PRODUCT_TO_ZONE = buildUrlWithContextPath("newProductToZone");
+var CHECK_IF_HAS_STORE_IN_ZONE = buildUrlWithContextPath("checkIfHasStoreInZone");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -1728,36 +1729,48 @@ function overloadNewStoreFormSubmit(){
 function clickOnAddProductButton(){
     $("#centerPage").empty();
     $("#welcomeTitle").empty().append( $("<h1>Add New Product To Zone </h1>"));
-    $("<form id='new-product-form' method=\"GET\" class=\"form-style-7\">\n" +
-        "<ul>\n" +
-        "<li>\n" +
-        "    <label for=\"productId\">Product ID</label>\n" +
-        "    <input id='intTextBox' type=\"text\" name=\"productId\" maxlength=\"100\">\n" +
-        "    <span>Insert the new product ID </span>\n" +
-        "</li>\n" +
-        "<li>\n" +
-        "    <label for=\"productName\">Product Name</label>\n" +
-        "    <input id='product-name' type=\"text\" name=\"product-name\" maxlength=\"100\">\n" +
-        "    <span>Insert the new product name</span>\n" +
-        "</li>\n" +
-        "<li>\n" +
-        "    <label for=\"wayOfBuying\">Way Of Buying</label>\n" +
-        "    <select id='wayOfBuyingSelect' form='new-store-form' class=\"select-css\">\n" +
-        "    <option value=\"\" disabled selected>Select way of buying</option>\n" +
-        "    <option>By quantity</option>\n" +
-        "    <option>By weight</option>\n" +
-        "</select>" +
-        "    <span>Choose way of buying</span>\n" +
-        "</li>\n" +
-        "<li>\n" +
-        "    <button class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
-        "</li>\n" +
-        "</ul>\n" +
-        "</form>").appendTo($("#centerPage"));
-    setInputFilter(document.getElementById("intTextBox"), function(value) {
-        return /^-?\d*$/.test(value); });
+    $.ajax({
+        url: CHECK_IF_HAS_STORE_IN_ZONE,
+        success: function(hasStoreInZoneAnswer) {
+            if(hasStoreInZoneAnswer === "true"){
+                $("#errorDiv").remove();
+                $("<form id='new-product-form' method=\"GET\" class=\"form-style-7\">\n" +
+                    "<ul>\n" +
+                    "<li>\n" +
+                    "    <label for=\"productId\">Product ID</label>\n" +
+                    "    <input id='intTextBox' type=\"text\" name=\"productId\" maxlength=\"100\">\n" +
+                    "    <span>Insert the new product ID </span>\n" +
+                    "</li>\n" +
+                    "<li>\n" +
+                    "    <label for=\"productName\">Product Name</label>\n" +
+                    "    <input id='product-name' type=\"text\" name=\"product-name\" maxlength=\"100\">\n" +
+                    "    <span>Insert the new product name</span>\n" +
+                    "</li>\n" +
+                    "<li>\n" +
+                    "    <label for=\"wayOfBuying\">Way Of Buying</label>\n" +
+                    "    <select id='wayOfBuyingSelect' form='new-store-form' class=\"select-css\">\n" +
+                    "    <option value=\"\" disabled selected>Select way of buying</option>\n" +
+                    "    <option>By quantity</option>\n" +
+                    "    <option>By weight</option>\n" +
+                    "</select>" +
+                    "    <span>Choose way of buying</span>\n" +
+                    "</li>\n" +
+                    "<li>\n" +
+                    "    <button class='button' type=\"submit\" value=\"Continue\" > <span>Continue </span> </button>\n" +
+                    "</li>\n" +
+                    "</ul>\n" +
+                    "</form>").appendTo($("#centerPage"));
+                setInputFilter(document.getElementById("intTextBox"), function(value) {
+                    return /^-?\d*$/.test(value); });
 
-    overloadNewProductFormSubmit();
+                overloadNewProductFormSubmit();
+            }
+            else{
+                errorMsg($("#centerPage"),"You must have at least one store in this zone to add a new product!");
+            }
+        }
+    });
+
 }
 
 function clickOnAddStoreButton(){

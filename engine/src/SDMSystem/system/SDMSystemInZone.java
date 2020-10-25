@@ -1000,4 +1000,16 @@ public class SDMSystemInZone {
         Feedback feedback = new Feedback(rank,comment,username,storeToRankId,date);
         storeToRank.giveFeedback(feedback);
     }
+
+    public boolean checkIfHasStoreInZone(String username) {
+        boolean answer = false;
+        for(Store store : storesInSystem.getStoresInSystemBySerialNumber().values()){
+            if(store.getStoreOwner().getUsername() == username){
+                answer = true;
+                break;
+            }
+        }
+
+        return answer;
+    }
 }

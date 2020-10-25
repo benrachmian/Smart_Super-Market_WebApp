@@ -199,10 +199,19 @@
         <servlet-class>sdm.servlets.NewProductToZoneServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CheckIfHasStoreInZoneServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckIfHasStoreInZoneServlet</servlet-class>
+    </servlet>
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
 <!--    </servlet>-->
+    <servlet-mapping>
+        <servlet-name>CheckIfHasStoreInZoneServlet</servlet-name>
+        <url-pattern>/checkIfHasStoreInZone</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>NewProductToZoneServlet</servlet-name>
         <url-pattern>/newProductToZone</url-pattern>
