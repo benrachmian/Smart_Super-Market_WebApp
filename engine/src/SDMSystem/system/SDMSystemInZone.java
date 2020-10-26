@@ -58,6 +58,9 @@ public class SDMSystemInZone {
         this.zone = zone;
     }
 
+    public String getZoneOwnerUsername(){
+        return zoneOwner.getUsername();
+    }
 //    public static SDMSystemInZone getInstance(){
 //        if(single_Instance == null){
 //            single_Instance = new SDMSystemInZone();

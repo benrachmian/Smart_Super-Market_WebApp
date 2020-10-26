@@ -24,6 +24,7 @@ var CHECK_NEW_PRODUCT_SETTINGS = buildUrlWithContextPath("checkNewProductSetting
 var ADD_NEW_STORE_TO_ZONE = buildUrlWithContextPath("newStoreToZone");
 var ADD_NEW_PRODUCT_TO_ZONE = buildUrlWithContextPath("newProductToZone");
 var CHECK_IF_HAS_STORE_IN_ZONE = buildUrlWithContextPath("checkIfHasStoreInZone");
+var CHECK_IF_USER_ZONE_OWNER = buildUrlWithContextPath("checkIfUserZoneOwner");
 var orderToLocationX;
 var orderToLocationY;
 var chosenStoreIdForAjax;
@@ -553,7 +554,7 @@ function addStoresParticipatingToOrderSummaryDiv(){
                     storeParticipating.storeLocation.x,
                     storeParticipating.storeLocation.y);
                 $("<br><div class='storeAndProductsParticipatingDiv' data-storeId='" + storeParticipating.storeSerialNumber + "' id='storeAndProductsParticipatingDiv'>" +
-                    "<p id='sub-title2'>" + storeParticipating.storeName + "</p>" +
+                    "<p class='sub-title2'>" + storeParticipating.storeName + "</p>" +
                     "<div class='centerDiv'>" +
                     "<ul class=\"notATable\">\n" +
                     "   <li><label>Store ID</label><div>" + storeParticipating.storeSerialNumber + "</div></li>\n" +
@@ -647,7 +648,7 @@ function createRankingStoresPage(){
         success: function (storesParticipating) {
             $.each(storesParticipating || [], function (index, storeParticipating) {
                 var storeId = storeParticipating.storeSerialNumber;
-                $(  "<p class='centerDiv' id='sub-title2'> " + storeParticipating.storeName + "</p>" +
+                $(  "<p class='centerDiv sub-title2'> " + storeParticipating.storeName + "</p>" +
                    "<div class=\"containerRanking\">\n" +
                     "<div data-storeId='" + storeId + "' class=\"my-rating centerDiv\"></div>" +
                     "<div data-storeId='" + storeId + "' class=\"wrapper\">\n" +
@@ -1842,13 +1843,23 @@ function setButtonsAccordingToUserRole() {
             else{
                 $("<a href=\"#\" id=\"show-feedbacks-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Show Feedbacks</a>").insertBefore("#backButton");
                 $("<a href=\"#\" id=\"add-store-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Add Store To Zone</a>").insertBefore("#backButton");
-                $("<a href=\"#\" id=\"add-product-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Add Product To Zone</a>").insertBefore("#backButton");
                 $("#show-feedbacks-button").click(function (){
                     clickOnShowFeedbacksButton();
                 });
                 $("#add-store-button").click(function (){
                     clickOnAddStoreButton();
                 });
+            }
+        }
+    })
+}
+
+function setButtonsToZoneOwner(){
+    $.ajax({
+        url: CHECK_IF_USER_ZONE_OWNER,
+        success: function (isZoneOwner) {
+            if(isZoneOwner === "true"){
+                $("<a href=\"#\" id=\"add-product-button\" class=\"w3-bar-item w3-button\" onclick=\"w3_close()\">Add Product To Zone</a>").insertBefore("#backButton");
                 $("#add-product-button").click(function (){
                     clickOnAddProductButton();
                 });
@@ -1866,6 +1877,7 @@ $(function() {
         clickOnStoresInZoneButton();
     });
     setButtonsAccordingToUserRole();
+    setButtonsToZoneOwner();
 
 });
 

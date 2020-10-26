@@ -109,7 +109,7 @@
     display: block;
     text-align: center;
     padding: 0;
-    margin: 0px 0px 20px 0px;
+    margin: 0 0 20px 0;
     color: #5C5C5C;
     font-size:x-large;
 }
@@ -127,7 +127,7 @@
 }
 .form-style-7 li:last-child{
     border:none;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     text-align: center;
 }
 .form-style-7 li > label{
@@ -210,7 +210,7 @@
 
 
 .isa_info, .isa_success, .isa_warning, .isa_error {
-    margin: 10px 0px;
+    margin: 10px 0;
     padding:12px;
     border-radius: 15px;
 
@@ -286,16 +286,16 @@
 
 #sub-title{
     font-size: 22px;
-    font-family: "Levenim MT";
+    font-family: "Levenim MT", serif;
     fill: #818181;
     color: #3e3f43;
     font-weight: bold;
     text-align: center;
 }
 
-#sub-title2{
+.sub-title2{
     font-size: 30px;
-    font-family: "Comic Sans MS";
+    font-family: "Comic Sans MS", serif;
     fill: #ff0000;
     color: #4a510e;
     font-weight: bold;

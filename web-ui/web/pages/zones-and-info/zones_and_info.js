@@ -1,4 +1,3 @@
-var numOfZonesInTable = 0;
 var chatVersion = 0;
 var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
@@ -50,7 +49,7 @@ function goToZonePage(tableRow) {
         error: function(error) {
 
         },
-        success: function (data) {
+        success: function () {
             window.location.href = "../single-zone/single_zone.html";
         }
     })
@@ -93,7 +92,7 @@ function overloadFileUploadWithAjax() {
             error: function(e) {
                 errorMsg($("#centerPage"),e.responseText);
             },
-            success: function(r) {
+            success: function() {
                 $("#errorDiv").remove();
                 successMsg($("#centerPage"),"The zone was successfully loaded!");
                 ajaxZoneTable();
@@ -125,7 +124,7 @@ function overloadChargeSubmit() {
                 //showErrorMsg(e);
                 errorMsg($("#centerPage"),e.responseText);
             },
-            success: function(r) {
+            success: function() {
                 $("#errorDiv").remove();
                 successMsg($("#centerPage"),"You charged your account successfully!");
                 $("#chargeMoneySubmit").attr("disabled",true);
@@ -137,18 +136,9 @@ function overloadChargeSubmit() {
 }
 
 function clickOnChargeMoneyButton() {
-    $("#centerPage").empty();
+    var centerPage = $("#centerPage");
+    centerPage.empty();
     $("#welcomeTitle").empty().append( $("<h1>Charge Money </h1>"));
-
-    // $("<form method=\"GET\" id='chargeMoney' action=\"chargeMoney\">" +
-    //     "        <div class=\"form-group\">" +
-    //     "            <label for=\"money\">Money To Charge:</label>" +
-    //     "            <input type=\"number\" step=\"0.01\" class=\"form-control\" id=\"number\" placeholder=\"Enter Money To Charge\" name=\"money\">" +
-    //     "<br><label for=\"chargeDate\">Charge Date:</label>" +
-    //     "  <input type=\"date\" id=\"chargeDate\" name=\"chargeDate\">" +
-    //     "<input type=\"submit\" value=\"Charge!\">" +
-    //     + "</div>").appendTo($("#centerPage"));
-
     $("<form id='chargeMoneyForm' method=\"GET\" action=\"chargeMoney\" class=\"form-style-7\">\n" +
         "<ul>\n" +
         "<li>\n" +
@@ -165,7 +155,7 @@ function clickOnChargeMoneyButton() {
         "    <button id='chargeMoneySubmit' class='button' type=\"submit\" value=\"Charge\" > <span>Charge </span> </button>\n" +
         "</li>\n" +
         "</ul>\n" +
-        "</form>").appendTo($("#centerPage"));
+        "</form>").appendTo(centerPage);
 
 
     overloadChargeSubmit();
@@ -272,7 +262,7 @@ function clickOnAccountMovementsButton() {
 
 function createChatEntry(entry,index) {
     var chatEntry;
-    if(index % 2 == 0){
+    if(index % 2 === 0){
         chatEntry = "<div class=\"containerChat\">\n" +
             "  <p>" + entry.username + ": " +  entry.chatString + "</p>\n" +
             "  <span class=\"time-right\">" + entry.time + "</span>\n" +
@@ -295,7 +285,7 @@ function appendChatEntry(index, entry,numOfNewMsg){
 
 function appendToChatArea(entries,oldVersion) {
     var numOfNewMsg = oldVersion;
-    $.each(entries || [], function (index,entry,oldVersion)
+    $.each(entries || [], function (index,entry)
     {
         appendChatEntry(index,entry,numOfNewMsg);
         numOfNewMsg++;
@@ -340,7 +330,7 @@ function ajaxChatContent(){
             }
             triggerAjaxChatContent();
         },
-        error: function(error) {
+        error: function() {
             triggerAjaxChatContent();
         }
     });
@@ -374,19 +364,20 @@ function overloadChatFormSubmit(){
 
 function clickOnChatButton(){
     chatVersion = 0;
-    $("#centerPage").empty();
+    var centerPage =  $("#centerPage");
+    centerPage.empty();
     $("#welcomeTitle").empty().append( $("<h1>Chat </h1>"));
     $("<div class='chatDiv'></div>" +
         "<form class='centerDiv' style='margin-top: 20px' id='chatForm' >\n" +
         "\t\t\t\t\t\t<input style='margin-right: 15px' type=\"text\" id=\"userstring\" name=\"userstring\"/>\n" +
         "\t\t\t\t\t\t<input type=\"submit\" value=\"Send\"/>\n" +
         "\t\t\t\t\t</form><br>")
-        .appendTo($("#centerPage"));
+        .appendTo(centerPage);
     $("<div class=\"usersDiv\" class=\"users-in-system\">\n" +
         "            <h4>Users in system:</h4>\n" +
         "            <ul id=\"userslist\">\n" +
         "            </ul>\n" +
-        "        </div>").appendTo($("#centerPage"));
+        "        </div>").appendTo(centerPage);
     overloadChatFormSubmit();
     ajaxChatContent();
 }

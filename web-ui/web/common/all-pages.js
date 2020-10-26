@@ -100,7 +100,7 @@ function showAlerts(){
         $("#myModal").remove();
     }
     window.onclick = function (event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = "none";
             $("#myModal").remove();
         }
@@ -168,7 +168,7 @@ function addFeedbacksToFeedbackAlertDiv(newFeedbacks) {
             "                    <h3>New Ranking</h3>" +
             "                    <p>Ranking: " + newFeedback.rank + "/5 </p>" +
             "                    <p>Feedback giver:" + newFeedback.feedbackGiver +"</p>" +
-            "                    <p>Comment: " + (newFeedback.comment.length == 0 ? "No Comment" : newFeedback.comment) + "</p>" +
+            "                    <p>Comment: " + (newFeedback.comment.length === 0 ? "No Comment" : newFeedback.comment) + "</p>" +
             "                    <p>Store who got the feedback ID: " + newFeedback.storeGotFeedbackId + "</p>" +
             "                </div>" +
             "            </div>");
@@ -269,7 +269,7 @@ $(function() {
         targets: '.ml5 .line',
         duration: 600,
         easing: "easeOutExpo",
-        translateY: (el, i) => (-0.625 + 0.625*2*i) + "em"
+        //translateY: (el, i) => (-0.625 + 0.625*2*i) + "em"
     }).add({
         targets: '.ml5 .ampersand',
         opacity: [0,1],
@@ -313,17 +313,17 @@ function w3_close() {
     document.getElementById("openNav").style.display = "inline-block";
 }
 
-function scroll_to(div){
-    $('html, body').animate({
-        scrollTop: $("moreStoreDetailsDiv").offset().top
-    },1000);
-}
+// function scroll_to(div){
+//     $('html, body').animate({
+//         scrollTop: $("moreStoreDetailsDiv").offset().top
+//     },1000);
+// }
 
 //auto expand textarea
-function adjust_textarea(h) {
-    h.style.height = "20px";
-    h.style.height = (h.scrollHeight)+"px";
-}
+// function adjust_textarea(h) {
+//     h.style.height = "20px";
+//     h.style.height = (h.scrollHeight)+"px";
+// }
 
 //make text feild only numbers:
 function setInputFilter(textbox, inputFilter) {

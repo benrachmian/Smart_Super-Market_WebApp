@@ -203,14 +203,25 @@
         <servlet-name>CheckIfHasStoreInZoneServlet</servlet-name>
         <servlet-class>sdm.servlets.CheckIfHasStoreInZoneServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>CheckIfUserZoneOwnerServlet</servlet-name>
+        <servlet-class>sdm.servlets.CheckIfUserZoneOwnerServlet</servlet-class>
+    </servlet>
     <!--    <servlet>-->
 <!--        <servlet-name>UploadFileServlet</servlet-name>-->
 <!--        <servlet-class>sdm.servlets.UploadFileServlet</servlet-class>-->
 <!--    </servlet>-->
     <servlet-mapping>
+        <servlet-name>CheckIfUserZoneOwnerServlet</servlet-name>
+        <url-pattern>/checkIfUserZoneOwner</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>CheckIfHasStoreInZoneServlet</servlet-name>
         <url-pattern>/checkIfHasStoreInZone</url-pattern>
     </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>NewProductToZoneServlet</servlet-name>

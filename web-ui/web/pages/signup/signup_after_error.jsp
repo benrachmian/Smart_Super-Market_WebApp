@@ -58,12 +58,12 @@
         <% String usernameFromParameter = request.getParameter(Constants.USERNAME) != null ? request.getParameter(Constants.USERNAME) : "";%>
         <% String roleFromParameter = request.getParameter(Constants.ROLE) != null ? request.getParameter(Constants.ROLE) : "";%>
         <% if (usernameFromSession == null) {%>
-        <h4 id="sub-title2">Please enter a unique user name:</h4>
+        <h4 class="sub-title2">Please enter a unique user name:</h4>
         <form id="login" method="GET" action="login">
             <div class="form-group">
                 <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" value="<%=usernameFromParameter%>">
             </div>
-            <h4 id="sub-title2">Please select your role:</h4>
+            <h4 class="sub-title2">Please select your role:</h4>
             <input type="radio" id="customer" name="role" value="customer">
             <label for="customer">Customer</label><br>
             <input type="radio" id="store-owner" name="role" value="store-owner">
