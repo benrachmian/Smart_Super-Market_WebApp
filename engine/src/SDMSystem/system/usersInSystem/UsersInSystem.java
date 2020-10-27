@@ -38,7 +38,7 @@ public class UsersInSystem {
     public void addUser(String username, String userRole) {
         User user = null;
         if(userRole.equals("customer")){
-           user = new Customer(username);
+           user = new Customer(username,5000);
            customersInSystem.put(user.getUsername(),(Customer)user)       ;
         }
         else{

@@ -16,9 +16,10 @@ public class Customer extends User {
     //private static int generatedSerialNumber = 1000;
     private Collection<Order> ordersMade;
 
-    public Customer(String username) {
+    public Customer(String username, float money) {
         super(username);
         this.ordersMade = new LinkedList<>();
+        this.moneyInAccount = money;
     }
 
 

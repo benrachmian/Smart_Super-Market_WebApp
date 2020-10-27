@@ -359,7 +359,7 @@ function checkIfNeedToChooseProducts(discountName) {
 
 }
 
-function ajaxAddProductInDiscountToCart(discountName, productInDiscountSerialNumber, productQuantity){
+function ajaxAddProductInDiscountToCart(discountName, productInDiscountSerialNumber, productQuantity,pricePerUnit){
 
     $.ajax({
         method: "post",
@@ -369,7 +369,7 @@ function ajaxAddProductInDiscountToCart(discountName, productInDiscountSerialNum
 
         },
         success: function () {
-
+            updateProductsCostAndTotalCost(pricePerUnit,productQuantity);
         }
     })
 }
@@ -378,8 +378,8 @@ function addDiscountProductToCart(selectedProductAsOfferInDiscount,discountName)
     var productInStore = productsInOrderMap.get(selectedProductAsOfferInDiscount.productSerialNumber);
     productInStore.productName = selectedProductAsOfferInDiscount.productName + " (Discount)";
     addChosenProductToTable(productInStore,selectedProductAsOfferInDiscount.productQuantity,$("#shoppingCartTable"));
-    ajaxAddProductInDiscountToCart(discountName,productInStore.productSerialNumber,selectedProductAsOfferInDiscount.productQuantity);
-    updateProductsCostAndTotalCost(selectedProductAsOfferInDiscount.pricePerUnit,selectedProductAsOfferInDiscount.productQuantity);
+    ajaxAddProductInDiscountToCart(discountName,productInStore.productSerialNumber,selectedProductAsOfferInDiscount.productQuantity,selectedProductAsOfferInDiscount.pricePerUnit);
+    //updateProductsCostAndTotalCost(selectedProductAsOfferInDiscount.pricePerUnit,selectedProductAsOfferInDiscount.productQuantity);
 
 }
 
