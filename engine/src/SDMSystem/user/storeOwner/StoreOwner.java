@@ -86,7 +86,7 @@ public class StoreOwner extends User {
     }
 
 
-    public void orderFromTransaction(LocalDate orderDate, float transactionSum){
+    public synchronized void orderFromTransaction(LocalDate orderDate, float transactionSum){
         accountMovements.add(new AccountMovement(
                 AccountActionType.PAYMENT_RECEIVE,
                 orderDate,

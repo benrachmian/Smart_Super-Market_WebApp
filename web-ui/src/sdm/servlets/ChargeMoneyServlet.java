@@ -3,6 +3,7 @@ package sdm.servlets;
 import SDMSystem.system.SDMSystem;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +30,10 @@ public class ChargeMoneyServlet extends HttpServlet {
             if(moneyInFloat<= 0){
                 throw new RuntimeException("You must charge your account with a positive number!");
             }
-            sdmSystemManager.chargeUserMoney(SessionUtils.getUsername(request), Float.parseFloat(money), chargeDate);
+            //in order to avoid other threads from adding new account movements and in the same time get account movements
+            synchronized (ThreadSafeUtils.AccountMovementsLock) {
+                sdmSystemManager.chargeUserMoney(SessionUtils.getUsername(request), Float.parseFloat(money), chargeDate);
+            }
         }
         catch (RuntimeException e){
             response.setStatus(500);

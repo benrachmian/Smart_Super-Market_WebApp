@@ -37,7 +37,7 @@ public abstract class User implements HasSerialNumber<Integer> {
         return username;
     }
 
-    public void chargeMoney(float money, String chargeDate) {
+    public synchronized void chargeMoney(float money, String chargeDate) {
         float moneyBeforeCharge = moneyInAccount;
         moneyInAccount += money;
         accountMovements.add(new AccountMovement(
@@ -48,7 +48,7 @@ public abstract class User implements HasSerialNumber<Integer> {
                 moneyInAccount));
     }
 
-    public Collection<DTOAccountMovement> getAccountMovements(){
+    public synchronized Collection<DTOAccountMovement> getAccountMovements(){
         Collection<DTOAccountMovement> accountMovements = new LinkedList<>();
         for(AccountMovement accountMovement : this.accountMovements){
             accountMovements.add(accountMovement.getDTOAccountMovement());
@@ -57,7 +57,7 @@ public abstract class User implements HasSerialNumber<Integer> {
         return accountMovements;
     }
 
-    public float getMoneyInAccount() {
+    public synchronized float getMoneyInAccount() {
         return moneyInAccount;
     }
 

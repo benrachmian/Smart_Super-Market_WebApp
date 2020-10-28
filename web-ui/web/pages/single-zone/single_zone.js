@@ -1827,6 +1827,9 @@ function clickOnAddStoreButton(){
 function setButtonsAccordingToUserRole() {
     $.ajax({
         url: GET_ROLE_URL,
+        error: function (error){
+            window.location.replace("../../index.html");
+        },
         success: function (role) {
             userRole = role;
             if(role === "customer"){

@@ -1,5 +1,6 @@
 package sdm.servlets;
 
+import SDMSystem.exceptions.NoMoneyException;
 import SDMSystem.system.SDMSystem;
 import SDMSystem.user.User;
 import com.google.gson.Gson;
@@ -20,9 +21,19 @@ public class RoleServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         String roleFromSession = SessionUtils.getRole(request);
-        try (PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
+        try {
+            if (roleFromSession == null) {
+                throw new RuntimeException("No role");
+            }
             out.print(roleFromSession);
+        }
+        catch (RuntimeException e){
+            response.setStatus(500);
+            out.print(e.getMessage());
+            out.flush();
         }
     }
 

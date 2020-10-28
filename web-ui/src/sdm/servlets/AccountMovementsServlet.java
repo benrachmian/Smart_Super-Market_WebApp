@@ -5,6 +5,7 @@ import SDMSystemDTO.user.DTOAccountAction.DTOAccountMovement;
 import com.google.gson.Gson;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,11 +24,12 @@ public class AccountMovementsServlet extends HttpServlet {
         try {
             SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
             String username = SessionUtils.getUsername(request);
-            synchronized (getServletContext()) {
+            //in order to avoid other threads from adding new account movements and in the same time get account movements
+            synchronized (ThreadSafeUtils.AccountMovementsLock) {
                 userAccountMovements = sdmSystemManager.getUserAccountMovements(username);
-            }
-            if(userAccountMovements.size() == 0){
-                throw new RuntimeException("You still have no movements in your account!");
+                if (userAccountMovements.size() == 0) {
+                    throw new RuntimeException("You still have no movements in your account!");
+                }
             }
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(userAccountMovements);

@@ -30,7 +30,7 @@ public class Customer extends User {
         ordersMade.add(newOrder);
     }
 
-    public void makeNewOrderTransaction(LocalDate orderDate, float transactionSum, StoreOwner storeOwner){
+    public synchronized void makeNewOrderTransaction(LocalDate orderDate, float transactionSum, StoreOwner storeOwner){
         accountMovements.add(new AccountMovement(
                 AccountActionType.PAYMENT_TRANSFERENCE,
                 orderDate,
