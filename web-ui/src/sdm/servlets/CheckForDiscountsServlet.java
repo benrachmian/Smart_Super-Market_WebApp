@@ -30,17 +30,8 @@ public class CheckForDiscountsServlet  extends HttpServlet {
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         String zone = SessionUtils.getChosenZone(request);
         SDMSystemInZone zoneSystem = sdmSystemManager.getZoneSystem(zone);
-        //String storeId = request.getParameter("chosenStoreId");
         Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCart = SessionUtils.getShoppingCart(request);
         try {
-//            if(zoneSystem.storeHasDiscountWithOneOfTheProducts(
-//                    Integer.parseInt(storeId),
-//                    shoppingCart.get(Integer.parseInt(storeId)))){
-//                out.print("true");
-//            }
-//            else{
-//                out.print("false");
-//            }
             boolean answer = false;
             for(Integer storeId : shoppingCart.keySet()){
                 if(zoneSystem.storeHasDiscountWithOneOfTheProducts(storeId,shoppingCart.get(storeId))) {

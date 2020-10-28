@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,7 +31,7 @@ public class CheckFeedbacksAlertServlet extends HttpServlet {
 
 
         ArrayList<DTOFeedback> feedbacksUserGot;
-        synchronized (getServletContext()) {
+        synchronized (ThreadSafeUtils.feedbacksLock) {
             feedbacksUserGot = storeOwner.getNewFeedbacksFromUser(feedbacksAlertVersion);
             request.getSession(false).setAttribute(Constants.FEEDBACK_ALERT_VERSION, storeOwner.getFeedbacksAmount());
         }

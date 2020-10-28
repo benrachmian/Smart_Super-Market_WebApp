@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import javafx.util.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,10 +29,11 @@ public class GetFeedbacksServlet extends HttpServlet {
         String zoneFromSession = SessionUtils.getChosenZone(request);
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         String username = SessionUtils.getUsername(request);
+        Collection<DTOFeedback> zoneFeedbacks;
         try {
-            Collection<DTOFeedback> zoneFeedbacks = sdmSystemManager.getZoneFeedbacks(username, zoneFromSession);
-
-
+            synchronized (ThreadSafeUtils.feedbacksLock) {
+                zoneFeedbacks = sdmSystemManager.getZoneFeedbacks(username, zoneFromSession);
+            }
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(zoneFeedbacks);
 

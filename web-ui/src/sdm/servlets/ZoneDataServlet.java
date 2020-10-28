@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +21,6 @@ public class ZoneDataServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
-        //int numOfZonesInTable = ServletUtils.getIntParameter(request, Constants.NUM_OF_ZONES);
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/index.html");
@@ -30,12 +30,9 @@ public class ZoneDataServlet extends HttpServlet {
         verify chat version given from the user is a valid number. if not it is considered an error and nothing is returned back
         Obviously the UI should be ready for such a case and handle it properly
          */
-//        if (numOfZonesInTable == Constants.INT_PARAMETER_ERROR) {
-//            return;
-//        }
 
             List<SingleZoneEntry> zonesEntries;
-            synchronized (getServletContext()) {
+            synchronized (ThreadSafeUtils.zoneLock) {
                 zonesEntries = sdmSystemManager.getZonesEntries();
             }
             EntriesAndNumOfZones entriesAndNumOfZones = new EntriesAndNumOfZones(zonesEntries,sdmSystemManager.getNumOfZones());

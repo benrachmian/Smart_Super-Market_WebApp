@@ -4,6 +4,7 @@ import chat.ChatManager;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +23,7 @@ public class SendChatServlet extends HttpServlet {
         String userChatString = request.getParameter(Constants.CHAT_PARAMETER);
         if (userChatString != null && !userChatString.isEmpty()) {
             logServerMessage("Adding chat string from " + username + ": " + userChatString);
-            synchronized (getServletContext()) {
+            synchronized (ThreadSafeUtils.chatLock) {
                 chatManager.addChatString(userChatString, username);
             }
         }

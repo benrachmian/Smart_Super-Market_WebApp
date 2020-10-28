@@ -25,6 +25,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static sdm.utils.ThreadSafeUtils.storeLock;
+
 public class NewStoreToZoneServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
@@ -44,16 +46,18 @@ public class NewStoreToZoneServlet extends HttpServlet {
             Gson gson = new Gson();
             NewStoreDetails newStoreDetails = gson.fromJson(json, NewStoreDetails.class);
             Collection<DTOProductInStore> productsInNewStore = makeProductsInNewStoreCollectionFromNewStoreDetails(newStoreDetails);
-            sdmSystemInZone.addNewStoreToSystem(
-                    newStoreDetails.storeId,
-                    newStoreDetails.storeName,
-                    newStoreDetails.locationX,
-                    newStoreDetails.locationY,
-                    newStoreDetails.ppk,
-                    productsInNewStore,
-                    newStoreOwner,
-                    zoneFromSession
-            );
+            synchronized (storeLock) {
+                sdmSystemInZone.addNewStoreToSystem(
+                        newStoreDetails.storeId,
+                        newStoreDetails.storeName,
+                        newStoreDetails.locationX,
+                        newStoreDetails.locationY,
+                        newStoreDetails.ppk,
+                        productsInNewStore,
+                        newStoreOwner,
+                        zoneFromSession
+                );
+            }
         } catch (RuntimeException e) {
             response.setStatus(500);
             out.print(e.getMessage());

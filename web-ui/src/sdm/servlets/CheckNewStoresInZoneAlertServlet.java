@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +32,7 @@ public class CheckNewStoresInZoneAlertServlet extends HttpServlet {
 
 
         ArrayList<DTOStore> newStoresList;
-        synchronized (getServletContext()) {
+        synchronized (ThreadSafeUtils.storeLock) {
             newStoresList = storeOwner.getNewStoresFromUser(newStoresAlertVersion);
             request.getSession(false).setAttribute(Constants.NEW_STORES_ALERT_VERSION, storeOwner.getNumOfStoresInZones());
         }

@@ -9,6 +9,7 @@ import org.omg.SendingContext.RunTime;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,7 +38,9 @@ public class RankStoreServlet extends HttpServlet {
             if (username == null) {
                 response.sendRedirect(request.getContextPath() + "/index.html");
             }
-            sdmSystemInZone.giveFeedback(storeToRankId, comment, rank, username,orderDate);
+            synchronized (ThreadSafeUtils.feedbacksLock) {
+                sdmSystemInZone.giveFeedback(storeToRankId, comment, rank, username, orderDate);
+            }
         }
         catch (RuntimeException e){
             PrintWriter out = response.getWriter();

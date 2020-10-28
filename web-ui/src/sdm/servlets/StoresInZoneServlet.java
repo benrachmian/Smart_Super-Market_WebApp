@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 
+import static sdm.utils.ThreadSafeUtils.storeLock;
+
 public class StoresInZoneServlet  extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -22,7 +24,7 @@ public class StoresInZoneServlet  extends HttpServlet {
         String zoneFromSession = SessionUtils.getChosenZone(request);
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         Collection<DTOStore> storesInZone;
-        synchronized (getServletContext()) {
+        synchronized (storeLock) {
             storesInZone = sdmSystemManager.getStoresInZone(zoneFromSession);
         }
 

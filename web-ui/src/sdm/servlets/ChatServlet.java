@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,7 +42,7 @@ public class ChatServlet extends HttpServlet {
          */
         int chatManagerVersion = 0;
         List<SingleChatEntry> chatEntries;
-        synchronized (getServletContext()) {
+        synchronized (ThreadSafeUtils.chatLock) {
             chatManagerVersion = chatManager.getVersion();
             chatEntries = chatManager.getChatEntries(chatVersion);
         }

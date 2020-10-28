@@ -6,6 +6,7 @@ import javafx.application.Application;
 import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -52,8 +53,9 @@ public class UploadFileServlet extends HttpServlet {
 
         SequenceInputStream fileInputStream =  new SequenceInputStream(Collections.enumeration(fileInputStreamList));
 
-
-            sdmSystem.loadSystemWithInputStream(fileInputStream,usernameFromSession);
+            synchronized (ThreadSafeUtils.zoneLock) {
+                sdmSystem.loadSystemWithInputStream(fileInputStream, usernameFromSession);
+            }
 
         } catch (Exception e) {
             ErrorMsg cav = new ErrorMsg(e.getMessage());
