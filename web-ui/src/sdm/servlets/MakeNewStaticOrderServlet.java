@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import javafx.util.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,14 +42,16 @@ public class MakeNewStaticOrderServlet extends HttpServlet {
         Point orderToLocation = new Point(orderToX,orderToY);
 
         try {
-            sdmSystemInZone.makeNewStaticOrder(
-                    storeId,
-                    orderDate,
-                    deliveryCost,
-                    shoppingCart.get(storeId),
-                    userName,
-                    sdmSystemManager,
-                    orderToLocation);
+            synchronized (ThreadSafeUtils.newOrderLock) {
+                sdmSystemInZone.makeNewStaticOrder(
+                        storeId,
+                        orderDate,
+                        deliveryCost,
+                        shoppingCart.get(storeId),
+                        userName,
+                        sdmSystemManager,
+                        orderToLocation);
+            }
         }
         catch (NoMoneyException e){
             response.setStatus(500);

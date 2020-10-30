@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sdm.utils.ThreadSafeUtils.newOrderLock;
+
 public class CheckOrdersAlertServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,7 +34,7 @@ public class CheckOrdersAlertServlet extends HttpServlet {
 
 
         ArrayList<DTOOrder> ordersFromUserStores;
-        synchronized (getServletContext()) {
+        synchronized (newOrderLock) {
             ordersFromUserStores = storeOwner.getNewOrdersFromUser(orderAlertVersion);
             request.getSession(false).setAttribute(Constants.ORDER_ALERT_VERSION, storeOwner.getOrdersFromUser().size());
         }

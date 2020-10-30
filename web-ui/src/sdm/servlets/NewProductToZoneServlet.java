@@ -8,6 +8,7 @@ import SDMSystemDTO.store.DTOStore;
 import com.google.gson.Gson;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,12 +40,14 @@ public class NewProductToZoneServlet extends HttpServlet {
             NewProductDetails newProductDetails = gson.fromJson(json, NewProductDetails.class);
             //key: store Id, value: price
             Map<Integer, Float> storesSellingTheProductAndPrice = makeStoresSellingTheProductAndPriceFromDetails(newProductDetails);
-            sdmSystemInZone.addNewProductToSystem(
-                    newProductDetails.productId,
-                    newProductDetails.productName,
-                    newProductDetails.productWayOfBuying == "By quantity"? WayOfBuying.BY_QUANTITY : WayOfBuying.BY_WEIGHT,
-                    storesSellingTheProductAndPrice
-            );
+            synchronized (ThreadSafeUtils.productsLock) {
+                sdmSystemInZone.addNewProductToSystem(
+                        newProductDetails.productId,
+                        newProductDetails.productName,
+                        newProductDetails.productWayOfBuying == "By quantity" ? WayOfBuying.BY_QUANTITY : WayOfBuying.BY_WEIGHT,
+                        storesSellingTheProductAndPrice
+                );
+            }
         } catch (RuntimeException e) {
             response.setStatus(500);
             out.print(e.getMessage());

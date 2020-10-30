@@ -6,5 +6,7 @@ public class ThreadSafeUtils {
     public static final Object chatLock = new Object();
     public static final Object zoneLock = new Object();
     public static final Object storeLock = new Object();
+    public static final Object newOrderLock = new Object();
+    public static final Object productsLock = new Object();
 
 }

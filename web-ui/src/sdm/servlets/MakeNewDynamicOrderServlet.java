@@ -8,6 +8,7 @@ import SDMSystemDTO.product.IDTOProductInStore;
 import javafx.util.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,23 +34,19 @@ public class MakeNewDynamicOrderServlet extends HttpServlet {
         int orderToX = Integer.parseInt(request.getParameter("orderToX"));
         int orderToY = Integer.parseInt(request.getParameter("orderToY"));
         Point orderToLocation = new Point(orderToX,orderToY);
-//        float deliveryCost = Float.parseFloat(request.getParameter("deliveryCost"));
         LocalDate orderDate = LocalDate.parse(request.getParameter("orderDate"));
         String userName = SessionUtils.getUsername(request);
-//        //key: username, value: orders in user's stores
-//        Map<String, ArrayList<DTOOrder>> usersStoreOrdersMap = ServletUtils.getUsersStoreOrdersMap(getServletContext());
-//        ArrayList<DTOOrder> thisUserStoresOrder = usersStoreOrdersMap.get(userName);
-//        if(thisUserStoresOrder == null){
-//            thisUserStoresOrder = new ArrayList<>();
-//        }
+
         try {
-            sdmSystemInZone.makeNewDynamicOrder(
-                    orderDate,
-                    shoppingCart,
-                    userName,
-                    orderToLocation,
-                    sdmSystemManager
-            );
+            synchronized (ThreadSafeUtils.newOrderLock) {
+                sdmSystemInZone.makeNewDynamicOrder(
+                        orderDate,
+                        shoppingCart,
+                        userName,
+                        orderToLocation,
+                        sdmSystemManager
+                );
+            }
         }
         catch (NoMoneyException e){
             response.setStatus(500);

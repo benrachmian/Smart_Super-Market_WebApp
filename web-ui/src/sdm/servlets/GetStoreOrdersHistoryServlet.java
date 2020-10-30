@@ -6,6 +6,7 @@ import SDMSystemDTO.order.DTOOrder;
 import com.google.gson.Gson;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 import xml.generated.SuperDuperMarketDescriptor;
 
 import javax.servlet.ServletException;
@@ -25,7 +26,7 @@ public class GetStoreOrdersHistoryServlet extends HttpServlet {
         SDMSystemInZone sdmSystemInZone = sdmSystemManager.getZoneSystem(zoneFromSession);
         int storeId = Integer.parseInt(request.getParameter("chosenStoreId"));
         Collection<DTOOrder> storeOrdersHistory;
-        synchronized (getServletContext()) {
+        synchronized (ThreadSafeUtils.newOrderLock) {
             storeOrdersHistory = sdmSystemInZone.getOrdersFromStore(storeId);
         }
 

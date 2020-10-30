@@ -7,6 +7,7 @@ import SDMSystemDTO.product.DTOProductInStore;
 import com.google.gson.Gson;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
+import sdm.utils.ThreadSafeUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,7 +25,7 @@ public class GetProductsInSystemServlet extends HttpServlet {
         //String storeId = request.getParameter("chosenStoreId");
         SDMSystem sdmSystemManager = ServletUtils.getSDMSystem(getServletContext());
         Collection<DTOProduct> productsInSystem;
-        synchronized (getServletContext()) {
+        synchronized (ThreadSafeUtils.productsLock) {
             productsInSystem = sdmSystemManager.getProductsInZone(zoneFromSession);
         }
 

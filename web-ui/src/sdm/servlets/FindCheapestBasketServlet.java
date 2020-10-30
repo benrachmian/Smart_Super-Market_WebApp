@@ -43,8 +43,6 @@ public class FindCheapestBasketServlet extends HttpServlet {
             Gson gson = new Gson();
             Type listType = new TypeToken<ArrayList<FindCheapestBasketServlet.ProductAndAmount>>(){}.getType();
             java.util.List<FindCheapestBasketServlet.ProductAndAmount> productsAndAmount = gson.fromJson(json, listType);
-            //key: storeId, value:Map - key:product id, value: pair - key:product, value: ammount
-            //Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> shoppingCart = new HashMap<>();
             Collection<Pair<DTOProduct, Float>> productsInOrder = createProductsInOrderProductsAndAmount(productsAndAmount);
             Map<Integer, Collection<Pair<IDTOProductInStore, Float>>> cheapestBasket = new HashMap<>();
             sdmSystemInZone.makeCheapestBasket(cheapestBasket,productsInOrder);
