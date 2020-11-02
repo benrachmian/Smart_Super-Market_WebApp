@@ -2,11 +2,10 @@ package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
-import SDMSystemDTO.discount.DTODiscount;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
 import com.google.gson.Gson;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 

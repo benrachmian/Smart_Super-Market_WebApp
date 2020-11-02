@@ -5,12 +5,7 @@ import SDMSystem.system.SDMSystemInZone;
 import SDMSystem.user.storeOwner.StoreOwner;
 import SDMSystemDTO.product.DTOProduct;
 import SDMSystemDTO.product.DTOProductInStore;
-import SDMSystemDTO.product.IDTOProductInStore;
-import SDMSystemDTO.store.DTOStore;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import javafx.util.Pair;
-import sdm.constants.Constants;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -22,7 +17,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
 import java.util.*;
 
 import static sdm.utils.ThreadSafeUtils.storeLock;

@@ -1,15 +1,11 @@
 package sdm.servlets;
 
-import SDMSystem.system.SDMSystem;
-import SDMSystem.system.SDMSystemInZone;
 import SDMSystemDTO.product.DTOProductInStore;
 import SDMSystemDTO.product.IDTOProductInStore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 import sdm.constants.Constants;
-import sdm.utils.ServletUtils;
-import sdm.utils.SessionUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

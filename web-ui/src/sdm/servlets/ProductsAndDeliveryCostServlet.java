@@ -4,7 +4,7 @@ import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
 import SDMSystemDTO.product.IDTOProductInStore;
 import com.google.gson.Gson;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 

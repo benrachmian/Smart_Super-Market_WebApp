@@ -3,9 +3,8 @@ package sdm.servlets;
 import SDMSystem.exceptions.NoMoneyException;
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
-import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.IDTOProductInStore;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 import sdm.utils.ThreadSafeUtils;
@@ -18,7 +17,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 

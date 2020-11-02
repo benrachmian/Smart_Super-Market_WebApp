@@ -2,12 +2,8 @@ package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
 import SDMSystem.system.SDMSystemInZone;
-import SDMSystemDTO.product.DTOProductInStore;
 import SDMSystemDTO.product.IDTOProductInStore;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import javafx.util.Pair;
-import sdm.constants.Constants;
+import SDMSystemDTO.pair.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 
@@ -15,11 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class CheckForDiscountsServlet  extends HttpServlet {

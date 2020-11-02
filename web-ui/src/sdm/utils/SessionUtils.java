@@ -1,7 +1,7 @@
 package sdm.utils;
 
 import SDMSystemDTO.product.IDTOProductInStore;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 import sdm.constants.Constants;
 
 import javax.servlet.http.HttpServletRequest;

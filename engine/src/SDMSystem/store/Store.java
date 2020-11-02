@@ -16,7 +16,7 @@ import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
 import feedback.Feedback;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 
 import java.awt.*;
 import java.io.Serializable;

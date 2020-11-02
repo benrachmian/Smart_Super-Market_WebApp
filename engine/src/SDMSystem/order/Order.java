@@ -6,7 +6,7 @@ import SDMSystem.product.IProductInStore;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.product.WayOfBuying;
 import SDMSystemDTO.order.DTOOrder;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 
 import java.awt.*;
 import java.io.Serializable;

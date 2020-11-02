@@ -1,7 +1,7 @@
 package SDMSystemDTO.discount;
 
+import SDMSystemDTO.pair.Pair;
 import SDMSystemDTO.product.WayOfBuying;
-import javafx.util.Pair;
 
 import java.util.Collection;
 

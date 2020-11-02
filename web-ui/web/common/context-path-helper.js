@@ -10,9 +10,9 @@ function calculateContextPath() {
 // the returned function is one that accepts a resource to fetch,
 // and returns a new resource with the context path at its prefix
 function wrapBuildingURLWithContextPath() {
-    var contextPath = calculateContextPath();
+    // var contextPath = calculateContextPath();
     return function(resource) {
-        return "/" + contextPath + "/" + resource;
+        return "/" + resource;
     };
 }
 

@@ -1,6 +1,5 @@
 package SDMSystem.system;
 
-import SDMSystem.user.User;
 import SDMSystem.user.customer.Customer;
 import SDMSystem.discount.Discount;
 import SDMSystem.location.LocationUtility;
@@ -23,8 +22,7 @@ import SDMSystemDTO.product.*;
 import SDMSystemDTO.order.DTOOrder;
 import SDMSystemDTO.store.DTOStore;
 import feedback.Feedback;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 import xml.generated.*;
 
 import javax.xml.bind.JAXBException;

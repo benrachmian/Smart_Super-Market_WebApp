@@ -1,13 +1,8 @@
 package sdm.servlets;
 
 import SDMSystem.system.SDMSystem;
-import SDMSystem.system.SDMSystemInZone;
-import SDMSystemDTO.discount.DTODiscount;
 import SDMSystemDTO.feedback.DTOFeedback;
-import SDMSystemDTO.product.IDTOProductInStore;
-import SDMSystemDTO.store.DTOStore;
 import com.google.gson.Gson;
-import javafx.util.Pair;
 import sdm.utils.ServletUtils;
 import sdm.utils.SessionUtils;
 import sdm.utils.ThreadSafeUtils;
@@ -19,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class GetFeedbacksServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

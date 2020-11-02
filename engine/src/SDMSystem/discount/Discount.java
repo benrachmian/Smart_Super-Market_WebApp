@@ -1,12 +1,10 @@
 package SDMSystem.discount;
 
-import SDMSystem.product.Product;
-import SDMSystem.store.Store;
 import SDMSystemDTO.discount.DTODiscount;
 import SDMSystemDTO.discount.DTOOffer;
 import SDMSystemDTO.discount.DiscountKind;
 import SDMSystemDTO.product.WayOfBuying;
-import javafx.util.Pair;
+import SDMSystemDTO.pair.Pair;
 
 import java.util.Collection;
 import java.util.LinkedList;

@@ -1,8 +1,8 @@
 package SDMSystemDTO.order;
 
+import SDMSystemDTO.pair.Pair;
 import SDMSystemDTO.product.IDTOProductInStore;
 import SDMSystemDTO.store.DTOStore;
-import javafx.util.Pair;
 
 import java.awt.*;
 import java.time.LocalDate;
